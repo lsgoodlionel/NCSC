@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Set, Tuple
+from hashlib import sha256
+from itertools import product
+import json
+from typing import Any, Dict, FrozenSet, Iterable, Iterator, List, NamedTuple, Set, Tuple
 
 from .core import IRValidationError, _check_id, _validate_day, validate_document
 from .rule_loader import load_rules
@@ -46,6 +49,29 @@ def _matches(rule: Dict[str, Any], facts: Set[Fact]) -> Iterator[Edge]:
 def _opposite(fact: Fact) -> Fact:
     s, r, o, polarity = fact
     return s, r, o, "negative" if polarity == "positive" else "positive"
+
+
+def _proofs(fact: Fact, ancestors: FrozenSet[Fact], by_result: Dict[Fact, List[Edge]],
+            originals: Dict[Fact, List[str]], assertions: Dict[str, Any]) -> Iterator[Dict[str, Any]]:
+    """每条根到叶路径内事实唯一；兄弟前提各自保留独立的祖先集合。"""
+    if fact in ancestors:
+        return
+    for aid in sorted(originals.get(fact, [])):
+        yield {"assertion_id": aid, "polarity": fact[3], "sources": assertions[aid]["sources"]}
+    path = ancestors | {fact}
+    for edge in sorted(by_result.get(fact, [])):
+        options = [_proofs(p, path, by_result, originals, assertions) for p in edge.premises]
+        for children in product(*options):
+            ids = [child["assertion_id"] for child in children]
+            payload = json.dumps([edge.rule, ids], separators=(",", ":"), ensure_ascii=False)
+            digest = sha256(payload.encode("utf-8")).hexdigest()[:32]
+            sources = {}
+            for child in children:
+                for source in child["sources"]:
+                    sources.setdefault(source["id"], source)
+            yield {"assertion_id": f"d:{edge.rule}:{digest}", "polarity": fact[3],
+                   "derived_by": edge.rule, "premises": ids, "sources": list(sources.values()),
+                   "trace": list(children)}
 
 
 def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: str,
@@ -101,7 +127,11 @@ def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: s
             suppressed.append({**edge._asdict(),
                                "premise_originals": [sorted(originals[p]) for p in edge.premises],
                                "contested": [_opposite(p) for p in edge.premises if _opposite(p) in facts]})
-    return {"status": status, "context": context, "valid_at": day,
+    assertions = {a["id"]: a for a in doc["assertions"]}
+    evidence = sorted((e for root in (pos, neg)
+                       for e in _proofs(root, frozenset(), by_result, originals, assertions)),
+                      key=lambda e: e["assertion_id"])
+    return {"status": status, "context": context, "valid_at": day, "evidence": evidence,
             "experimental_graph": {"edges": [e._asdict() for e in sorted(reachable)],
                                    "originals": sorted(aid for f in visited for aid in originals[f])},
             "suppressed_preview": suppressed}

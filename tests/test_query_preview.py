@@ -85,12 +85,30 @@ class PreviewCLI(unittest.TestCase):
         self.assertEqual(set(graph["originals"]), {"a:forward", "a:release-requires-key", "a:key-unavailable"})
         doc["assertions"].append(self.fact("a:back", task, dep, nxt))
         first = self.run_query(doc, q, [R1, chain])
+        self.assertEqual(first["evidence"], out["evidence"])
+        proof, = first["evidence"]
+        self.assertEqual(proof["premises"], [e["assertion_id"] for e in proof["trace"]])
+        self.assertEqual(proof["trace"][1]["premises"], ["a:release-requires-key", "a:key-unavailable"])
         self.assertEqual(len(first["experimental_graph"]["edges"]), 3)
         self.assertEqual(set(first["experimental_graph"]["originals"]), set(graph["originals"]) | {"a:back"})
         doc["assertions"].reverse()
         self.assertEqual(self.run_query(doc, q, [chain, R1]), first)
         doc["assertions"] = [a for a in doc["assertions"] if a["id"] in ("a:forward", "a:back")]
         self.assertEqual(self.run_query(doc, q, [chain])["status"], "未知")
+
+    def test_reference_proof_and_independent_premise_ids(self):
+        doc = self.extended_example([])
+        case = read(ROOT / "tests/contract/cases/d1-control-no-conflict.json")["queries"][0]
+        q = case["query"]
+        expected = case["expect"]["p3-option-a"]["result"]["evidence"]
+        self.assertEqual(self.run_query(doc, q, [R1])["evidence"], expected)
+        first = doc["assertions"][0]
+        doc["assertions"].append(dict(first, id="a:second-need"))
+        proofs = self.run_query(doc, q, [R1])["evidence"]
+        self.assertEqual(len({e["assertion_id"] for e in proofs}), 2)
+        self.assertEqual({e["premises"][0] for e in proofs}, {first["id"], "a:second-need"})
+        doc["assertions"].reverse()
+        self.assertEqual(self.run_query(doc, q, [R1])["evidence"], proofs)
 
     def test_gate_polarity_and_partitions(self):
         task, need, gate, passed, unmet = ("c:task:release", "r:task:requires-gate", "c:g",
