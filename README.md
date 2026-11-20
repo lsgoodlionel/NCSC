@@ -6,12 +6,12 @@
 
 ## 快速运行
 
+从仓库根目录运行。下列命令使用 Python 3.9 或更高版本。macOS 若只有 `python3`，将 `python` 换成 `python3`；Windows 可用 `py -3`。
+
 ```bash
-python3 -m ncsc.cli validate examples/project_state.json
-python3 -m ncsc.cli query examples/project_state.json \
-  --subject c:task:release --relation r:status:blocked --object c:value:true \
-  --context ctx:project-alpha --valid-at 2026-11-19
-python3 -m unittest discover -s tests -v
+python -m ncsc.cli validate examples/project_state.json
+python -m ncsc.cli query examples/project_state.json --subject c:task:release --relation r:status:blocked --object c:value:true --context ctx:project-alpha --valid-at 2026-11-19
+python -m unittest discover -s tests -v
 ```
 
 查询状态只有四种：
@@ -35,6 +35,8 @@ python3 -m unittest discover -s tests -v
 未知字段、悬空引用、重复 ID、空来源、未支持角色或时间结构会被拒绝。查询必须明确上下文；数据中使用时间时，查询也必须给出完全相同的日期。不同上下文或日期的证据不会合并成冲突。
 
 ## 当前白名单规则
+
+初始规则、候选规则及其准入条件见 [M0 规则表](docs/M0_RULES.md)。开发环境可用 `python -m pip install -e ".[dev]"` 安装命令行入口与质量工具，然后运行 `ncsc validate examples/project_state.json`、`python -m ruff check ncsc tests`、`python -m mypy`。仅运行示例和单元测试时可直接使用源码。
 
 `resource_unavailable_blocks_task`：同一证据分区中，若任务 `需要资源` 某资源，且该资源被正向断言为 `不可用=true`，则推导任务 `阻塞=true`。推导结果列出规则名和两条前提 ID。规则只做精确 ID 匹配，不做词面猜测。
 
