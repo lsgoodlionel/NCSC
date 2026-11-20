@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 from .core import IRValidationError, KnowledgeBase, validate_document
+from .migration import preview_migration
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -14,6 +15,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     validate = commands.add_parser("validate", help="校验 JSON IR")
     validate.add_argument("file")
+    migrate = commands.add_parser("migrate", help="预览类别迁移，输出候选文档与报告")
+    migrate.add_argument("file")
     query = commands.add_parser("query", help="执行四值查询")
     query.add_argument("file")
     query.add_argument("--subject", required=True)
@@ -23,6 +26,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     query.add_argument("--valid-at")
     args = parser.parse_args(argv)
     try:
+        if args.command == "migrate":
+            with Path(args.file).open(encoding="utf-8") as handle:
+                preview = preview_migration(json.load(handle), args.file)
+            print(json.dumps(preview, ensure_ascii=False, indent=2))
+            return 2 if preview["report"]["rejected"] else 1 if preview["report"]["needs_confirmation"] else 0
         if args.command == "validate":
             with Path(args.file).open(encoding="utf-8") as handle:
                 doc = validate_document(json.load(handle))
