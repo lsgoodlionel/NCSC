@@ -8,7 +8,7 @@ from typing import Optional, Sequence
 
 from .core import IRValidationError, KnowledgeBase, validate_document
 from .migration import preview_migration
-from .query_preview import query_preview
+from .query_preview import DEFAULT_TRACE_BUDGET, TraceLimitError, query_preview
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -21,6 +21,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     query = commands.add_parser("query", help="执行四值查询")
     preview_query = commands.add_parser("query-preview", help="实验性 0.2 分区查询，输出有限证据图")
     preview_query.add_argument("--rule", action="append", default=[], help="每次指定一个 P-4 规则文件")
+    preview_query.add_argument("--trace-budget", type=int, default=DEFAULT_TRACE_BUDGET,
+                               help=f"证明展开预算，1–{DEFAULT_TRACE_BUDGET}")
     for cmd in (query, preview_query):
         cmd.add_argument("file")
         cmd.add_argument("--subject", required=True)
@@ -33,7 +35,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if args.command == "query-preview":
             documents = [json.loads(Path(p).read_text(encoding="utf-8")) for p in args.rule]
             answer = query_preview(json.loads(Path(args.file).read_text(encoding="utf-8")), documents,
-                                   args.subject, args.relation, args.object_, args.context, args.valid_at)
+                                   args.subject, args.relation, args.object_, args.context, args.valid_at,
+                                   trace_budget=args.trace_budget)
             print(json.dumps(answer, ensure_ascii=False, indent=2))
             return 0
         if args.command == "migrate":
@@ -53,6 +56,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             result = kb.query(args.subject, args.relation, args.object_, args.context, args.valid_at)
             print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
+    except TraceLimitError as exc:
+        print(json.dumps({"error": "trace_limit_exceeded", "resource": exc.resource,
+                          "limit": exc.limit}), file=sys.stderr)
+        return 3
     except (IRValidationError, OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
         print(json.dumps({"valid": False, "error": str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 2

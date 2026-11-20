@@ -12,6 +12,28 @@ from .rule_loader import load_rules
 
 Fact = Tuple[str, str, str, str]
 Binding = Dict[str, str]
+DEFAULT_TRACE_BUDGET = 10000
+MAX_TRACE_DEPTH = 48
+
+
+class TraceLimitError(Exception):
+    def __init__(self, resource: str, limit: int):
+        self.resource = resource
+        self.limit = limit
+        super().__init__(f"证明展开超限: {resource}={limit}")
+
+
+class _Budget:
+    def __init__(self, limit: int):
+        if type(limit) is not int or not 1 <= limit <= DEFAULT_TRACE_BUDGET:
+            raise IRValidationError(f"trace_budget 须为 1–{DEFAULT_TRACE_BUDGET} 的整数")
+        self.limit = limit
+        self.remaining = limit
+
+    def charge(self, units: int = 1) -> None:
+        if units > self.remaining:
+            raise TraceLimitError("trace_budget", self.limit)
+        self.remaining -= units
 
 
 class Edge(NamedTuple):
@@ -52,16 +74,25 @@ def _opposite(fact: Fact) -> Fact:
 
 
 def _proofs(fact: Fact, ancestors: FrozenSet[Fact], by_result: Dict[Fact, List[Edge]],
-            originals: Dict[Fact, List[str]], assertions: Dict[str, Any]) -> Iterator[Dict[str, Any]]:
+            originals: Dict[Fact, List[str]], assertions: Dict[str, Any],
+            budget: _Budget) -> Iterator[Tuple[Dict[str, Any], int]]:
     """每条根到叶路径内事实唯一；兄弟前提各自保留独立的祖先集合。"""
+    budget.charge()
     if fact in ancestors:
         return
+    if len(ancestors) >= MAX_TRACE_DEPTH:
+        raise TraceLimitError("trace_depth", MAX_TRACE_DEPTH)
     for aid in sorted(originals.get(fact, [])):
-        yield {"assertion_id": aid, "polarity": fact[3], "sources": assertions[aid]["sources"]}
+        budget.charge()
+        yield {"assertion_id": aid, "polarity": fact[3], "sources": assertions[aid]["sources"]}, 1
     path = ancestors | {fact}
     for edge in sorted(by_result.get(fact, [])):
-        options = [_proofs(p, path, by_result, originals, assertions) for p in edge.premises]
-        for children in product(*options):
+        options = [_proofs(p, path, by_result, originals, assertions, budget) for p in edge.premises]
+        for combination in product(*options):
+            # product 复用子证明；按序列化后每次出现的节点计费，避免共享引用掩盖指数增长。
+            size = 1 + sum(weight for _, weight in combination)
+            budget.charge(size)
+            children = [node for node, _ in combination]
             ids = [child["assertion_id"] for child in children]
             payload = json.dumps([edge.rule, ids], separators=(",", ":"), ensure_ascii=False)
             digest = sha256(payload.encode("utf-8")).hexdigest()[:32]
@@ -71,11 +102,13 @@ def _proofs(fact: Fact, ancestors: FrozenSet[Fact], by_result: Dict[Fact, List[E
                     sources.setdefault(source["id"], source)
             yield {"assertion_id": f"d:{edge.rule}:{digest}", "polarity": fact[3],
                    "derived_by": edge.rule, "premises": ids, "sources": list(sources.values()),
-                   "trace": list(children)}
+                   "trace": children}, size
 
 
 def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: str,
-                  obj: str, context: str, day: str | None) -> Dict[str, Any]:
+                  obj: str, context: str, day: str | None, *,
+                  trace_budget: int = DEFAULT_TRACE_BUDGET) -> Dict[str, Any]:
+    budget = _Budget(trace_budget)
     doc = validate_document(document)
     if doc["version"] != "0.2":
         raise IRValidationError("query-preview 仅用于 IR 0.2")
@@ -128,8 +161,8 @@ def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: s
                                "premise_originals": [sorted(originals[p]) for p in edge.premises],
                                "contested": [_opposite(p) for p in edge.premises if _opposite(p) in facts]})
     assertions = {a["id"]: a for a in doc["assertions"]}
-    evidence = sorted((e for root in (pos, neg)
-                       for e in _proofs(root, frozenset(), by_result, originals, assertions)),
+    evidence = sorted((e for root in (pos, neg) if root in facts
+                       for e, _ in _proofs(root, frozenset(), by_result, originals, assertions, budget)),
                       key=lambda e: e["assertion_id"])
     return {"status": status, "context": context, "valid_at": day, "evidence": evidence,
             "experimental_graph": {"edges": [e._asdict() for e in sorted(reachable)],

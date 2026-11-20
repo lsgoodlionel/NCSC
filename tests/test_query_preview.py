@@ -21,7 +21,7 @@ class PreviewCLI(unittest.TestCase):
         self.addCleanup(tmp.cleanup)
         self.tmp = Path(tmp.name)
 
-    def run_query(self, doc, query, rules):
+    def run_query(self, doc, query, rules, *, budget=None, error_code=0):
         path = self.tmp / "ir.json"
         path.write_text(json.dumps(doc), encoding="utf8")
         args = [sys.executable, "-X", "utf8", "-m", "ncsc.cli", "query-preview", str(path)]
@@ -30,9 +30,43 @@ class PreviewCLI(unittest.TestCase):
                 args.extend(["--" + key.replace("_", "-"), val])
         for rule in rules:
             args.extend(["--rule", str(rule)])
+        if budget is not None:
+            args.extend(["--trace-budget", str(budget)])
         result = subprocess.run(args, cwd=ROOT, capture_output=True, encoding="utf8", timeout=8)
-        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.returncode, error_code, result.stderr)
+        if error_code:
+            self.assertEqual(result.stdout, "")
+            return json.loads(result.stderr)
         return json.loads(result.stdout)
+
+    def test_trace_budget_exact_boundary_and_broad_join(self):
+        doc = self.extended_example([])
+        q = read(ROOT / "tests/contract/cases/d1-control-no-conflict.json")["queries"][0]["query"]
+        expected = self.run_query(doc, q, [R1])
+        self.assertEqual(self.run_query(doc, q, [R1], budget=8), expected)
+        self.assertEqual(self.run_query(doc, q, [R1], budget=7, error_code=3),
+                         {"error": "trace_limit_exceeded", "resource": "trace_budget", "limit": 7})
+        for invalid in (0, 10001):
+            self.assertFalse(self.run_query(doc, q, [R1], budget=invalid, error_code=2)["valid"])
+        need, unavailable = doc["assertions"][:2]
+        doc["assertions"] = [dict(fact, id=f"a:{i}-{j}") for i, fact in enumerate((need, unavailable))
+                             for j in range(101)]
+        error = self.run_query(doc, q, [R1], error_code=3)
+        self.assertEqual(error["resource"], "trace_budget")
+        doc["assertions"].reverse()
+        self.assertEqual(self.run_query(doc, q, [R1], error_code=3), error)
+
+    def test_trace_depth_rejected_before_recursion_limit(self):
+        tasks = [f"c:step:{i}" for i in range(50)]
+        dep = "r:task:depends-on"
+        doc = self.extended_example([dep] + tasks)
+        for i, (child, parent) in enumerate(zip(tasks, ["c:task:release"] + tasks)):
+            doc["assertions"].append(self.fact(f"a:link:{i}", child, dep, parent))
+        chain = self.active_copy("chain-blocked-delays-release.json")
+        q = dict(subject=tasks[-1], relation="r:status:blocked", object="c:value:true",
+                 context="ctx:project-alpha", valid_at="2026-11-19")
+        self.assertEqual(self.run_query(doc, q, [R1, chain], error_code=3),
+                         {"error": "trace_limit_exceeded", "resource": "trace_depth", "limit": 48})
 
     def test_seed_set_without_version_downgrade(self):
         concepts = read(DATA / "registry.json")["concepts"]
