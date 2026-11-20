@@ -142,7 +142,7 @@ def _proofs(fact: Fact, ancestors: FrozenSet[Fact], by_result: Dict[Fact, List[E
             ids = [child["assertion_id"] for child in children]
             payload = json.dumps([edge.rule, ids], separators=(",", ":"), ensure_ascii=False)
             digest = sha256(payload.encode("utf-8")).hexdigest()[:32]
-            sources = {}
+            sources: Dict[str, Dict[str, str]] = {}
             for child in children:
                 for source in child["sources"]:
                     sources.setdefault(source["id"], source)
