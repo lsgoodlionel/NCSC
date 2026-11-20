@@ -1,0 +1,26 @@
+{
+  "format": "ncsc-rules/0.2",
+  "id": "resource_unavailable_blocks_task",
+  "status": "active",
+  "description": "同一分区内，任务需要的资源被确认不可用时，推出任务阻塞。",
+  "premises": [
+    {
+      "subject": "?task",
+      "relation": "r:task:requires",
+      "object": "?resource",
+      "polarity": "positive"
+    },
+    {
+      "subject": "?resource",
+      "relation": "r:resource:unavailable",
+      "object": "c:value:true",
+      "polarity": "positive"
+    }
+  ],
+  "conclusion": {
+    "subject": "?task",
+    "relation": "r:status:blocked",
+    "object": "c:value:true",
+    "polarity": "positive"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "format": "ncsc-rules/0.2",
+  "id": "failed_gate_blocks_start",
+  "status": "proposed",
+  "description": "同一分区内，任务启动须通过的验收被明确记录为未通过时，推出该启动条件未满足。",
+  "premises": [
+    {
+      "subject": "?task",
+      "relation": "r:task:requires-gate",
+      "object": "?gate",
+      "polarity": "positive"
+    },
+    {
+      "subject": "?gate",
+      "relation": "r:gate:passed",
+      "object": "c:value:true",
+      "polarity": "negative"
+    }
+  ],
+  "conclusion": {
+    "subject": "?task",
+    "relation": "r:status:start-condition-unmet",
+    "object": "c:value:true",
+    "polarity": "positive"
+  }
+}
