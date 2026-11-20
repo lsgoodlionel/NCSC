@@ -2,7 +2,8 @@
   "schemas": {
     "0.1": "ir-0.1.schema.json",
     "0.2": "ir-0.2.draft.schema.json",
-    "rules-0.2": "rules-0.2.draft.schema.json"
+    "rules-0.2": "rules-0.2.draft.schema.json",
+    "0.3": "ir-0.3.draft.schema.json"
   },
   "query_result_schema": "query-result-0.2.draft.schema.json",
   "fixtures": [
@@ -533,6 +534,94 @@
       "kernel": "enforced",
       "decision": "P-4",
       "note": "结论变量 ?status 未出现在任何前提中"
+    },
+    {
+      "path": "fixtures/0.3/valid/single-day-unchanged.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "0.2 的单日写法在 0.3 中不变"
+    },
+    {
+      "path": "fixtures/0.3/valid/interval-closed.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "闭区间"
+    },
+    {
+      "path": "fixtures/0.3/valid/interval-open-end.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "“从 19 日起”：终点未给出"
+    },
+    {
+      "path": "fixtures/0.3/valid/interval-open-start.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "“截至 21 日”：起点未给出"
+    },
+    {
+      "path": "fixtures/0.3/structural/both-valid-at-and-during.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "单日与区间不能同时出现"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-empty.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "区间至少给出一端"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-unknown-field.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "只允许 from/to"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-loose-date.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "区间端点同样须零填充"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-trailing-newline.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "区间端点不得含换行"
+    },
+    {
+      "path": "fixtures/0.3/value/during-reversed.json",
+      "ir": "0.3",
+      "layer": "value",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "起点晚于终点：内核拒绝"
+    },
+    {
+      "path": "fixtures/0.3/value/during-impossible-date.json",
+      "ir": "0.3",
+      "layer": "value",
+      "kernel": "unimplemented:P-6",
+      "decision": "P-6",
+      "note": "日历无效：内核拒绝"
     }
   ],
   "query_cases": [
@@ -540,6 +629,10 @@
     "cases/d1-premise-conflict-only.json",
     "cases/d1-premise-conflict-direct-positive.json",
     "cases/d1-premise-conflict-direct-negative.json",
-    "cases/d1-need-premise-conflict.json"
+    "cases/d1-need-premise-conflict.json",
+    "cases/p6-open-interval-rule.json",
+    "cases/p6-recovery.json",
+    "cases/p6-overlap-conflict.json",
+    "cases/p6-undated-not-always.json"
   ]
 }

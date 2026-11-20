@@ -27,7 +27,7 @@ STATUSES = ("支持", "反对", "冲突", "未知")
 REQUIRED_PHENOMENA = {
     "direct-positive", "explicit-negation", "absence-not-negation", "unknown-unrelated", "missing-premise", "negative-premise",
     "rule-r1", "rule-binding", "reported-cause", "reported-cause-no-upgrade", "modality-not-representable",
-    "conflict-direct", "premise-conflict", "time-partition", "time-no-merge",
+    "conflict-direct", "no-majority-vote", "premise-conflict", "time-partition", "time-no-merge",
     "context-partition", "context-no-conflict", "undated-partition",
 }
 NOT_ANNOTATED_REASONS = {"absence", "modality", "no-relation", "ambiguous"}  # 与 annotation/GUIDE.md §7 一致
