@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from ncsc import IRValidationError, KnowledgeBase
+from ncsc.core import validate_document
 
 try:
     import jsonschema
@@ -43,7 +44,7 @@ def _schema(name: str) -> Dict[str, Any]:
 
 def _kernel_accepts(doc: Any) -> bool:
     try:
-        KnowledgeBase(doc)
+        validate_document(doc)
     except IRValidationError:
         return False
     return True

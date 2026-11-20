@@ -3,9 +3,10 @@
 import argparse
 import json
 import sys
+from pathlib import Path
 from typing import Optional, Sequence
 
-from .core import IRValidationError, KnowledgeBase
+from .core import IRValidationError, KnowledgeBase, validate_document
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -22,10 +23,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     query.add_argument("--valid-at")
     args = parser.parse_args(argv)
     try:
-        kb = KnowledgeBase.from_path(args.file)
         if args.command == "validate":
-            print(json.dumps({"valid": True, "version": kb.doc["version"]}, ensure_ascii=False))
+            with Path(args.file).open(encoding="utf-8") as handle:
+                doc = validate_document(json.load(handle))
+            print(json.dumps({"valid": True, "version": doc["version"]}, ensure_ascii=False))
         else:
+            kb = KnowledgeBase.from_path(args.file)
             result = kb.query(args.subject, args.relation, args.object_, args.context, args.valid_at)
             print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0

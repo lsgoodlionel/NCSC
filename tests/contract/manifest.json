@@ -209,7 +209,7 @@
       "path": "fixtures/0.2/valid/example-migrated.json",
       "ir": "0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-1",
       "note": "0.1 示例的迁移结果"
     },
@@ -217,7 +217,7 @@
       "path": "fixtures/0.2/valid/polysemy.json",
       "ir": "0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "跨概念同名（多义）合法；非汉字别名允许，只要至少一个别名含汉字"
     },
@@ -225,7 +225,7 @@
       "path": "fixtures/0.2/valid/opaque-ids.json",
       "ir": "0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-2",
       "note": "生产数据应使用不透明 ID（如 UUIDv7 十六进制）"
     },
@@ -233,7 +233,7 @@
       "path": "fixtures/0.2/structural/kind-free-text.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-1",
       "note": "kind 必须取枚举值；中文显示名另行映射"
     },
@@ -241,7 +241,7 @@
       "path": "fixtures/0.2/structural/relation-prefix-kind-mismatch.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-1/P-2",
       "note": "r: 前缀必须是 relation"
     },
@@ -249,7 +249,7 @@
       "path": "fixtures/0.2/structural/concept-kind-relation.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-1/P-2",
       "note": "c: 前缀不能是 relation"
     },
@@ -257,7 +257,7 @@
       "path": "fixtures/0.2/structural/relation-slot-non-relation.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "D3/P-1",
       "note": "relation 位只能引用 r:（D3）"
     },
@@ -265,7 +265,7 @@
       "path": "fixtures/0.2/structural/subject-is-relation.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-1",
       "note": "0.2 不支持以关系为论元"
     },
@@ -273,7 +273,7 @@
       "path": "fixtures/0.2/structural/id-whitespace.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "D5/P-2",
       "note": "ID 不得含空白（D5）"
     },
@@ -281,7 +281,7 @@
       "path": "fixtures/0.2/structural/id-uppercase.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-2",
       "note": "ID 只用小写"
     },
@@ -289,7 +289,7 @@
       "path": "fixtures/0.2/structural/id-wrong-prefix.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-2",
       "note": "断言 ID 必须以 a: 开头"
     },
@@ -297,7 +297,7 @@
       "path": "fixtures/0.2/structural/context-free-text.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-2",
       "note": "上下文必须是 ctx: ID"
     },
@@ -305,7 +305,7 @@
       "path": "fixtures/0.2/structural/alias-duplicate-within-concept.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "同一概念内别名重复"
     },
@@ -313,7 +313,7 @@
       "path": "fixtures/0.2/structural/alias-untrimmed.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "别名首尾空白"
     },
@@ -321,7 +321,7 @@
       "path": "fixtures/0.2/structural/alias-no-cjk.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "至少一个别名含汉字"
     },
@@ -329,7 +329,7 @@
       "path": "fixtures/0.2/structural/valid-at-loose.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "D2",
       "note": "非零填充日期"
     },
@@ -337,7 +337,7 @@
       "path": "fixtures/0.2/referential/dangling-object.json",
       "ir": "0.2",
       "layer": "referential",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "0.2",
       "note": "宾语未声明"
     },
@@ -345,7 +345,7 @@
       "path": "fixtures/0.2/referential/duplicate-source-in-assertion.json",
       "ir": "0.2",
       "layer": "referential",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "0.2",
       "note": "同一断言内来源 ID 重复"
     },
@@ -353,7 +353,7 @@
       "path": "fixtures/0.2/value/valid-at-impossible.json",
       "ir": "0.2",
       "layer": "value",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "0.2",
       "note": "日历无效"
     },
@@ -369,7 +369,7 @@
       "path": "fixtures/0.2/structural/valid-at-trailing-newline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "D2",
       "note": "日期末尾换行"
     },
@@ -377,7 +377,7 @@
       "path": "fixtures/0.2/structural/id-trailing-newline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-2",
       "note": "ID 末尾换行（Codex 复核指出）"
     },
@@ -385,7 +385,7 @@
       "path": "fixtures/0.2/structural/alias-trailing-newline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "别名末尾换行"
     },
@@ -393,7 +393,7 @@
       "path": "fixtures/0.2/structural/alias-multiline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "别名必须单行"
     },
@@ -401,7 +401,7 @@
       "path": "fixtures/0.2/structural/alias-line-separator.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "U+2028 也算换行"
     },
@@ -409,7 +409,7 @@
       "path": "fixtures/0.2/structural/description-multiline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "来源说明必须单行"
     },
@@ -417,7 +417,7 @@
       "path": "fixtures/0.2/valid/alias-internal-space.json",
       "ir": "0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "内部空格允许"
     }
