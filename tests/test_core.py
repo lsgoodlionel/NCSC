@@ -64,7 +64,7 @@ class PartitionIndexTests(unittest.TestCase):
     def test_repeated_queries_read_the_snapshot_without_rescanning_assertions(self):
         from unittest.mock import patch
         fixture = Path(__file__).resolve().parents[1] / "tests/contract/fixtures/0.2/valid/example-migrated.json"
-        document = json.loads(fixture.read_text())
+        document = json.loads(fixture.read_text(encoding="utf-8"))
         kb = KnowledgeBase(document)
         query = ("c:task:release", "r:status:blocked", "c:value:true", "ctx:project-alpha", "2026-11-19")
         first = kb.query(*query)

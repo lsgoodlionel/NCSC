@@ -29,10 +29,10 @@ def measure(label, fn):
     tracemalloc.stop()
     print(label, round(median(times), 2), round(peak / 1048576, 2), outcome, flush=True)
 
-doc = json.loads(Path("tests/contract/fixtures/0.2/valid/example-migrated.json").read_text())
+doc = json.loads(Path("tests/contract/fixtures/0.2/valid/example-migrated.json").read_text(encoding="utf-8"))
 base = doc["assertions"][0]
 q = ("c:task:release", "r:status:blocked", "c:value:true", "ctx:project-alpha", "2026-11-19")
-r1 = json.loads(Path("tests/contract/fixtures/rules-0.2/valid/r1-resource-unavailable.json").read_text())
+r1 = json.loads(Path("tests/contract/fixtures/rules-0.2/valid/r1-resource-unavailable.json").read_text(encoding="utf-8"))
 with tempfile.TemporaryDirectory() as folder:
     p = Path(folder) / "ir.json"
     for n in (256, 2048, 8192):
