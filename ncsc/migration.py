@@ -15,6 +15,7 @@ def preview_migration(doc: Dict[str, Any], source: str) -> Dict[str, Any]:
     candidate["version"] = "0.2"
     report: Dict[str, Any] = {
         "from": "0.1", "to": "0.2", "source": source,
+        "output_status": "candidate",
         "automatic": [{"path": "version", "from": "0.1", "to": "0.2"}],
         "needs_confirmation": [], "id_changes": [], "rejected": [],
     }
@@ -40,5 +41,10 @@ def preview_migration(doc: Dict[str, Any], source: str) -> Dict[str, Any]:
     try:
         validate_document(candidate)
     except IRValidationError as exc:
-        report["rejected"].append(str(exc))
+        path = str(exc).partition(":")[0]
+        if not any(item["path"] == path for item in report["needs_confirmation"]):
+            report["unhandled_first_error"] = str(exc)
+    else:
+        if not report["needs_confirmation"]:
+            report["output_status"] = "final"
     return {"candidate": candidate, "report": report}

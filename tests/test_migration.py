@@ -24,4 +24,13 @@ class MigrationTests(unittest.TestCase):
         doc = {"version": "0.1", "assertions": [], "concepts": [{"kind": "临时", "aliases": ["甲"], "id": "c:x"}]}
         result = preview_migration(doc, "example")
         self.assertIsNone(result["report"]["needs_confirmation"][0]["proposed"])
-        self.assertTrue(result["report"]["rejected"])
+        self.assertEqual(result["report"]["rejected"], [])
+        self.assertEqual(result["report"]["output_status"], "candidate")
+
+    def test_clean_and_unhandled_previews(self):
+        doc = {"version": "0.1", "assertions": [], "concepts": [{"kind": "值", "aliases": ["甲"], "id": "c:x"}]}
+        self.assertEqual(preview_migration(doc, "example")["report"]["output_status"], "final")
+        doc["concepts"][0]["id"] = "c:X"
+        report = preview_migration(doc, "example")["report"]
+        self.assertEqual(report["output_status"], "candidate")
+        self.assertIn("concepts[0].id", report["unhandled_first_error"])

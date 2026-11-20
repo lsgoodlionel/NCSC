@@ -30,7 +30,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             with Path(args.file).open(encoding="utf-8") as handle:
                 preview = preview_migration(json.load(handle), args.file)
             print(json.dumps(preview, ensure_ascii=False, indent=2))
-            return 2 if preview["report"]["rejected"] else 1 if preview["report"]["needs_confirmation"] else 0
+            report = preview["report"]
+            if report["rejected"] or "unhandled_first_error" in report:
+                return 2
+            return 1 if report["output_status"] == "candidate" else 0
         if args.command == "validate":
             with Path(args.file).open(encoding="utf-8") as handle:
                 doc = validate_document(json.load(handle))
