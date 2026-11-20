@@ -18,6 +18,7 @@
 | `status` | 不变 | 支持 / 反对 / 冲突 / 未知 |
 | `status_code` | 新增 | supported / refuted / both / undetermined，与 `status` 一一对应 |
 | `query` | 不变 | |
+| `evidence` 顺序 | 修正 | 按 `assertion_id` 码位升序，与输入顺序无关（P-4 §5） |
 | `evidence[].sources` | 修正 | 推导证据按 `source.id` 去重，保留首次出现顺序（D8） |
 | `evidence[].assertion_id` | 修正 | 推导证据使用 P-2 的 `d:` ID |
 | `evidence[].trace` | 新增 | 推导证据必须带；逐个前提展开其证据，可递归，叶子为原始断言 |

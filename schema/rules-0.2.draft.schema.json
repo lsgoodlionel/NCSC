@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lsgoodlionel/NCSC/schema/rules-0.2.draft.schema.json",
+  "title": "NCSC 规则 0.2 草案（结构层）",
+  "description": "P-4。每个文件一条规则。安全性（结论变量须出现在前提中）、常量已声明、分层约束与规则 ID 唯一由内核检查。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "id", "status", "description", "premises", "conclusion"],
+  "properties": {
+    "format": {"const": "ncsc-rules/0.2"},
+    "id": {
+      "description": "语义变化必须换 ID。",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,62}$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "status": {"enum": ["proposed", "active", "retired"]},
+    "description": {
+      "type": "string",
+      "pattern": "^\\S(?:.*\\S)?$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "premises": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/premise"}
+    },
+    "conclusion": {"$ref": "#/$defs/conclusion"}
+  },
+  "$defs": {
+    "singleLine": {
+      "description": "与 IR 0.2 相同：不得含任何换行类字符。",
+      "not": {"pattern": "[\n\r\u000b\f\u001c\u001d\u001e\u0085  ]"}
+    },
+    "variable": {
+      "type": "string",
+      "pattern": "^\\?[a-z][a-z0-9_]{0,31}$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "conceptId": {
+      "type": "string",
+      "pattern": "^c:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "term": {"anyOf": [{"$ref": "#/$defs/variable"}, {"$ref": "#/$defs/conceptId"}]},
+    "relation": {
+      "description": "只能是 r: 常量；报告因果既不能作前提，也不能被推出。",
+      "type": "string",
+      "pattern": "^r:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "not": {"const": "r:claim:reported-cause"},
+      "$ref": "#/$defs/singleLine"
+    },
+    "premise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "relation", "object", "polarity"],
+      "properties": {
+        "subject": {"$ref": "#/$defs/term"},
+        "relation": {"$ref": "#/$defs/relation"},
+        "object": {"$ref": "#/$defs/term"},
+        "polarity": {"enum": ["positive", "negative"]}
+      }
+    },
+    "conclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "relation", "object", "polarity"],
+      "properties": {
+        "subject": {"$ref": "#/$defs/term"},
+        "relation": {"$ref": "#/$defs/relation"},
+        "object": {"$ref": "#/$defs/term"},
+        "polarity": {"const": "positive"}
+      }
+    }
+  }
+}

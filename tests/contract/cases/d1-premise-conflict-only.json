@@ -216,22 +216,22 @@
             },
             "evidence": [
               {
-                "assertion_id": "a:key-unavailable",
-                "polarity": "positive",
-                "sources": [
-                  {
-                    "id": "src:resource-register",
-                    "description": "合成案例：资源登记表记录密钥不可用"
-                  }
-                ]
-              },
-              {
                 "assertion_id": "a:key-available",
                 "polarity": "negative",
                 "sources": [
                   {
                     "id": "src:ops-ticket",
                     "description": "合成案例：运维工单称密钥可用"
+                  }
+                ]
+              },
+              {
+                "assertion_id": "a:key-unavailable",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表记录密钥不可用"
                   }
                 ]
               }
