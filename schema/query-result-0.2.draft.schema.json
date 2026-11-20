@@ -5,34 +5,81 @@
   "description": "P-5（溯源树、未知原因）、P-3（被抑制推导）、P-2（推导 ID）。0.1 已有字段 status/query/evidence 语义不变；其余字段为增量。",
   "type": "object",
   "additionalProperties": false,
-  "required": ["status", "status_code", "query", "evidence", "suppressed"],
+  "required": [
+    "status",
+    "status_code",
+    "query",
+    "evidence",
+    "suppressed"
+  ],
   "properties": {
-    "status": {"enum": ["支持", "反对", "冲突", "未知"]},
+    "status": {
+      "enum": [
+        "支持",
+        "反对",
+        "冲突",
+        "未知"
+      ]
+    },
     "status_code": {
       "description": "与 status 一一对应的机器码，对齐 docs/v0.1 工程架构用语。",
-      "enum": ["supported", "refuted", "both", "undetermined"]
+      "enum": [
+        "supported",
+        "refuted",
+        "both",
+        "undetermined"
+      ]
     },
     "query": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["subject", "relation", "object", "context", "valid_at"],
+      "required": [
+        "subject",
+        "relation",
+        "object",
+        "context",
+        "valid_at"
+      ],
       "properties": {
-        "subject": {"type": "string"},
-        "relation": {"type": "string"},
-        "object": {"type": "string"},
-        "context": {"type": "string"},
-        "valid_at": {"type": ["string", "null"]}
+        "subject": {
+          "type": "string"
+        },
+        "relation": {
+          "type": "string"
+        },
+        "object": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "valid_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
-    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
     "suppressed": {
       "description": "P-3：结论与本查询相同、但因前提在本分区为“冲突”而未推出的推导。只作诊断，不参与四值判定。",
       "type": "array",
-      "items": {"$ref": "#/$defs/suppressed"}
+      "items": {
+        "$ref": "#/$defs/suppressed"
+      }
     },
     "reason": {
       "description": "仅当 status 为“未知”时出现。no_evidence：本分区无任何证据；premise_conflict：仅有被抑制推导。",
-      "enum": ["no_evidence", "premise_conflict"]
+      "enum": [
+        "no_evidence",
+        "premise_conflict"
+      ]
     },
     "other_partitions": {
       "description": "仅当 status 为“未知”时可出现：同一三元组在哪些其他分区有证据。只作提示，绝不合并。按 (context, valid_at) 排序，null 在前。",
@@ -40,71 +87,265 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["context", "valid_at"],
-        "properties": {"context": {"type": "string"}, "valid_at": {"type": ["string", "null"]}}
+        "required": [
+          "context",
+          "valid_at"
+        ],
+        "properties": {
+          "context": {
+            "type": "string"
+          },
+          "valid_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
       }
     }
   },
   "allOf": [
     {
-      "if": {"properties": {"status": {"const": "未知"}}},
-      "then": {"required": ["reason"]},
-      "else": {"not": {"anyOf": [{"required": ["reason"]}, {"required": ["other_partitions"]}]}}
+      "if": {
+        "properties": {
+          "status": {
+            "const": "未知"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reason"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "reason"
+              ]
+            },
+            {
+              "required": [
+                "other_partitions"
+              ]
+            }
+          ]
+        }
+      }
     },
-    {"if": {"properties": {"status": {"const": "支持"}}}, "then": {"properties": {"status_code": {"const": "supported"}}}},
-    {"if": {"properties": {"status": {"const": "反对"}}}, "then": {"properties": {"status_code": {"const": "refuted"}}}},
-    {"if": {"properties": {"status": {"const": "冲突"}}}, "then": {"properties": {"status_code": {"const": "both"}}}},
-    {"if": {"properties": {"status": {"const": "未知"}}}, "then": {"properties": {"status_code": {"const": "undetermined"}}}}
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "支持"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "status_code": {
+            "const": "supported"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "反对"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "status_code": {
+            "const": "refuted"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "冲突"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "status_code": {
+            "const": "both"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "未知"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "status_code": {
+            "const": "undetermined"
+          }
+        }
+      }
+    }
   ],
   "$defs": {
     "derivedId": {
       "description": "P-2：d:<rule_id>:<sha256([rule_id, premises]) 前 32 位十六进制>；premises 保持规则定义顺序。",
       "type": "string",
-      "pattern": "^d:[a-z0-9_]+:[0-9a-f]{32}$"
+      "pattern": "^d:[a-z0-9_]+:[0-9a-f]{32}$",
+      "$ref": "#/$defs/singleLine"
     },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "description"],
-      "properties": {"id": {"type": "string"}, "description": {"type": "string"}}
+      "required": [
+        "id",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
     },
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["assertion_id", "polarity", "sources"],
+      "required": [
+        "assertion_id",
+        "polarity",
+        "sources"
+      ],
       "properties": {
-        "assertion_id": {"type": "string"},
-        "polarity": {"enum": ["positive", "negative"]},
-        "sources": {"description": "推导证据的来源按 source.id 去重，保留首次出现顺序（D8）。", "type": "array", "items": {"$ref": "#/$defs/source"}},
-        "derived_by": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-        "premises": {"type": "array", "items": {"type": "string"}},
-        "trace": {"description": "P-5：逐个前提展开的证据，可递归。", "type": "array", "items": {"$ref": "#/$defs/evidence"}}
+        "assertion_id": {
+          "type": "string"
+        },
+        "polarity": {
+          "enum": [
+            "positive",
+            "negative"
+          ]
+        },
+        "sources": {
+          "description": "推导证据的来源按 source.id 去重，保留首次出现顺序（D8）。",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "derived_by": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "premises": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trace": {
+          "description": "P-5：逐个前提展开的证据，可递归。",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
       },
-      "dependentRequired": {"derived_by": ["premises", "trace"], "premises": ["derived_by"], "trace": ["derived_by"]},
-      "if": {"required": ["derived_by"]},
-      "then": {"properties": {"assertion_id": {"$ref": "#/$defs/derivedId"}}}
+      "dependentRequired": {
+        "derived_by": [
+          "premises",
+          "trace"
+        ],
+        "premises": [
+          "derived_by"
+        ],
+        "trace": [
+          "derived_by"
+        ]
+      },
+      "if": {
+        "required": [
+          "derived_by"
+        ]
+      },
+      "then": {
+        "properties": {
+          "assertion_id": {
+            "$ref": "#/$defs/derivedId"
+          }
+        }
+      }
     },
     "suppressed": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["rule_id", "premises", "reason", "contested_premises"],
+      "required": [
+        "rule_id",
+        "premises",
+        "reason",
+        "contested_premises"
+      ],
       "properties": {
-        "rule_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-        "premises": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-        "reason": {"const": "premise_conflict"},
+        "rule_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "premises": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "const": "premise_conflict"
+        },
         "contested_premises": {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["assertion_id", "opposing"],
+            "required": [
+              "assertion_id",
+              "opposing"
+            ],
             "properties": {
-              "assertion_id": {"type": "string"},
-              "opposing": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+              "assertion_id": {
+                "type": "string"
+              },
+              "opposing": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
+      }
+    },
+    "singleLine": {
+      "description": "单行：不得含任何换行类字符（与 Python str.splitlines 的行边界一致）。也用于堵住 Python 正则中 $ 可匹配末尾换行之前的差异。",
+      "not": {
+        "pattern": "[\n\r\u000b\f\u001c\u001d\u001e\u0085\u2028\u2029]"
       }
     }
   }

@@ -20,13 +20,21 @@
 | 日历有效性（如 `2026-02-30`） | 正则无法表达 |
 | 分区隔离、四值判定、规则推导、冲突抑制 | 运行时语义 |
 
+### 正则方言
+
+Schema 的 `pattern` 要在 ECMA-262 与 Python `re` 下给出相同结论。已知差异：Python 的 `$` 会匹配“末尾换行之前”，`.` 会匹配 U+2028 等行分隔符。为此，所有 ID、日期和 0.2 文本字段都额外引用 `$defs/singleLine`，禁止任何换行类字符（与 Python `str.splitlines` 的行边界一致）。新增带 `$` 或 `.` 的模式时，必须同时引用 `singleLine`，并补一个末尾换行的反例夹具。
+
 内核必须同时执行结构层的全部约束（不能假设调用方先跑过 Schema）。两层对同一夹具的期望由 `tests/contract/manifest.json` 的 `layer` 字段给出，`tests/contract/test_contract.py` 分别验证。
 
 ## 已知差异
 
-| 编号 | 差异 | 跟踪 |
+当前无。
+
+新的差异登记方式：在 `tests/contract/manifest.json` 中把对应夹具的 `kernel` 标为 `pending:<Issue> <缺陷号>`，并在此表登记；内核修复后测试会失败并提醒改为 `enforced`。
+
+| 编号 | 差异 | 状态 |
 |---|---|---|
-| D2 | 0.1 内核接受 `2026-1-5`，Schema 拒绝 | #4；夹具 `fixtures/0.1/structural/valid-at-loose.json` 标为 `pending`，修复后测试会提醒改为 `enforced` |
+| D2 | 0.1 内核曾接受 `2026-1-5` | 已由 #12 修复，夹具已改为 `enforced` |
 
 ## 运行
 
