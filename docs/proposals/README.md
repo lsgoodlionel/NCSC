@@ -1,7 +1,7 @@
 # IR 0.2 契约提案
 
 关联 Issue #3。状态：**提议**，待 Codex（复核）评审；评审结论写回各提案的“评审记录”。
-本目录取代 `docs/DEVELOPMENT_PLAN.md` §5 中 P-1～P-5、P-7 的初稿；P-6（时间区间）另行提出。
+本目录取代 `docs/DEVELOPMENT_PLAN.md` §5 中 P-1～P-7 的初稿。
 
 ## 决策一览
 
@@ -12,6 +12,7 @@
 | [P-3](P-3-premise-conflict.md) 前提冲突 | 方案 A：前提在本分区非“支持”即不推出，记入 `suppressed` | 语义变化 | 内核层 | `cases/d1-*.json` |
 | [P-4](P-4-rule-format.md) 规则格式与求值 | 每条规则一个 JSON 文件；结论只能正向；前提可正可负；报告因果不可作前提或结论；分层不动点求值；证据按 ID 排序 | 新增（0.2 输出顺序变化） | 结构层 + 内核层 | `fixtures/rules-0.2/*` |
 | [P-5](P-5-query-trace.md) 查询溯源与原因 | 增加 `status_code`、`trace`、`reason`、`suppressed`、`other_partitions`；未声明 ID 报错 | D4 部分破坏，其余为增量 | 输出 Schema + 内核层 | `cases/d1-control-no-conflict.json` |
+| [P-6](P-6-time-intervals.md) 时间区间 | 新增 `valid_during`（闭区间，可开放一端）；查询仍按单日；规则在当日视图中求值，结论范围取交集；无日期不等于一直有效 | 新增字段，IR 升为 0.3 | 结构层 + 内核层 | `fixtures/0.3/*`、`cases/p6-*.json` |
 | [P-7](P-7-aliases.md) 别名 | 概念内唯一、去首尾空白、至少一个含汉字；**跨概念同名允许** | 是 | 结构层 | `fixtures/0.2/*/alias-*`、`valid/polysemy` |
 
 迁移清单（破坏性变化、身份迁移、人工确认项）见 [MIGRATION-0.1-to-0.2.md](MIGRATION-0.1-to-0.2.md)。

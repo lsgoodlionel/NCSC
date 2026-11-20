@@ -1,0 +1,181 @@
+{
+  "id": "p6-undated-not-always",
+  "decision": "P-6",
+  "description": "无日期仍是独立分区，不被当作“一直有效”，也不与区间组合。",
+  "document": {
+    "version": "0.3",
+    "concepts": [
+      {
+        "id": "c:task:release",
+        "aliases": [
+          "发布任务",
+          "版本发布"
+        ],
+        "kind": "event"
+      },
+      {
+        "id": "c:resource:signing-key",
+        "aliases": [
+          "签名密钥"
+        ],
+        "kind": "entity"
+      },
+      {
+        "id": "c:value:true",
+        "aliases": [
+          "真",
+          "是"
+        ],
+        "kind": "value"
+      },
+      {
+        "id": "r:task:requires",
+        "aliases": [
+          "需要资源"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:resource:unavailable",
+        "aliases": [
+          "不可用"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:status:blocked",
+        "aliases": [
+          "阻塞"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:claim:reported-cause",
+        "aliases": [
+          "报告原因为"
+        ],
+        "kind": "relation"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "a:key-unavailable-undated",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:resource-register",
+            "description": "合成案例：资源登记表"
+          }
+        ],
+        "context": "ctx:project-alpha"
+      },
+      {
+        "id": "a:key-available-from-19",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "negative",
+        "sources": [
+          {
+            "id": "src:ops-ticket",
+            "description": "合成案例：运维工单"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_during": {
+          "from": "2026-11-19"
+        }
+      }
+    ]
+  },
+  "queries": [
+    {
+      "name": "day-19",
+      "query": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "unimplemented:P-6",
+          "result": {
+            "status": "反对",
+            "status_code": "refuted",
+            "query": {
+              "subject": "c:resource:signing-key",
+              "relation": "r:resource:unavailable",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [
+              {
+                "assertion_id": "a:key-available-from-19",
+                "polarity": "negative",
+                "sources": [
+                  {
+                    "id": "src:ops-ticket",
+                    "description": "合成案例：运维工单"
+                  }
+                ],
+                "valid_during": {
+                  "from": "2026-11-19"
+                }
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    },
+    {
+      "name": "undated",
+      "query": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": null
+      },
+      "expect": {
+        "p6": {
+          "kernel": "unimplemented:P-6",
+          "result": {
+            "status": "支持",
+            "status_code": "supported",
+            "query": {
+              "subject": "c:resource:signing-key",
+              "relation": "r:resource:unavailable",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": null
+            },
+            "evidence": [
+              {
+                "assertion_id": "a:key-unavailable-undated",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表"
+                  }
+                ]
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    }
+  ]
+}

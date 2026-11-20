@@ -92,21 +92,23 @@ class StructuralLayerTests(unittest.TestCase):
                 self.assertEqual(not errors, expected_valid, [e.message for e in errors][:3])
 
     def test_proposed_query_results_against_schema(self) -> None:
+        """判例中任何带完整 result 的期望（p3-option-a、p6 等）都须符合查询结果 Schema。"""
         validator = jsonschema.Draft202012Validator(_schema(MANIFEST["query_result_schema"]))
         for rel in MANIFEST["query_cases"]:
             for item in _load(rel)["queries"]:
-                expect = item["expect"].get("p3-option-a")
-                if expect is None:
-                    continue
-                with self.subTest(case=rel, query=item["name"]):
-                    errors = list(validator.iter_errors(expect["result"]))
-                    self.assertEqual(errors, [], [e.message for e in errors][:3])
-                    self.assertEqual(expect["result"]["query"], item["query"])
-                    # P-4 §5：证据与被抑制推导按 ID 的码位升序排列，与输入顺序无关
-                    ids = [e["assertion_id"] for e in expect["result"]["evidence"]]
-                    self.assertEqual(ids, sorted(ids))
-                    keys = [s["premises"] for s in expect["result"]["suppressed"]]
-                    self.assertEqual(keys, sorted(keys))
+                for key, expect in item["expect"].items():
+                    if "result" not in expect:
+                        continue
+                    with self.subTest(case=rel, query=item["name"], expect=key):
+                        result = expect["result"]
+                        errors = list(validator.iter_errors(result))
+                        self.assertEqual(errors, [], [e.message for e in errors][:3])
+                        self.assertEqual(result["query"], item["query"])
+                        # P-4 §5：证据与被抑制推导按 ID 的码位升序排列，与输入顺序无关
+                        ids = [e["assertion_id"] for e in result["evidence"]]
+                        self.assertEqual(ids, sorted(ids))
+                        keys = [s["premises"] for s in result["suppressed"]]
+                        self.assertEqual(keys, sorted(keys))
 
 
 class KernelLayerTests(unittest.TestCase):
@@ -128,6 +130,8 @@ class KernelLayerTests(unittest.TestCase):
     def test_query_cases_current_behaviour(self) -> None:
         for rel in MANIFEST["query_cases"]:
             case = _load(rel)
+            if case["document"]["version"] != "0.1":
+                continue  # 0.2 起的判例只有提议期望，等内核实现后再执行
             kb = KnowledgeBase(case["document"])
             for item in case["queries"]:
                 expect = item["expect"]["ir-0.1-current"]
