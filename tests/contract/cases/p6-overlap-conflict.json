@@ -1,0 +1,245 @@
+{
+  "id": "p6-overlap-conflict",
+  "decision": "P-6",
+  "description": "两个区间只在 20 日重叠：只有重叠的那一天是冲突。",
+  "document": {
+    "version": "0.3",
+    "concepts": [
+      {
+        "id": "c:task:release",
+        "aliases": [
+          "发布任务",
+          "版本发布"
+        ],
+        "kind": "event"
+      },
+      {
+        "id": "c:resource:signing-key",
+        "aliases": [
+          "签名密钥"
+        ],
+        "kind": "entity"
+      },
+      {
+        "id": "c:value:true",
+        "aliases": [
+          "真",
+          "是"
+        ],
+        "kind": "value"
+      },
+      {
+        "id": "r:task:requires",
+        "aliases": [
+          "需要资源"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:resource:unavailable",
+        "aliases": [
+          "不可用"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:status:blocked",
+        "aliases": [
+          "阻塞"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:claim:reported-cause",
+        "aliases": [
+          "报告原因为"
+        ],
+        "kind": "relation"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "a:key-unavailable-18-20",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:resource-register",
+            "description": "合成案例：资源登记表"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_during": {
+          "from": "2026-11-18",
+          "to": "2026-11-20"
+        }
+      },
+      {
+        "id": "a:key-available-from-20",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "negative",
+        "sources": [
+          {
+            "id": "src:ops-ticket",
+            "description": "合成案例：运维工单"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_during": {
+          "from": "2026-11-20"
+        }
+      }
+    ]
+  },
+  "queries": [
+    {
+      "name": "day-19",
+      "query": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "支持",
+            "status_code": "supported",
+            "query": {
+              "subject": "c:resource:signing-key",
+              "relation": "r:resource:unavailable",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [
+              {
+                "assertion_id": "a:key-unavailable-18-20",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表"
+                  }
+                ],
+                "valid_during": {
+                  "from": "2026-11-18",
+                  "to": "2026-11-20"
+                }
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    },
+    {
+      "name": "day-20",
+      "query": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-20"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "冲突",
+            "status_code": "both",
+            "query": {
+              "subject": "c:resource:signing-key",
+              "relation": "r:resource:unavailable",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-20"
+            },
+            "evidence": [
+              {
+                "assertion_id": "a:key-available-from-20",
+                "polarity": "negative",
+                "sources": [
+                  {
+                    "id": "src:ops-ticket",
+                    "description": "合成案例：运维工单"
+                  }
+                ],
+                "valid_during": {
+                  "from": "2026-11-20"
+                }
+              },
+              {
+                "assertion_id": "a:key-unavailable-18-20",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表"
+                  }
+                ],
+                "valid_during": {
+                  "from": "2026-11-18",
+                  "to": "2026-11-20"
+                }
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    },
+    {
+      "name": "day-21",
+      "query": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-21"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "反对",
+            "status_code": "refuted",
+            "query": {
+              "subject": "c:resource:signing-key",
+              "relation": "r:resource:unavailable",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-21"
+            },
+            "evidence": [
+              {
+                "assertion_id": "a:key-available-from-20",
+                "polarity": "negative",
+                "sources": [
+                  {
+                    "id": "src:ops-ticket",
+                    "description": "合成案例：运维工单"
+                  }
+                ],
+                "valid_during": {
+                  "from": "2026-11-20"
+                }
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    }
+  ]
+}

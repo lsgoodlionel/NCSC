@@ -60,5 +60,22 @@ class CoreTests(unittest.TestCase):
             KnowledgeBase(self.doc)
 
 
+class PartitionIndexTests(unittest.TestCase):
+    def test_repeated_queries_read_the_snapshot_without_rescanning_assertions(self):
+        from unittest.mock import patch
+        fixture = Path(__file__).resolve().parents[1] / "tests/contract/fixtures/0.2/valid/example-migrated.json"
+        document = json.loads(fixture.read_text(encoding="utf-8"))
+        kb = KnowledgeBase(document)
+        query = ("c:task:release", "r:status:blocked", "c:value:true", "ctx:project-alpha", "2026-11-19")
+        first = kb.query(*query)
+        self.assertEqual(first["status"], "支持")
+        document["assertions"].clear()
+        # 全表不可迭代，命中分区和缺失分区都须能从构造时的索引作答。
+        with patch.dict(kb.doc, assertions=None):
+            self.assertEqual(kb.query(*query), first)
+            self.assertEqual(kb.query(*query[:4], None)["other_partitions"],
+                             [{"context": query[3], "valid_at": query[4]}])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,232 @@
+{
+  "id": "p6-open-interval-rule",
+  "decision": "P-6",
+  "description": "19 日起需要密钥，20 日密钥不可用；20 日的查询可推出阻塞。",
+  "document": {
+    "version": "0.3",
+    "concepts": [
+      {
+        "id": "c:task:release",
+        "aliases": [
+          "发布任务",
+          "版本发布"
+        ],
+        "kind": "event"
+      },
+      {
+        "id": "c:resource:signing-key",
+        "aliases": [
+          "签名密钥"
+        ],
+        "kind": "entity"
+      },
+      {
+        "id": "c:value:true",
+        "aliases": [
+          "真",
+          "是"
+        ],
+        "kind": "value"
+      },
+      {
+        "id": "r:task:requires",
+        "aliases": [
+          "需要资源"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:resource:unavailable",
+        "aliases": [
+          "不可用"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:status:blocked",
+        "aliases": [
+          "阻塞"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:claim:reported-cause",
+        "aliases": [
+          "报告原因为"
+        ],
+        "kind": "relation"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "a:release-requires-key-from-19",
+        "roles": {
+          "subject": "c:task:release",
+          "relation": "r:task:requires",
+          "object": "c:resource:signing-key"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:build-config",
+            "description": "合成案例：构建配置"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_during": {
+          "from": "2026-11-19"
+        }
+      },
+      {
+        "id": "a:key-unavailable-20",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:resource-register",
+            "description": "合成案例：资源登记表"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-20"
+      }
+    ]
+  },
+  "queries": [
+    {
+      "name": "day-20",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-20"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "支持",
+            "status_code": "supported",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-20"
+            },
+            "evidence": [
+              {
+                "assertion_id": "d:resource_unavailable_blocks_task:0bde404b11ff6bca78f05c237b51601b",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:build-config",
+                    "description": "合成案例：构建配置"
+                  },
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表"
+                  }
+                ],
+                "derived_by": "resource_unavailable_blocks_task",
+                "premises": [
+                  "a:release-requires-key-from-19",
+                  "a:key-unavailable-20"
+                ],
+                "trace": [
+                  {
+                    "assertion_id": "a:release-requires-key-from-19",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:build-config",
+                        "description": "合成案例：构建配置"
+                      }
+                    ],
+                    "valid_during": {
+                      "from": "2026-11-19"
+                    }
+                  },
+                  {
+                    "assertion_id": "a:key-unavailable-20",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:resource-register",
+                        "description": "合成案例：资源登记表"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    },
+    {
+      "name": "day-19",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "未知",
+            "status_code": "undetermined",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [],
+            "suppressed": [],
+            "reason": "no_evidence"
+          }
+        }
+      }
+    },
+    {
+      "name": "day-18",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-18"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "未知",
+            "status_code": "undetermined",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-18"
+            },
+            "evidence": [],
+            "suppressed": [],
+            "reason": "no_evidence"
+          }
+        }
+      }
+    }
+  ]
+}

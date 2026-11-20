@@ -111,6 +111,15 @@
       }
     ]
   },
+  "concept_kinds_0.2": {
+    "c:task:release": "event",
+    "c:resource:signing-key": "entity",
+    "c:value:true": "value",
+    "r:task:requires": "relation",
+    "r:resource:unavailable": "relation",
+    "r:status:blocked": "relation",
+    "r:claim:reported-cause": "relation"
+  },
   "queries": [
     {
       "name": "blocked",
@@ -138,7 +147,7 @@
           ]
         },
         "p3-option-a": {
-          "kernel": "unimplemented:#5",
+          "kernel": "enforced",
           "result": {
             "status": "未知",
             "status_code": "undetermined",
@@ -203,7 +212,7 @@
           ]
         },
         "p3-option-a": {
-          "kernel": "unimplemented:#5",
+          "kernel": "enforced",
           "result": {
             "status": "冲突",
             "status_code": "both",

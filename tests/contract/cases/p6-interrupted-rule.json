@@ -1,0 +1,324 @@
+{
+  "id": "p6-interrupted-rule",
+  "decision": "P-6",
+  "description": "发布需要密钥，且密钥在 19–21 日不可用；20 日另有相反记录。阻塞只在 19、21 日推出。",
+  "document": {
+    "version": "0.3",
+    "concepts": [
+      {
+        "id": "c:task:release",
+        "aliases": [
+          "发布任务",
+          "版本发布"
+        ],
+        "kind": "event"
+      },
+      {
+        "id": "c:resource:signing-key",
+        "aliases": [
+          "签名密钥"
+        ],
+        "kind": "entity"
+      },
+      {
+        "id": "c:value:true",
+        "aliases": [
+          "真",
+          "是"
+        ],
+        "kind": "value"
+      },
+      {
+        "id": "r:task:requires",
+        "aliases": [
+          "需要资源"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:resource:unavailable",
+        "aliases": [
+          "不可用"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:status:blocked",
+        "aliases": [
+          "阻塞"
+        ],
+        "kind": "relation"
+      },
+      {
+        "id": "r:claim:reported-cause",
+        "aliases": [
+          "报告原因为"
+        ],
+        "kind": "relation"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "a:release-requires-key",
+        "roles": {
+          "subject": "c:task:release",
+          "relation": "r:task:requires",
+          "object": "c:resource:signing-key"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:build-config",
+            "description": "合成案例：构建配置"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_during": {
+          "from": "2026-11-19",
+          "to": "2026-11-21"
+        }
+      },
+      {
+        "id": "a:key-unavailable",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:resource-register",
+            "description": "合成案例：资源登记表"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_during": {
+          "from": "2026-11-19",
+          "to": "2026-11-21"
+        }
+      },
+      {
+        "id": "a:key-not-unavailable",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "negative",
+        "sources": [
+          {
+            "id": "src:operations",
+            "description": "合成案例：运维复核"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-20"
+      }
+    ]
+  },
+  "queries": [
+    {
+      "name": "day-19",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "支持",
+            "status_code": "supported",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [
+              {
+                "assertion_id": "d:resource_unavailable_blocks_task:5a615ab2e519cfda4d4afc87ad93796b",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:build-config",
+                    "description": "合成案例：构建配置"
+                  },
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表"
+                  }
+                ],
+                "derived_by": "resource_unavailable_blocks_task",
+                "premises": [
+                  "a:release-requires-key",
+                  "a:key-unavailable"
+                ],
+                "trace": [
+                  {
+                    "assertion_id": "a:release-requires-key",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:build-config",
+                        "description": "合成案例：构建配置"
+                      }
+                    ],
+                    "valid_during": {
+                      "from": "2026-11-19",
+                      "to": "2026-11-21"
+                    }
+                  },
+                  {
+                    "assertion_id": "a:key-unavailable",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:resource-register",
+                        "description": "合成案例：资源登记表"
+                      }
+                    ],
+                    "valid_during": {
+                      "from": "2026-11-19",
+                      "to": "2026-11-21"
+                    }
+                  }
+                ]
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    },
+    {
+      "name": "day-20",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-20"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "未知",
+            "status_code": "undetermined",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-20"
+            },
+            "evidence": [],
+            "suppressed": [
+              {
+                "rule_id": "resource_unavailable_blocks_task",
+                "premises": [
+                  "a:release-requires-key",
+                  "a:key-unavailable"
+                ],
+                "reason": "premise_conflict",
+                "contested_premises": [
+                  {
+                    "assertion_id": "a:key-unavailable",
+                    "opposing": [
+                      "a:key-not-unavailable"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "reason": "premise_conflict"
+          }
+        }
+      }
+    },
+    {
+      "name": "day-21",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-21"
+      },
+      "expect": {
+        "p6": {
+          "kernel": "enforced",
+          "result": {
+            "status": "支持",
+            "status_code": "supported",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-21"
+            },
+            "evidence": [
+              {
+                "assertion_id": "d:resource_unavailable_blocks_task:5a615ab2e519cfda4d4afc87ad93796b",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:build-config",
+                    "description": "合成案例：构建配置"
+                  },
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表"
+                  }
+                ],
+                "derived_by": "resource_unavailable_blocks_task",
+                "premises": [
+                  "a:release-requires-key",
+                  "a:key-unavailable"
+                ],
+                "trace": [
+                  {
+                    "assertion_id": "a:release-requires-key",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:build-config",
+                        "description": "合成案例：构建配置"
+                      }
+                    ],
+                    "valid_during": {
+                      "from": "2026-11-19",
+                      "to": "2026-11-21"
+                    }
+                  },
+                  {
+                    "assertion_id": "a:key-unavailable",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:resource-register",
+                        "description": "合成案例：资源登记表"
+                      }
+                    ],
+                    "valid_during": {
+                      "from": "2026-11-19",
+                      "to": "2026-11-21"
+                    }
+                  }
+                ]
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    }
+  ]
+}

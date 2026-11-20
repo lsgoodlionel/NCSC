@@ -4,8 +4,10 @@
 |---|---|---|
 | `ir-0.1.schema.json` | 现行 | IR 0.1 的结构层，忠实描述当前内核 |
 | `ir-0.2.draft.schema.json` | 草案，待 #3 评审 | P-1 / P-2 / P-7 的结构层约束 |
+| `ir-0.3.draft.schema.json` | 草案，待 P-6 评审 | 在 0.2 基础上增加时间区间 `valid_during` |
 | `rules-0.2.draft.schema.json` | 草案，待 P-4 评审 | 规则文件的结构层 |
 | `query-result-0.2.draft.schema.json` | 草案，待 #3 评审 | P-3 / P-5 的查询输出形状 |
+| `query-result-0.3.draft.schema.json` | P-6 草案 | 区间原始证据与按日推导 |
 
 ## 两层校验的分工
 

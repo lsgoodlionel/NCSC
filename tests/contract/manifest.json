@@ -2,9 +2,11 @@
   "schemas": {
     "0.1": "ir-0.1.schema.json",
     "0.2": "ir-0.2.draft.schema.json",
-    "rules-0.2": "rules-0.2.draft.schema.json"
+    "rules-0.2": "rules-0.2.draft.schema.json",
+    "0.3": "ir-0.3.draft.schema.json"
   },
   "query_result_schema": "query-result-0.2.draft.schema.json",
+  "p6_query_result_schema": "query-result-0.3.draft.schema.json",
   "fixtures": [
     {
       "path": "fixtures/0.1/valid/example-regression.json",
@@ -426,7 +428,7 @@
       "path": "fixtures/rules-0.2/valid/r1-resource-unavailable.json",
       "ir": "rules-0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "R1 的声明式写法"
     },
@@ -434,7 +436,7 @@
       "path": "fixtures/rules-0.2/valid/r2-gate-negative-premise.json",
       "ir": "rules-0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "负向前提：验收明确未通过；尚未验收为未知，不触发"
     },
@@ -442,7 +444,7 @@
       "path": "fixtures/rules-0.2/valid/chain-blocked-delays-release.json",
       "ir": "rules-0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "结论关系可作其他规则的正向前提（链式）"
     },
@@ -450,7 +452,7 @@
       "path": "fixtures/rules-0.2/structural/conclusion-negative.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "结论只能为正向（P-3 分层）"
     },
@@ -458,7 +460,7 @@
       "path": "fixtures/rules-0.2/structural/premise-reported-cause.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "报告因果不能作前提"
     },
@@ -466,7 +468,7 @@
       "path": "fixtures/rules-0.2/structural/conclusion-reported-cause.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "报告因果不能被推出"
     },
@@ -474,7 +476,7 @@
       "path": "fixtures/rules-0.2/structural/relation-variable.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "关系位不允许变量"
     },
@@ -482,7 +484,7 @@
       "path": "fixtures/rules-0.2/structural/empty-premises.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "至少一个前提"
     },
@@ -490,7 +492,7 @@
       "path": "fixtures/rules-0.2/structural/too-many-premises.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "最多 4 个前提"
     },
@@ -498,7 +500,7 @@
       "path": "fixtures/rules-0.2/structural/bad-rule-id.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "规则 ID 只用小写字母、数字、下划线"
     },
@@ -506,7 +508,7 @@
       "path": "fixtures/rules-0.2/structural/bad-variable-name.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "变量名小写"
     },
@@ -514,7 +516,7 @@
       "path": "fixtures/rules-0.2/structural/unknown-field.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "未知字段（0.2 不支持优先级）"
     },
@@ -522,7 +524,7 @@
       "path": "fixtures/rules-0.2/structural/id-trailing-newline.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "规则 ID 末尾换行"
     },
@@ -530,9 +532,97 @@
       "path": "fixtures/rules-0.2/referential/unsafe-conclusion-variable.json",
       "ir": "rules-0.2",
       "layer": "referential",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "结论变量 ?status 未出现在任何前提中"
+    },
+    {
+      "path": "fixtures/0.3/valid/single-day-unchanged.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "0.2 的单日写法在 0.3 中不变"
+    },
+    {
+      "path": "fixtures/0.3/valid/interval-closed.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "闭区间"
+    },
+    {
+      "path": "fixtures/0.3/valid/interval-open-end.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "“从 19 日起”：终点未给出"
+    },
+    {
+      "path": "fixtures/0.3/valid/interval-open-start.json",
+      "ir": "0.3",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "“截至 21 日”：起点未给出"
+    },
+    {
+      "path": "fixtures/0.3/structural/both-valid-at-and-during.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "单日与区间不能同时出现"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-empty.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "区间至少给出一端"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-unknown-field.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "只允许 from/to"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-loose-date.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "区间端点同样须零填充"
+    },
+    {
+      "path": "fixtures/0.3/structural/during-trailing-newline.json",
+      "ir": "0.3",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "区间端点不得含换行"
+    },
+    {
+      "path": "fixtures/0.3/value/during-reversed.json",
+      "ir": "0.3",
+      "layer": "value",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "起点晚于终点：内核拒绝"
+    },
+    {
+      "path": "fixtures/0.3/value/during-impossible-date.json",
+      "ir": "0.3",
+      "layer": "value",
+      "kernel": "enforced",
+      "decision": "P-6",
+      "note": "日历无效：内核拒绝"
     }
   ],
   "query_cases": [
@@ -540,6 +630,11 @@
     "cases/d1-premise-conflict-only.json",
     "cases/d1-premise-conflict-direct-positive.json",
     "cases/d1-premise-conflict-direct-negative.json",
-    "cases/d1-need-premise-conflict.json"
+    "cases/d1-need-premise-conflict.json",
+    "cases/p6-open-interval-rule.json",
+    "cases/p6-interrupted-rule.json",
+    "cases/p6-recovery.json",
+    "cases/p6-overlap-conflict.json",
+    "cases/p6-undated-not-always.json"
   ]
 }
