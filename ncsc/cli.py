@@ -21,7 +21,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     migrate.add_argument("file")
     query = commands.add_parser("query", help="执行四值查询")
     preview_query = commands.add_parser("query-preview", help="实验性 0.2 分区查询，输出有限证据图")
-    query.add_argument("--rule", action="append", help="指定 IR 0.2 查询使用的规则集，每个文件一条规则")
+    query.add_argument("--rule", action="append", help="指定 IR 0.2 / 0.3 查询使用的规则集，每个文件一条规则")
     preview_query.add_argument("--rule", action="append", default=[], help="每次指定一个 P-4 规则文件")
     preview_query.add_argument("--trace-budget", type=int, default=DEFAULT_TRACE_BUDGET,
                                help=f"证明展开预算，1–{DEFAULT_TRACE_BUDGET}")

@@ -108,7 +108,7 @@
       },
       "expect": {
         "p6": {
-          "kernel": "unimplemented:P-6",
+          "kernel": "enforced",
           "result": {
             "status": "支持",
             "status_code": "supported",
@@ -147,7 +147,7 @@
       },
       "expect": {
         "p6": {
-          "kernel": "unimplemented:P-6",
+          "kernel": "enforced",
           "result": {
             "status": "反对",
             "status_code": "refuted",
@@ -189,7 +189,7 @@
       },
       "expect": {
         "p6": {
-          "kernel": "unimplemented:P-6",
+          "kernel": "enforced",
           "result": {
             "status": "反对",
             "status_code": "refuted",
@@ -231,7 +231,7 @@
       },
       "expect": {
         "p6": {
-          "kernel": "unimplemented:P-6",
+          "kernel": "enforced",
           "result": {
             "status": "未知",
             "status_code": "undetermined",

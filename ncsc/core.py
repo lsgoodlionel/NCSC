@@ -26,6 +26,7 @@ CONCEPT_KEYS = {"id", "aliases", "kind"}
 ASSERTION_KEYS = {"id", "roles", "polarity", "sources", "context", "valid_at"}
 ROLE_KEYS = {"subject", "relation", "object"}
 SOURCE_KEYS = {"id", "description"}
+INTERVAL_KEYS = {"from", "to"}
 
 
 def _exact_keys(value: Dict[str, Any], allowed: set[str], where: str, required: set[str]) -> None:
@@ -51,6 +52,16 @@ def _validate_day(value: Any, where: str) -> None:
         raise IRValidationError(message) from exc
     if day.isoformat() != value:
         raise IRValidationError(message)
+
+
+def _validate_interval(value: Any, where: str) -> None:
+    if not isinstance(value, dict) or not value:
+        raise IRValidationError(f"{where}: 区间必须是含 from 或 to 的对象")
+    _exact_keys(value, INTERVAL_KEYS, where, set())
+    for endpoint, day in value.items():
+        _validate_day(day, f"{where}.{endpoint}")
+    if "from" in value and "to" in value and value["from"] > value["to"]:
+        raise IRValidationError(f"{where}: from 晚于 to")
 
 
 _ID_BODY = re.compile(r"[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?")
@@ -101,8 +112,8 @@ def validate_document(doc: Any) -> Dict[str, Any]:
     if not isinstance(doc, dict):
         raise IRValidationError("根节点必须是对象")
     _exact_keys(doc, ROOT_KEYS, "根节点", ROOT_KEYS)
-    if doc["version"] not in ("0.1", "0.2"):
-        raise IRValidationError("仅支持 IR version 0.1 / 0.2")
+    if doc["version"] not in ("0.1", "0.2", "0.3"):
+        raise IRValidationError("仅支持 IR version 0.1 / 0.2 / 0.3")
     if not isinstance(doc["concepts"], list) or not isinstance(doc["assertions"], list):
         raise IRValidationError("concepts 与 assertions 必须是数组")
 
@@ -122,12 +133,13 @@ def validate_document(doc: Any) -> Dict[str, Any]:
             _nonempty_string(alias, f"{where}.aliases")
         _nonempty_string(concept["kind"], f"{where}.kind")
 
+    allowed = ASSERTION_KEYS | {"valid_during"} if doc["version"] == "0.3" else ASSERTION_KEYS
     assertion_ids = set()
     for index, assertion in enumerate(doc["assertions"]):
         where = f"assertions[{index}]"
         if not isinstance(assertion, dict):
             raise IRValidationError(f"{where}: 必须是对象")
-        _exact_keys(assertion, ASSERTION_KEYS, where, ASSERTION_KEYS - {"valid_at"})
+        _exact_keys(assertion, allowed, where, ASSERTION_KEYS - {"valid_at"})
         aid = _nonempty_string(assertion["id"], f"{where}.id")
         if aid in assertion_ids:
             raise IRValidationError(f"{where}: 重复断言 ID {aid}")
@@ -153,9 +165,13 @@ def validate_document(doc: Any) -> Dict[str, Any]:
             _exact_keys(source, SOURCE_KEYS, sw, SOURCE_KEYS)
             _nonempty_string(source["id"], f"{sw}.id")
             _nonempty_string(source["description"], f"{sw}.description")
-        if "valid_at" in assertion:
+        if "valid_during" in assertion:
+            if "valid_at" in assertion:
+                raise IRValidationError(f"{where}: valid_at 与 valid_during 不能同时出现")
+            _validate_interval(assertion["valid_during"], f"{where}.valid_during")
+        elif "valid_at" in assertion:
             _validate_day(assertion["valid_at"], f"{where}.valid_at")
-    if doc["version"] == "0.2":
+    if doc["version"] in ("0.2", "0.3"):
         _validate_v02(doc)
     return doc
 
@@ -178,12 +194,12 @@ class Evidence:
 class KnowledgeBase:
     def __init__(self, doc: Dict[str, Any], rules: Optional[Iterable[Any]] = None) -> None:
         self.doc = validate_document(doc)
-        if self.doc["version"] == "0.2":
+        if self.doc["version"] in ("0.2", "0.3"):
             self.doc = deepcopy(self.doc)
         self.assertions = list(self.doc["assertions"])
         self._index: Optional[QueryIndex] = None
         self._active: List[Dict[str, Any]] = []
-        if self.doc["version"] == "0.2":
+        if self.doc["version"] in ("0.2", "0.3"):
             from .query_preview import QueryIndex
             from .rule_loader import load_rules
 
@@ -192,7 +208,7 @@ class KnowledgeBase:
             self._active = load_rules(default_rules_02(declared) if rules is None else rules, declared)
             return
         if rules is not None:
-            raise IRValidationError("声明式规则仅适用于 IR 0.2")
+            raise IRValidationError("声明式规则仅适用于 IR 0.2 / 0.3")
         self.assertions.extend(derive_initial_assertions(self.doc["assertions"]))
 
     @classmethod

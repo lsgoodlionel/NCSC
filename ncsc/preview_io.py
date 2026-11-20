@@ -48,7 +48,7 @@ def load_query_inputs(path: str, rule_paths: Iterable[str]) -> Tuple[Any, List[A
     with Path(path).open("rb") as stream:
         raw = stream.read()
     doc = json.loads(raw.decode("utf-8"))
-    if isinstance(doc, dict) and doc.get("version") == "0.2" and len(raw) > IR_BYTES:
+    if isinstance(doc, dict) and doc.get("version") in ("0.2", "0.3") and len(raw) > IR_BYTES:
         raise QueryLimitError("ir_bytes", IR_BYTES)
     return doc, _load_rule_files(rule_paths)
 

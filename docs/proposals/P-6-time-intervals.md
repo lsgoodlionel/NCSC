@@ -86,7 +86,7 @@ IR 0.1/0.2 只有单日 `valid_at`。数据集 `datasets/synthetic-v0/needs-p6.m
 | `cases/p6-overlap-conflict.json` | 两个区间只在 20 日重叠：只有 20 日冲突 |
 | `cases/p6-undated-not-always.json` | 无日期断言不参与 19 日查询 |
 
-内核侧全部标为 `unimplemented:P-6`。判例的期望结果已通过查询结果 Schema 校验。
+11 个输入夹具已接入内核。五组判例的 15 个查询逐字段核对正式输出，并校验查询结果 Schema。
 
 ## 对数据集的影响
 
@@ -94,4 +94,4 @@ IR 0.1/0.2 只有单日 `valid_at`。数据集 `datasets/synthetic-v0/needs-p6.m
 
 ## 评审记录
 
-Codex 本地复核（2026-11-20）。第 3 节已按逐日冲突反例修订，0.3 输出单列 Schema。前提区间可从叶子读取。若后续需要 `premise_overlap`，另行评审其解释含义。内核执行留待 #5 之后。
+Codex 本地复核（2026-11-20）。第 3 节已按逐日冲突反例修订，0.3 输出单列 Schema。前提区间可从叶子读取。若后续需要 `premise_overlap`，另行评审其解释含义。正式入口已在 #5 查询引擎上接入按日求值。

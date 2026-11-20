@@ -129,7 +129,7 @@
       },
       "expect": {
         "p6": {
-          "kernel": "unimplemented:P-6",
+          "kernel": "enforced",
           "result": {
             "status": "支持",
             "status_code": "supported",
@@ -207,7 +207,7 @@
       },
       "expect": {
         "p6": {
-          "kernel": "unimplemented:P-6",
+          "kernel": "enforced",
           "result": {
             "status": "未知",
             "status_code": "undetermined",
@@ -253,7 +253,7 @@
       },
       "expect": {
         "p6": {
-          "kernel": "unimplemented:P-6",
+          "kernel": "enforced",
           "result": {
             "status": "支持",
             "status_code": "supported",

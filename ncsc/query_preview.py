@@ -1,4 +1,4 @@
-"""IR 0.2 分区事实闭包、有限溯源，以及预览命令的诊断图。"""
+"""IR 分区事实闭包、有限溯源，以及预览命令的诊断图。"""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -18,23 +18,58 @@ MAX_JOIN_ATTEMPTS = 1_000_000
 MAX_JOIN_ROWS = 8192
 
 
+class TimeScope(NamedTuple):
+    context: str
+    kind: str
+    start: str
+    end: str
+
+    def describe(self) -> Dict[str, Any]:
+        if self.kind == "valid_at":
+            return {"context": self.context, "valid_at": self.start or None}
+        bounds = {k: v for k, v in (("from", self.start), ("to", self.end)) if v}
+        return {"context": self.context, "valid_during": bounds}
+
+
 class QueryIndex:
-    """已通过校验的 IR 0.2 快照，按分区和断言 ID 建索引。"""
+    """已校验文档的只读索引。区间按上下文分组，在查询时按日取视图。"""
 
     def __init__(self, doc: Dict[str, Any]) -> None:
+        self.version = doc["version"]
         self.declared = {concept["id"] for concept in doc["concepts"]}
         self.assertions: Dict[str, Any] = {}
         self.partitions: Dict[Tuple[str, str | None], Dict[Fact, List[str]]] = {}
+        self.intervals: Dict[str, List[Tuple[TimeScope, Fact, str]]] = defaultdict(list)
+        self.original_scopes: Dict[Tuple[str, str, str], Set[TimeScope]] = defaultdict(set)
         for assertion in doc["assertions"]:
             self.assertions[assertion["id"]] = assertion
-            key = (assertion["context"], assertion.get("valid_at"))
-            partition = self.partitions.setdefault(key, {})
             roles = assertion["roles"]
             fact = (roles["subject"], roles["relation"], roles["object"], assertion["polarity"])
-            partition.setdefault(fact, []).append(assertion["id"])
+            context = assertion["context"]
+            day = assertion.get("valid_at")
+            if "valid_during" in assertion:
+                bounds = assertion["valid_during"]
+                scope = TimeScope(context, "valid_during", bounds.get("from", ""), bounds.get("to", ""))
+                self.intervals[context].append((scope, fact, assertion["id"]))
+            else:
+                scope = TimeScope(context, "valid_at", day or "", "")
+                partition = self.partitions.setdefault((context, day), {})
+                partition.setdefault(fact, []).append(assertion["id"])
+            if self.version == "0.3":
+                self.original_scopes[roles["subject"], roles["relation"], roles["object"]].add(scope)
         for partition in self.partitions.values():
             for original_ids in partition.values():
                 original_ids.sort()
+
+    def daily_originals(self, context: str, day: str | None) -> Dict[Fact, List[str]]:
+        direct = self.partitions.get((context, day), {})
+        if day is None or context not in self.intervals:
+            return direct
+        originals = {fact: list(ids) for fact, ids in direct.items()}
+        for scope, fact, aid in self.intervals[context]:
+            if scope.start <= day and (not scope.end or day <= scope.end):
+                originals.setdefault(fact, []).append(aid)
+        return originals
 
 
 class QueryLimitError(Exception):
@@ -130,7 +165,11 @@ def _proofs(fact: Fact, ancestors: FrozenSet[Fact], by_result: Dict[Fact, List[E
         raise TraceLimitError("trace_depth", MAX_TRACE_DEPTH)
     for aid in sorted(originals.get(fact, [])):
         budget.charge()
-        yield {"assertion_id": aid, "polarity": fact[3], "sources": assertions[aid]["sources"]}, 1
+        assertion = assertions[aid]
+        leaf = {"assertion_id": aid, "polarity": fact[3], "sources": assertion["sources"]}
+        if "valid_during" in assertion:
+            leaf["valid_during"] = dict(assertion["valid_during"])
+        yield leaf, 1
     path = ancestors | {fact}
     for edge in sorted(by_result.get(fact, [])):
         options = [_proofs(p, path, by_result, originals, assertions, budget) for p in edge.premises]
@@ -186,7 +225,7 @@ def evaluate_query(index: QueryIndex, active: List[Dict[str, Any]], subject: str
     if day is not None:
         _validate_day(day, "query.valid_at")
     partitions = index.partitions
-    originals = partitions.get((context, day), {})
+    originals = index.daily_originals(context, day)
     join_budget = _JoinBudget()
     facts, matches, accepted = _closure(originals, active, join_budget)
     pos: Fact = (subject, relation, obj, "positive")
@@ -227,13 +266,18 @@ def evaluate_query(index: QueryIndex, active: List[Dict[str, Any]], subject: str
         }
         if status == "未知":
             result["reason"] = "premise_conflict" if diagnostics else "no_evidence"
-            others = []
-            for partition_key in sorted(partitions, key=lambda k: (k[0], k[1] or "")):
-                if partition_key == (context, day):
-                    continue
-                other_facts, _, _ = _closure(partitions[partition_key], active, join_budget)
-                if pos in other_facts or neg in other_facts:
-                    others.append({"context": partition_key[0], "valid_at": partition_key[1]})
+            others: List[Dict[str, Any]] = []
+            if index.version == "0.3":
+                # 未知查询的三元组在当日没有原始证据；所有直接来源范围均属其他分区。
+                scopes = index.original_scopes.get((subject, relation, obj), set())
+                others = [scope.describe() for scope in sorted(scopes)]
+            else:
+                for partition_key in sorted(partitions, key=lambda k: (k[0], k[1] or "")):
+                    if partition_key == (context, day):
+                        continue
+                    other_facts, _, _ = _closure(partitions[partition_key], active, join_budget)
+                    if pos in other_facts or neg in other_facts:
+                        others.append({"context": partition_key[0], "valid_at": partition_key[1]})
             if others:
                 result["other_partitions"] = others
         return result

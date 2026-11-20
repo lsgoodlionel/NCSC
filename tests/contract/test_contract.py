@@ -148,6 +148,23 @@ class KernelLayerTests(unittest.TestCase):
                 self.assertEqual(mode, "enforced")
                 self.assertEqual(actual, expected)
 
+    def test_open_start_is_inclusive_and_context_local(self) -> None:
+        case = _load("cases/p6-overlap-conflict.json")
+        before, after = case["document"]["assertions"]
+        before["valid_during"] = {"to": "2026-11-20"}
+        after["context"] = "ctx:other-project"
+        q = case["queries"][0]["query"]
+        for assertions in ([before, after], [after, before]):
+            kb = KnowledgeBase({**case["document"], "assertions": assertions})
+            for day, status in (("0001-01-01", "支持"), ("2026-11-20", "支持"),
+                                ("2026-11-21", "未知"), (None, "未知")):
+                with self.subTest(day=day, first=assertions[0]["id"]):
+                    result = kb.query(q["subject"], q["relation"], q["object"], q["context"], day)
+                    self.assertEqual(result["status"], status)
+                    if status == "支持":
+                        self.assertEqual([e["assertion_id"] for e in result["evidence"]], [before["id"]])
+                        self.assertEqual(result["evidence"][0]["valid_during"], before["valid_during"])
+
     def test_query_cases_ir_01(self) -> None:
         for rel in MANIFEST["query_cases"]:
             case = _load(rel)
@@ -164,23 +181,24 @@ class KernelLayerTests(unittest.TestCase):
                     self.assertEqual(_evidence_summary(result), expect["evidence"])
 
 
-    def test_query_cases_ir_02(self) -> None:
+    def test_query_cases_ir_02_and_ir_03(self) -> None:
         for rel in MANIFEST["query_cases"]:
             case = _load(rel)
             document = case["document"]
-            if document["version"] == "0.3":  # P-6 判例目前只校验草案结构
-                continue
             if document["version"] == "0.1":
                 # 同一份事实在两个版本下求值，类别选择由夹具逐概念声明。
                 kinds = case["concept_kinds_0.2"]
                 self.assertEqual(set(kinds), {c["id"] for c in document["concepts"]})
                 concepts = [{**c, "kind": kinds[c["id"]]} for c in document["concepts"]]
                 document = {**document, "version": "0.2", "concepts": concepts}
-            self.assertEqual(document["version"], "0.2")
+            self.assertIn(document["version"], ("0.2", "0.3"))
             kb = KnowledgeBase(document)
             for item in case["queries"]:
                 with self.subTest(case=case["id"], query=item["name"]):
-                    key = "p5-d4" if "p5-d4" in item["expect"] else "p3-option-a"
+                    if document["version"] == "0.3":
+                        key = "p6"
+                    else:
+                        key = "p5-d4" if "p5-d4" in item["expect"] else "p3-option-a"
                     expect = item["expect"][key]
                     self.assertEqual(expect["kernel"], "enforced")
                     q = item["query"]
