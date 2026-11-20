@@ -163,7 +163,7 @@
       "layer": "structural",
       "kernel": "enforced",
       "decision": "D2",
-      "note": "非零填充日期：契约拒绝；当前内核仍接受，修复见 #4"
+      "note": "非零填充日期：结构层与内核均拒绝（D2 已由 #12 修复）"
     },
     {
       "path": "fixtures/0.1/value/valid-at-impossible.json",
@@ -356,6 +356,70 @@
       "kernel": "enforced",
       "decision": "0.2",
       "note": "日历无效"
+    },
+    {
+      "path": "fixtures/0.1/structural/valid-at-trailing-newline.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "D2",
+      "note": "日期末尾换行：Python 正则 $ 的差异已由 singleLine 堵住"
+    },
+    {
+      "path": "fixtures/0.2/structural/valid-at-trailing-newline.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "D2",
+      "note": "日期末尾换行"
+    },
+    {
+      "path": "fixtures/0.2/structural/id-trailing-newline.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-2",
+      "note": "ID 末尾换行（Codex 复核指出）"
+    },
+    {
+      "path": "fixtures/0.2/structural/alias-trailing-newline.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "别名末尾换行"
+    },
+    {
+      "path": "fixtures/0.2/structural/alias-multiline.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "别名必须单行"
+    },
+    {
+      "path": "fixtures/0.2/structural/alias-line-separator.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "U+2028 也算换行"
+    },
+    {
+      "path": "fixtures/0.2/structural/description-multiline.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "来源说明必须单行"
+    },
+    {
+      "path": "fixtures/0.2/valid/alias-internal-space.json",
+      "ir": "0.2",
+      "layer": "valid",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "内部空格允许"
     }
   ],
   "query_cases": [

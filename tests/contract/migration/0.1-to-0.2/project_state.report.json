@@ -2,6 +2,7 @@
   "from": "0.1",
   "to": "0.2",
   "source": "examples/project_state.json",
+  "output_status": "candidate",
   "automatic": [
     {
       "path": "version",
