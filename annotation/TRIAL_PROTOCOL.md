@@ -14,12 +14,14 @@
 ## 2. 材料
 
 - 输入：每个条目只提供 `id` 和 `text`，以及登记表 `registry.json`。
-- 生成方法（不含金标）：
+- 在仓库根目录运行以下命令。最后一个参数指定一个尚未创建的工作目录。准备者分别发给两人相同的 `packet.json`、`registry.json` 与各自的空表，同时提供指南。金标留在准备者手中。
 
   ```bash
-  python -c "import json;d=json.load(open('datasets/synthetic-v0/items.json',encoding='utf-8'));print(json.dumps([{'id':i['id'],'text':i['text']} for i in d['items']],ensure_ascii=False,indent=2))" > trial-packet.json
+  python3 -m annotation.trial prepare /tmp/ncsc-trial-r1
+  python3 -m annotation.trial check /tmp/ncsc-trial-r1 a
   ```
 
+- 空表每行两个答案栏初始为 `null`。标完一行后都填数组，无内容时填 `[]`。`check` 校验条目覆盖、IR、登记表、未标注说明，列出未填写的条目。两人完成后由准备者在同一个工作目录收齐两份表。
 - 输出：每位标注者为每个条目提交 `assertions` 与 `not_annotated`，格式同 `items.json`。
 
 ## 3. 指标（先冻结，后测量）
@@ -35,6 +37,16 @@
 | 与金标的一致率 | A、B 分别与金标做同样的断言集合比较，用于发现金标自身的错误 |
 
 数据量小时 κ 很不稳定，报告时必须同时给出样本数和原始混淆表，不能只报 κ 值。
+
+### 极性核对命令
+
+在完成本轮定义冻结、收齐独立标注后运行：
+
+```bash
+python3 -m annotation.trial polarity /tmp/ncsc-trial-r1
+```
+
+按条目、三元组、上下文和日期配对，报告共同键数、单方键数、双人单极性配对数，以及 A 为行、B 为列的原始混淆表。空白或未完成的表退出码为 2。已完成但无共同键、边际恒定导致分母为零时，结果给出 `kappa: null` 和原因。如果共同键出现来自不同来源的正反断言，协议尚无多标签 κ 约定，保留样本计数并返回 `multi_label_policy_required`，供指标负责人决定后续轮次口径。其余指标及分歧裁决仍按本协议办理。工具输出单独保留，汇总本轮指标时记录工具所在的 Git 提交。
 
 ## 4. 步骤
 
