@@ -15,3 +15,15 @@ PYTHONHASHSEED=0 python3 -m benchmarks.ir02_smoke --assertions 1000 --repeats 3
 **可重复性。** 报告记录 Git HEAD、运行器与内核源文件的 SHA-256 合成摘要、系统和 Python 版本、架构、逻辑 CPU 数、语料字节数及 SHA-256、两个查询的参数及完整规范 JSON 结果摘要。规范编码按键排序，证据数组保持返回顺序。可另起进程以不同 `PYTHONHASHSEED` 运行，比较 `canonical_answer_sha256` 和 `corpus_sha256`。计时本身预计会波动。
 
 **范围。** 默认只运行 10³ 条断言。10⁴、10⁵、10⁶ 是手动可选梯度，分别用 `--assertions` 指定，每次只执行一个规模。较大梯度会同时占用语料、解析对象、知识库及追踪内存，须先核定机器可用内存并逐级试跑。首次工程运行结果只验证测量流程。正式规模结论待方法冻结及相应规模实测后记录。`preview_limits.py` 另用于预览实现的资源上限实验。
+
+## 同提交的 0.2 与 0.3 工程对照
+
+从仓库根目录依次执行。第一项直接复用 synthetic-v0 已有金标，核对四值、有序证据摘要及受抑制的前提。0.3 保留种子原有的单日和无日期写法。规模对照则为同一批事实分别编码 0.2 单日与 0.3 起止同日的闭区间。两种编码在指定查询日应得到同一状态和前提，0.3 的原始叶子另须保留区间，派生节点只在查询日有效。
+
+```sh
+python3 -m benchmarks.seed_regression
+PYTHONHASHSEED=0 python3 -m benchmarks.ir02_smoke --ir 0.2 --assertions 10000 --repeats 5
+PYTHONHASHSEED=0 python3 -m benchmarks.ir02_smoke --ir 0.3 --assertions 10000 --repeats 5
+```
+
+计时和峰值沿用上面的分阶段口径。不同版本的完整输出含不同来源字段，各自按固定输入复核摘要。此处通过正式 Python API 加载；CLI 的文件大小上限独立于该 API。所有样本为公开合成数据，测量方法供开发使用。

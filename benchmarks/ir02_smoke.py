@@ -27,12 +27,17 @@ def encode(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
-def corpus(size):
+def corpus(size, version="0.2"):
     doc = json.loads(FIXTURE.read_bytes())
     pair = doc["assertions"][:2]
     doc["assertions"] = [
         dict(pair[i % 2], id=f"a:bench-{i}", context=f"ctx:bench-{i // 2}") for i in range(size)
     ]
+    if version == "0.3":
+        doc["version"] = version
+        for assertion in doc["assertions"]:
+            day = assertion.pop("valid_at")
+            assertion["valid_during"] = {"from": day, "to": day}
     return encode(doc)
 
 
@@ -49,7 +54,7 @@ def load(data):
     return KnowledgeBase(json.loads(data))
 
 
-def digest_answer(key, answer):
+def digest_answer(key, answer, version="0.2"):
     evidence = answer["evidence"]
     if answer["status"] != "支持" or len(evidence) != 1:
         raise ValueError(f"{key} 查询未得到预期证据")
@@ -58,6 +63,12 @@ def digest_answer(key, answer):
         raise ValueError("直接证据 ID 不符")
     if key == "inferred" and node.get("premises") != ["a:bench-0", "a:bench-1"]:
         raise ValueError("推导前提不符")
+    if version == "0.3":
+        leaves = node["trace"] if key == "inferred" else [node]
+        if any(leaf.get("valid_during") != {"from": DAY, "to": DAY} for leaf in leaves):
+            raise ValueError("0.3 叶子的来源区间不符")
+        if key == "inferred" and "valid_during" in node:
+            raise ValueError("派生证据不应声明连续有效期")
     return sha256(encode(answer)).hexdigest()
 
 
@@ -71,8 +82,8 @@ def peak(fn):
         tracemalloc.stop()
 
 
-def measure(size, repeats):
-    data = corpus(size)
+def measure(size, repeats, version="0.2"):
+    data = corpus(size, version)
     timings = {k: [] for k in ("load", *QUERIES)}
     expected = {}
     # 第零轮预热；每一轮都从相同的 UTF-8 字节重新构建知识库。
@@ -88,7 +99,7 @@ def measure(size, repeats):
             elapsed = perf_counter_ns() - start
             if run:
                 timings[key].append(elapsed)
-            digest = digest_answer(key, answer)
+            digest = digest_answer(key, answer, version)
             if expected.setdefault(key, digest) != digest:
                 raise ValueError(f"{key} 重复查询的结果摘要不同")
         del kb
@@ -97,12 +108,13 @@ def measure(size, repeats):
     peak_bytes = {"load": load_peak}
     for key, query in QUERIES.items():
         peak_bytes[key], answer = peak(lambda: kb.query(*query))
-        if digest_answer(key, answer) != expected[key]:
+        if digest_answer(key, answer, version) != expected[key]:
             raise ValueError(f"{key} 内存测量轮结果不同")
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
                             capture_output=True, text=True).stdout.strip()
     return {
-        "protocol": "ir02-partitions-v1", "ir_version": "0.2", "assertions": size,
+        "protocol": "ir02-partitions-v1" if version == "0.2" else "ir03-single-day-intervals-v1",
+        "ir_version": version, "assertions": size,
         "partitions": size // 2, "corpus_bytes": len(data), "corpus_sha256": sha256(data).hexdigest(),
         "query_args": QUERIES, "canonical_answer_sha256": expected,
         "head": commit, "source_sha256": source_hash(),
@@ -117,12 +129,13 @@ def measure(size, repeats):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--ir", choices=("0.2", "0.3"), default="0.2")
     parser.add_argument("--assertions", type=int, choices=(1000, 10000, 100000, 1000000), default=1000)
     parser.add_argument("--repeats", type=int, default=3)
     args = parser.parse_args()
     if args.repeats < 1:
         parser.error("--repeats 必须大于 0")
-    print(json.dumps(measure(args.assertions, args.repeats), ensure_ascii=False, indent=2))
+    print(json.dumps(measure(args.assertions, args.repeats, args.ir), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
