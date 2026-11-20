@@ -94,6 +94,11 @@ class ConsistencyTests(unittest.TestCase):
                             self.assertIn(aid, by_id)
                     if expect["status"] == "未知":
                         self.assertEqual(expect["evidence"], [])
+                    # P-4 §5：原始断言按 ID 升序在前，推导证据（d: ID）在后
+                    base = [e["assertion_id"] for e in expect["evidence"] if "assertion_id" in e]
+                    self.assertEqual(base, sorted(base))
+                    kinds = ["a" if "assertion_id" in e else "d" for e in expect["evidence"]]
+                    self.assertEqual(kinds, sorted(kinds))
 
     def test_coverage(self) -> None:
         statuses = [q["expect"]["status"] for i in ITEMS for q in i["queries"]]
@@ -137,7 +142,9 @@ class ExecutableTests(unittest.TestCase):
                         self.assertNotEqual(q["ir01"]["status"], q["expect"]["status"])
                         continue
                     self.assertEqual(result["status"], q["expect"]["status"])
-                    self.assertEqual(summarize(result["evidence"]), q["expect"]["evidence"])
+                    # 0.1 按文档顺序输出，0.2 按 ID 排序（P-4 §5），所以这里按集合比较
+                    key = lambda e: json.dumps(e, sort_keys=True, ensure_ascii=False)  # noqa: E731
+                    self.assertEqual(sorted(map(key, summarize(result["evidence"]))), sorted(map(key, q["expect"]["evidence"])))
                     self.assertEqual(q["expect"]["suppressed"], [], "只有 D1 类查询会有被抑制推导")
 
 

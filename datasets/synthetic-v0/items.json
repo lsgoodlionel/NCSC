@@ -890,10 +890,10 @@
             "status": "冲突",
             "evidence": [
               {
-                "assertion_id": "a:s013-key-unavail"
+                "assertion_id": "a:s013-key-available"
               },
               {
-                "assertion_id": "a:s013-key-available"
+                "assertion_id": "a:s013-key-unavail"
               }
             ],
             "suppressed": []
