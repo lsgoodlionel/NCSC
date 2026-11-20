@@ -42,9 +42,16 @@ def _schema(name: str) -> Dict[str, Any]:
     return json.loads((ROOT / "schema" / name).read_text(encoding="utf-8"))
 
 
-def _kernel_accepts(doc: Any) -> bool:
+def _kernel_accepts(doc: Any, ir: str) -> bool:
     try:
-        validate_document(doc)
+        if ir == "rules-0.2":
+            from ncsc.rule_loader import load_rules
+            load_rules([doc], {"c:value:true", "r:gate:passed", "r:resource:unavailable",
+                               "r:status:blocked", "r:task:depends-on", "r:task:requires",
+                               "r:task:requires-gate", "r:status:start-condition-unmet",
+                               "r:claim:reported-cause"})
+        else:
+            validate_document(doc)
     except IRValidationError:
         return False
     return True
@@ -117,7 +124,7 @@ class KernelLayerTests(unittest.TestCase):
                 if mode.startswith("unimplemented:"):
                     self.skipTest(mode)
                 expected = LAYERS[f["layer"]][1]
-                actual = _kernel_accepts(_load(f["path"]))
+                actual = _kernel_accepts(_load(f["path"]), f["ir"])
                 if mode.startswith("pending:"):
                     if actual == expected:
                         self.fail(f"{mode} 已被修复：请把 manifest 中该夹具改为 enforced")

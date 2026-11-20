@@ -426,7 +426,7 @@
       "path": "fixtures/rules-0.2/valid/r1-resource-unavailable.json",
       "ir": "rules-0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "R1 的声明式写法"
     },
@@ -434,7 +434,7 @@
       "path": "fixtures/rules-0.2/valid/r2-gate-negative-premise.json",
       "ir": "rules-0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "负向前提：验收明确未通过；尚未验收为未知，不触发"
     },
@@ -442,7 +442,7 @@
       "path": "fixtures/rules-0.2/valid/chain-blocked-delays-release.json",
       "ir": "rules-0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "结论关系可作其他规则的正向前提（链式）"
     },
@@ -450,7 +450,7 @@
       "path": "fixtures/rules-0.2/structural/conclusion-negative.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "结论只能为正向（P-3 分层）"
     },
@@ -458,7 +458,7 @@
       "path": "fixtures/rules-0.2/structural/premise-reported-cause.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "报告因果不能作前提"
     },
@@ -466,7 +466,7 @@
       "path": "fixtures/rules-0.2/structural/conclusion-reported-cause.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "报告因果不能被推出"
     },
@@ -474,7 +474,7 @@
       "path": "fixtures/rules-0.2/structural/relation-variable.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "关系位不允许变量"
     },
@@ -482,7 +482,7 @@
       "path": "fixtures/rules-0.2/structural/empty-premises.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "至少一个前提"
     },
@@ -490,7 +490,7 @@
       "path": "fixtures/rules-0.2/structural/too-many-premises.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "最多 4 个前提"
     },
@@ -498,7 +498,7 @@
       "path": "fixtures/rules-0.2/structural/bad-rule-id.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "规则 ID 只用小写字母、数字、下划线"
     },
@@ -506,7 +506,7 @@
       "path": "fixtures/rules-0.2/structural/bad-variable-name.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "变量名小写"
     },
@@ -514,7 +514,7 @@
       "path": "fixtures/rules-0.2/structural/unknown-field.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "未知字段（0.2 不支持优先级）"
     },
@@ -522,7 +522,7 @@
       "path": "fixtures/rules-0.2/structural/id-trailing-newline.json",
       "ir": "rules-0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "规则 ID 末尾换行"
     },
@@ -530,7 +530,7 @@
       "path": "fixtures/rules-0.2/referential/unsafe-conclusion-variable.json",
       "ir": "rules-0.2",
       "layer": "referential",
-      "kernel": "unimplemented:#5",
+      "kernel": "enforced",
       "decision": "P-4",
       "note": "结论变量 ?status 未出现在任何前提中"
     }
