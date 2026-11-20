@@ -24,9 +24,13 @@
 
 ## 已知差异
 
-| 编号 | 差异 | 跟踪 |
+当前无。
+
+新的差异登记方式：在 `tests/contract/manifest.json` 中把对应夹具的 `kernel` 标为 `pending:<Issue> <缺陷号>`，并在此表登记；内核修复后测试会失败并提醒改为 `enforced`。
+
+| 编号 | 差异 | 状态 |
 |---|---|---|
-| D2 | 0.1 内核接受 `2026-1-5`，Schema 拒绝 | #4；夹具 `fixtures/0.1/structural/valid-at-loose.json` 标为 `pending`，修复后测试会提醒改为 `enforced` |
+| D2 | 0.1 内核曾接受 `2026-1-5` | 已由 #12 修复，夹具已改为 `enforced` |
 
 ## 运行
 

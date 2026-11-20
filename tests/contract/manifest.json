@@ -161,9 +161,9 @@
       "path": "fixtures/0.1/structural/valid-at-loose.json",
       "ir": "0.1",
       "layer": "structural",
-      "kernel": "pending:#4 D2",
+      "kernel": "enforced",
       "decision": "D2",
-      "note": "非零填充日期：契约拒绝；当前内核仍接受，修复见 #4"
+      "note": "非零填充日期：结构层与内核均拒绝（D2 已由 #12 修复）"
     },
     {
       "path": "fixtures/0.1/value/valid-at-impossible.json",
