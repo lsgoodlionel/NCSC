@@ -53,7 +53,7 @@ def measure(count, pairs, batch):
     memory = {}
     for arm in data:
         build, kb = peak(lambda: load(data[arm]))
-        cost, answer = peak(lambda: kb.query(*query))
+        cost, answer = peak(lambda kb=kb: kb.query(*query))
         if answer != reference:
             raise ValueError("内存轮结果不一致")
         memory[arm] = {"build": build, "query": cost}
