@@ -1,0 +1,181 @@
+{
+  "id": "d1-need-premise-conflict",
+  "decision": "P-3/P-5",
+  "description": "D1 对照：冲突出现在“需要资源”前提上，规则同样应被抑制。",
+  "document": {
+    "version": "0.1",
+    "concepts": [
+      {
+        "id": "c:task:release",
+        "aliases": [
+          "发布任务",
+          "版本发布"
+        ],
+        "kind": "任务"
+      },
+      {
+        "id": "c:resource:signing-key",
+        "aliases": [
+          "签名密钥"
+        ],
+        "kind": "资源"
+      },
+      {
+        "id": "c:value:true",
+        "aliases": [
+          "真",
+          "是"
+        ],
+        "kind": "值"
+      },
+      {
+        "id": "r:task:requires",
+        "aliases": [
+          "需要资源"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:resource:unavailable",
+        "aliases": [
+          "不可用"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:status:blocked",
+        "aliases": [
+          "阻塞"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:claim:reported-cause",
+        "aliases": [
+          "报告原因为"
+        ],
+        "kind": "关系"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "a:release-requires-key",
+        "roles": {
+          "subject": "c:task:release",
+          "relation": "r:task:requires",
+          "object": "c:resource:signing-key"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:build-config",
+            "description": "合成案例：构建配置声明发布需要签名密钥"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      {
+        "id": "a:release-not-requires-key",
+        "roles": {
+          "subject": "c:task:release",
+          "relation": "r:task:requires",
+          "object": "c:resource:signing-key"
+        },
+        "polarity": "negative",
+        "sources": [
+          {
+            "id": "src:release-note",
+            "description": "合成案例：发布说明称本次发布无需签名"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      {
+        "id": "a:key-unavailable",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:resource-register",
+            "description": "合成案例：资源登记表记录密钥不可用"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      }
+    ]
+  },
+  "queries": [
+    {
+      "name": "blocked",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "ir-0.1-current": {
+          "kernel": "enforced",
+          "status": "支持",
+          "evidence": [
+            {
+              "assertion_id": "derived:a:release-requires-key+a:key-unavailable",
+              "polarity": "positive",
+              "derived_by": "resource_unavailable_blocks_task",
+              "premises": [
+                "a:release-requires-key",
+                "a:key-unavailable"
+              ]
+            }
+          ]
+        },
+        "p3-option-a": {
+          "kernel": "unimplemented:#5",
+          "result": {
+            "status": "未知",
+            "status_code": "undetermined",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [],
+            "suppressed": [
+              {
+                "rule_id": "resource_unavailable_blocks_task",
+                "premises": [
+                  "a:release-requires-key",
+                  "a:key-unavailable"
+                ],
+                "reason": "premise_conflict",
+                "contested_premises": [
+                  {
+                    "assertion_id": "a:release-requires-key",
+                    "opposing": [
+                      "a:release-not-requires-key"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "reason": "premise_conflict"
+          }
+        },
+        "p3-option-b": {
+          "kernel": "rejected",
+          "status": "冲突"
+        }
+      }
+    }
+  ]
+}

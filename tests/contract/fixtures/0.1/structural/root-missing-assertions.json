@@ -1,0 +1,56 @@
+{
+  "version": "0.1",
+  "concepts": [
+    {
+      "id": "c:task:release",
+      "aliases": [
+        "发布任务",
+        "版本发布"
+      ],
+      "kind": "任务"
+    },
+    {
+      "id": "c:resource:signing-key",
+      "aliases": [
+        "签名密钥"
+      ],
+      "kind": "资源"
+    },
+    {
+      "id": "c:value:true",
+      "aliases": [
+        "真",
+        "是"
+      ],
+      "kind": "值"
+    },
+    {
+      "id": "r:task:requires",
+      "aliases": [
+        "需要资源"
+      ],
+      "kind": "关系"
+    },
+    {
+      "id": "r:resource:unavailable",
+      "aliases": [
+        "不可用"
+      ],
+      "kind": "关系"
+    },
+    {
+      "id": "r:status:blocked",
+      "aliases": [
+        "阻塞"
+      ],
+      "kind": "关系"
+    },
+    {
+      "id": "r:claim:reported-cause",
+      "aliases": [
+        "报告原因为"
+      ],
+      "kind": "关系"
+    }
+  ]
+}

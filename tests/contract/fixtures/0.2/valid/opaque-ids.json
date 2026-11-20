@@ -1,0 +1,44 @@
+{
+  "version": "0.2",
+  "concepts": [
+    {
+      "id": "c:0190f5c2a9b47c3d8e1f2a3b4c5d6e7f",
+      "aliases": [
+        "发布任务"
+      ],
+      "kind": "event"
+    },
+    {
+      "id": "r:0190f5c2a9b47c3d8e1f2a3b4c5d6e80",
+      "aliases": [
+        "阻塞"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "c:0190f5c2a9b47c3d8e1f2a3b4c5d6e81",
+      "aliases": [
+        "真"
+      ],
+      "kind": "value"
+    }
+  ],
+  "assertions": [
+    {
+      "id": "a:0190f5c2a9b47c3d8e1f2a3b4c5d6e82",
+      "roles": {
+        "subject": "c:0190f5c2a9b47c3d8e1f2a3b4c5d6e7f",
+        "relation": "r:0190f5c2a9b47c3d8e1f2a3b4c5d6e80",
+        "object": "c:0190f5c2a9b47c3d8e1f2a3b4c5d6e81"
+      },
+      "polarity": "positive",
+      "sources": [
+        {
+          "id": "src:0190f5c2a9b47c3d8e1f2a3b4c5d6e83",
+          "description": "合成案例：生产风格的不透明 ID"
+        }
+      ],
+      "context": "ctx:0190f5c2a9b47c3d8e1f2a3b4c5d6e84"
+    }
+  ]
+}

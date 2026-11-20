@@ -1,0 +1,368 @@
+{
+  "schemas": {
+    "0.1": "ir-0.1.schema.json",
+    "0.2": "ir-0.2.draft.schema.json"
+  },
+  "query_result_schema": "query-result-0.2.draft.schema.json",
+  "fixtures": [
+    {
+      "path": "fixtures/0.1/valid/example-regression.json",
+      "ir": "0.1",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "冻结的 examples/project_state.json 副本；0.1 输入回归夹具"
+    },
+    {
+      "path": "fixtures/0.1/valid/undated.json",
+      "ir": "0.1",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "无 valid_at 的分区"
+    },
+    {
+      "path": "fixtures/0.1/valid/empty.json",
+      "ir": "0.1",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "空文档合法"
+    },
+    {
+      "path": "fixtures/0.1/valid/multi-source.json",
+      "ir": "0.1",
+      "layer": "valid",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "多来源"
+    },
+    {
+      "path": "fixtures/0.1/structural/root-unknown-field.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "根节点未知字段"
+    },
+    {
+      "path": "fixtures/0.1/structural/root-missing-assertions.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "缺少 assertions"
+    },
+    {
+      "path": "fixtures/0.1/structural/version-number.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "version 必须是字符串 \"0.1\""
+    },
+    {
+      "path": "fixtures/0.1/structural/version-other.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "0.1 Schema 只接受 0.1"
+    },
+    {
+      "path": "fixtures/0.1/structural/concept-empty-aliases.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "别名数组为空"
+    },
+    {
+      "path": "fixtures/0.1/structural/concept-blank-alias.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "空白别名"
+    },
+    {
+      "path": "fixtures/0.1/structural/concept-unknown-field.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "概念未知字段"
+    },
+    {
+      "path": "fixtures/0.1/structural/id-blank.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "空白 ID"
+    },
+    {
+      "path": "fixtures/0.1/structural/assertion-unknown-field.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "断言未知字段（置信度不在 0.1 契约内）"
+    },
+    {
+      "path": "fixtures/0.1/structural/assertion-missing-context.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "缺少上下文"
+    },
+    {
+      "path": "fixtures/0.1/structural/roles-extra-role.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "未支持的角色"
+    },
+    {
+      "path": "fixtures/0.1/structural/polarity-invalid.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "极性只允许 positive/negative；未知不是极性"
+    },
+    {
+      "path": "fixtures/0.1/structural/sources-empty.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "来源为空"
+    },
+    {
+      "path": "fixtures/0.1/structural/source-missing-description.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "来源缺少说明"
+    },
+    {
+      "path": "fixtures/0.1/structural/valid-at-interval.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "区间时间未支持（P-6）"
+    },
+    {
+      "path": "fixtures/0.1/structural/valid-at-loose.json",
+      "ir": "0.1",
+      "layer": "structural",
+      "kernel": "pending:#4 D2",
+      "decision": "D2",
+      "note": "非零填充日期：契约拒绝；当前内核仍接受，修复见 #4"
+    },
+    {
+      "path": "fixtures/0.1/value/valid-at-impossible.json",
+      "ir": "0.1",
+      "layer": "value",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "格式合法但日历无效：结构层通过，内核拒绝"
+    },
+    {
+      "path": "fixtures/0.1/referential/duplicate-concept-id.json",
+      "ir": "0.1",
+      "layer": "referential",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "重复概念 ID"
+    },
+    {
+      "path": "fixtures/0.1/referential/duplicate-assertion-id.json",
+      "ir": "0.1",
+      "layer": "referential",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "重复断言 ID"
+    },
+    {
+      "path": "fixtures/0.1/referential/dangling-subject.json",
+      "ir": "0.1",
+      "layer": "referential",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "主语未声明"
+    },
+    {
+      "path": "fixtures/0.1/referential/dangling-relation.json",
+      "ir": "0.1",
+      "layer": "referential",
+      "kernel": "enforced",
+      "decision": "0.1",
+      "note": "关系未声明"
+    },
+    {
+      "path": "fixtures/0.2/valid/example-migrated.json",
+      "ir": "0.2",
+      "layer": "valid",
+      "kernel": "unimplemented:#4",
+      "decision": "P-1",
+      "note": "0.1 示例的迁移结果"
+    },
+    {
+      "path": "fixtures/0.2/valid/polysemy.json",
+      "ir": "0.2",
+      "layer": "valid",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "跨概念同名（多义）合法；非汉字别名允许，只要至少一个别名含汉字"
+    },
+    {
+      "path": "fixtures/0.2/valid/opaque-ids.json",
+      "ir": "0.2",
+      "layer": "valid",
+      "kernel": "unimplemented:#4",
+      "decision": "P-2",
+      "note": "生产数据应使用不透明 ID（如 UUIDv7 十六进制）"
+    },
+    {
+      "path": "fixtures/0.2/structural/kind-free-text.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-1",
+      "note": "kind 必须取枚举值；中文显示名另行映射"
+    },
+    {
+      "path": "fixtures/0.2/structural/relation-prefix-kind-mismatch.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-1/P-2",
+      "note": "r: 前缀必须是 relation"
+    },
+    {
+      "path": "fixtures/0.2/structural/concept-kind-relation.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-1/P-2",
+      "note": "c: 前缀不能是 relation"
+    },
+    {
+      "path": "fixtures/0.2/structural/relation-slot-non-relation.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "D3/P-1",
+      "note": "relation 位只能引用 r:（D3）"
+    },
+    {
+      "path": "fixtures/0.2/structural/subject-is-relation.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-1",
+      "note": "0.2 不支持以关系为论元"
+    },
+    {
+      "path": "fixtures/0.2/structural/id-whitespace.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "D5/P-2",
+      "note": "ID 不得含空白（D5）"
+    },
+    {
+      "path": "fixtures/0.2/structural/id-uppercase.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-2",
+      "note": "ID 只用小写"
+    },
+    {
+      "path": "fixtures/0.2/structural/id-wrong-prefix.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-2",
+      "note": "断言 ID 必须以 a: 开头"
+    },
+    {
+      "path": "fixtures/0.2/structural/context-free-text.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-2",
+      "note": "上下文必须是 ctx: ID"
+    },
+    {
+      "path": "fixtures/0.2/structural/alias-duplicate-within-concept.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "同一概念内别名重复"
+    },
+    {
+      "path": "fixtures/0.2/structural/alias-untrimmed.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "别名首尾空白"
+    },
+    {
+      "path": "fixtures/0.2/structural/alias-no-cjk.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "P-7",
+      "note": "至少一个别名含汉字"
+    },
+    {
+      "path": "fixtures/0.2/structural/valid-at-loose.json",
+      "ir": "0.2",
+      "layer": "structural",
+      "kernel": "unimplemented:#4",
+      "decision": "D2",
+      "note": "非零填充日期"
+    },
+    {
+      "path": "fixtures/0.2/referential/dangling-object.json",
+      "ir": "0.2",
+      "layer": "referential",
+      "kernel": "unimplemented:#4",
+      "decision": "0.2",
+      "note": "宾语未声明"
+    },
+    {
+      "path": "fixtures/0.2/referential/duplicate-source-in-assertion.json",
+      "ir": "0.2",
+      "layer": "referential",
+      "kernel": "unimplemented:#4",
+      "decision": "0.2",
+      "note": "同一断言内来源 ID 重复"
+    },
+    {
+      "path": "fixtures/0.2/value/valid-at-impossible.json",
+      "ir": "0.2",
+      "layer": "value",
+      "kernel": "unimplemented:#4",
+      "decision": "0.2",
+      "note": "日历无效"
+    }
+  ],
+  "query_cases": [
+    "cases/d1-control-no-conflict.json",
+    "cases/d1-premise-conflict-only.json",
+    "cases/d1-premise-conflict-direct-positive.json",
+    "cases/d1-premise-conflict-direct-negative.json",
+    "cases/d1-need-premise-conflict.json"
+  ]
+}

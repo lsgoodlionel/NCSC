@@ -1,0 +1,38 @@
+# IR 契约 Schema
+
+| 文件 | 状态 | 用途 |
+|---|---|---|
+| `ir-0.1.schema.json` | 现行 | IR 0.1 的结构层，忠实描述当前内核 |
+| `ir-0.2.draft.schema.json` | 草案，待 #3 评审 | P-1 / P-2 / P-7 的结构层约束 |
+| `query-result-0.2.draft.schema.json` | 草案，待 #3 评审 | P-3 / P-5 的查询输出形状 |
+
+## 两层校验的分工
+
+**结构层（JSON Schema）** 只回答“这份 JSON 的形状对不对”：字段集合封闭、类型、枚举、ID 语法、日期格式、别名格式。它可以被任何语言的 Schema 实现复用，不依赖 Python。
+
+**内核层（Python）** 回答需要看整份文档或需要语义的问题：
+
+| 检查 | 为什么不放进 Schema |
+|---|---|
+| 概念 ID、断言 ID 全局唯一 | 跨数组元素比较 |
+| 角色引用的概念已声明 | 跨数组引用 |
+| 同一断言内来源 ID 不重复（0.2） | `uniqueItems` 比较整个对象，不能只比 `id` |
+| 日历有效性（如 `2026-02-30`） | 正则无法表达 |
+| 分区隔离、四值判定、规则推导、冲突抑制 | 运行时语义 |
+
+内核必须同时执行结构层的全部约束（不能假设调用方先跑过 Schema）。两层对同一夹具的期望由 `tests/contract/manifest.json` 的 `layer` 字段给出，`tests/contract/test_contract.py` 分别验证。
+
+## 已知差异
+
+| 编号 | 差异 | 跟踪 |
+|---|---|---|
+| D2 | 0.1 内核接受 `2026-1-5`，Schema 拒绝 | #4；夹具 `fixtures/0.1/structural/valid-at-loose.json` 标为 `pending`，修复后测试会提醒改为 `enforced` |
+
+## 运行
+
+```bash
+python -m pip install -e ".[dev]" "jsonschema>=4.18,<5"
+python -m unittest discover -s tests -v
+```
+
+未安装 `jsonschema` 时结构层用例自动跳过，内核层用例照常运行。
