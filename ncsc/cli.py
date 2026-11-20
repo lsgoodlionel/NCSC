@@ -8,6 +8,7 @@ from typing import Optional, Sequence
 
 from .core import IRValidationError, KnowledgeBase, validate_document
 from .migration import preview_migration
+from .query_preview import query_preview
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -18,14 +19,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     migrate = commands.add_parser("migrate", help="预览类别迁移，输出候选文档与报告")
     migrate.add_argument("file")
     query = commands.add_parser("query", help="执行四值查询")
-    query.add_argument("file")
-    query.add_argument("--subject", required=True)
-    query.add_argument("--relation", required=True)
-    query.add_argument("--object", dest="object_", required=True)
-    query.add_argument("--context", required=True)
-    query.add_argument("--valid-at")
+    preview_query = commands.add_parser("query-preview", help="实验性 0.2 分区查询，输出有限证据图")
+    preview_query.add_argument("--rule", action="append", default=[], help="每次指定一个 P-4 规则文件")
+    for cmd in (query, preview_query):
+        cmd.add_argument("file")
+        cmd.add_argument("--subject", required=True)
+        cmd.add_argument("--relation", required=True)
+        cmd.add_argument("--object", dest="object_", required=True)
+        cmd.add_argument("--context", required=True)
+        cmd.add_argument("--valid-at")
     args = parser.parse_args(argv)
     try:
+        if args.command == "query-preview":
+            documents = [json.loads(Path(p).read_text(encoding="utf-8")) for p in args.rule]
+            answer = query_preview(json.loads(Path(args.file).read_text(encoding="utf-8")), documents,
+                                   args.subject, args.relation, args.object_, args.context, args.valid_at)
+            print(json.dumps(answer, ensure_ascii=False, indent=2))
+            return 0
         if args.command == "migrate":
             with Path(args.file).open(encoding="utf-8") as handle:
                 preview = preview_migration(json.load(handle), args.file)
