@@ -70,3 +70,62 @@ class RuleBaselineTests(unittest.TestCase):
         data["items"][0]["assertions"][0]["valid_during"] = {"from": "2026-11-19"}
         with self.assertRaisesRegex(ValueError, "valid_during"):
             list(predictions(data))
+
+
+class DeclarativeRulesTests(unittest.TestCase):
+    @staticmethod
+    def rule(rid, src, dst, polarity="positive"):
+        def atom(rel, sign):
+            return {"subject": "?x", "relation": rel, "object": "c:value:true", "polarity": sign}
+        return {"id": rid, "description": rid, "status": "active", "format": "ncsc-rules/0.2",
+                "premises": [atom(src, polarity)], "conclusion": atom(dst, "positive")}
+
+    def dataset(self, relation, assertions):
+        query = {"subject": "c:t", "relation": relation, "object": "c:value:true",
+                 "context": "ctx:alpha", "valid_at": None}
+        facts = [
+            {"id": aid, "roles": {**{k: query[k] for k in ("subject", "object")}, "relation": rel},
+             "polarity": polarity, "context": context}
+            for aid, rel, polarity, context in assertions
+        ]
+        return {"ir_version": "0.2", "items": [{"id": "item", "assertions": facts,
+                                                 "queries": [{"id": "q", "query": query}]}]}
+
+    def test_chain_with_seeded_cycle_scores_original_leaves(self):
+        from baselines.evaluate import score
+        rules = [self.rule("ab", "r:a", "r:b"), self.rule("ba", "r:b", "r:a"), self.rule("bc", "r:b", "r:c")]
+        data = self.dataset("r:c", [("a:seed1", "r:a", "positive", "ctx:alpha"),
+                                    ("a:seed2", "r:a", "positive", "ctx:alpha")])
+        expected = [{"derived_by": "bc", "premises": [{"derived_by": "ab", "premises": [aid]}]}
+                    for aid in ("a:seed1", "a:seed2")]
+        data["items"][0]["queries"][0]["expect"] = {"status": "支持", "evidence": expected}
+        result = list(predictions(data, rules))
+        self.assertEqual(len(result[0]["evidence"]), 2)
+        metrics = score(data, result)
+        self.assertEqual(metrics["rule_paths"]["matched"], 2)
+        self.assertEqual(metrics["leaves"]["matched"], 2)
+        self.assertEqual(metrics["provenance_complete"]["matched"], 1)
+        data["items"][0]["assertions"].reverse()
+        self.assertEqual(list(predictions(data, rules[::-1])), result)
+        data["items"][0]["assertions"] = []
+        row, = predictions(data, rules)
+        self.assertEqual((row["status"], row["evidence"]), ("未知", []))
+
+    def test_explicit_negative_is_partitioned_and_suppressed_on_conflict(self):
+        rule = self.rule("failed", "r:gate", "r:blocked", "negative")
+        data = self.dataset("r:blocked", [("a:other", "r:gate", "negative", "ctx:other")])
+        self.assertEqual(next(predictions(data, [rule]))["status"], "未知")
+        fact = data["items"][0]["assertions"][0]
+        data["items"][0]["assertions"].append(dict(fact, id="a:here", context="ctx:alpha"))
+        self.assertEqual(next(predictions(data, [rule]))["evidence"][0]["premises"], ["a:here"])
+        data["items"][0]["assertions"].append(dict(fact, id="a:confirmed", context="ctx:alpha", polarity="positive"))
+        self.assertEqual(next(predictions(data, [rule]))["status"], "未知")
+        with self.assertRaisesRegex(ValueError, "负向前提"):
+            list(predictions(data, [rule, self.rule("enable", "r:check", "r:gate")]))
+
+    def test_unsafe_rules_rejected(self):
+        data = self.dataset("r:c", [])
+        rule = self.rule("ab", "r:a", "r:b")
+        for update in ({"subject": "?unbound"}, {"polarity": "negative"}, {"relation": "r:claim:reported-cause"}):
+            with self.subTest(update=update), self.assertRaises(ValueError):
+                list(predictions(data, [dict(rule, conclusion=dict(rule["conclusion"], **update))]))

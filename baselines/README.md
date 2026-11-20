@@ -20,15 +20,16 @@ python3 -m unittest discover -s tests -p test_kg_baseline.py
 
 KG 为每条目建立按上下文和日期分区的三元组索引。查询将主体、关系、客体全部绑定，返回匹配的全部平行边。返回格式与 JSON 基线一致，可以逐行比较状态和证据；该基线仅评估直接检索。
 
-## 独立 R1 规则基线
-
-从仓库根目录执行以下命令，每个查询输出一行 JSON。
+## 声明式前向规则基线
 
 ```sh
 python3 -m baselines.rule_engine datasets/synthetic-v0/items.json
+python3 -m baselines.rule_engine datasets/synthetic-v0/items.json --rule tests/contract/fixtures/rules-0.2/valid/r1-resource-unavailable.json
 python3 -m unittest discover -s tests -p test_rule_baseline.py
 ```
 
-基线对通过一致性检查的 IR 0.2 合成条目逐项建表，限定相同上下文、相同日期（含无日期）的原始断言，只启用单跳 R1。任务明确需要某资源且该资源明确不可用时，推导任务阻塞。任一前提有反证时，该组推导被抑制；其他独立、无争议的资源仍可产生支持证据。报告因果只可作为直接查询结果。当前没有多跳、规则文件加载或 IR 0.3 区间求值。
+默认规则 R1 将“任务需要资源”和“资源不可用”连接为“任务阻塞”。可重复使用 `--rule` 提供完整替换规则集，也可通过 `predictions(dataset, rules)` 传入规则对象列表。接受 `ncsc-rules/0.2` 的固定关系、常量和主体/客体变量，支持 1–4 个正向或显式负向前提、已绑定变量的正向结论。只有 active 规则参与计算。负向前提引用的关系必须只来自原始断言，前提存在反证时抑制该组匹配。报告因果仅能作为直接断言查询。
 
-每行包含 `item_id`、`query_id`、`status` 和 `evidence`。直接证据以原始断言 ID 升序排列；推导证据随后按前提 ID 二元组排序，`derived_by` 给出单步规则路径，`premises` 依次列出需求断言与不可用断言的原始 ID。不同叶子组合分别保留。基线只导入共享的角色字段名与四值映射，独立实现连接与前提检查，运行时无需 NCSC 内核或金标。
+基线在每个条目、上下文、日期（含无日期分区）内建立独立的 SQLite 内存表，把前提编译成自连接，把反证检查编译成反连接。逐轮插入以前没有的四元事实，直至该分区没有新事实。查询解释随后从匹配好的规则应用回溯至原始叶子；同一条根到叶路径内重复事实的分支被剪去。循环可传播已有种子，无种子循环无法产生事实。该实现面向小型 IR 0.2 对照实验，仅依赖 Python 标准库，不使用 NCSC 的规则加载、闭包或证明实现。解释枚举的运行成本会随独立证明组合增加，规模上限尚未实测。
+
+每行包含 `item_id`、`query_id`、`status` 和 `evidence`。直接证据按原始断言 ID 升序排列；推导证据按规则、前提 ID 排序。单跳推导的 `premises` 保留规则前提顺序。多跳推导另附 `trace`，子证明引用与相同位置的前提一一对应，沿途可取得各步规则与叶子。可重算的 `b:` 引用只在基线解释内使用。评分时使用原始叶子和规则路径。
