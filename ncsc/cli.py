@@ -8,7 +8,8 @@ from typing import Optional, Sequence
 
 from .core import IRValidationError, KnowledgeBase, validate_document
 from .migration import preview_migration
-from .query_preview import DEFAULT_TRACE_BUDGET, TraceLimitError, query_preview
+from .preview_io import encode_response, load_inputs
+from .query_preview import DEFAULT_TRACE_BUDGET, QueryLimitError, TraceLimitError, query_preview
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -33,11 +34,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "query-preview":
-            documents = [json.loads(Path(p).read_text(encoding="utf-8")) for p in args.rule]
-            answer = query_preview(json.loads(Path(args.file).read_text(encoding="utf-8")), documents,
+            doc, documents = load_inputs(args.file, args.rule)
+            answer = query_preview(doc, documents,
                                    args.subject, args.relation, args.object_, args.context, args.valid_at,
                                    trace_budget=args.trace_budget)
-            print(json.dumps(answer, ensure_ascii=False, indent=2))
+            response = encode_response(answer)
+            if hasattr(sys.stdout, "buffer"):
+                sys.stdout.buffer.write(response)
+            else:
+                sys.stdout.write(response.decode("utf-8"))
             return 0
         if args.command == "migrate":
             with Path(args.file).open(encoding="utf-8") as handle:
@@ -56,9 +61,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             result = kb.query(args.subject, args.relation, args.object_, args.context, args.valid_at)
             print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
-    except TraceLimitError as exc:
-        print(json.dumps({"error": "trace_limit_exceeded", "resource": exc.resource,
+    except QueryLimitError as exc:
+        code = "trace_limit_exceeded" if isinstance(exc, TraceLimitError) else "query_limit_exceeded"
+        print(json.dumps({"error": code, "resource": exc.resource,
                           "limit": exc.limit}), file=sys.stderr)
+        return 3
+    except RecursionError:
+        print(json.dumps({"error": "nesting_limit_exceeded"}), file=sys.stderr)
         return 3
     except (IRValidationError, OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
         print(json.dumps({"valid": False, "error": str(exc)}, ensure_ascii=False), file=sys.stderr)

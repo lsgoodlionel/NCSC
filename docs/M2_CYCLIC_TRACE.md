@@ -10,4 +10,16 @@
 
 每次查询共享 10,000 单位展开预算。每次尝试访问事实消耗 1，每个原始证据消耗 1，每次组合按该证明树的节点总数计费（含重复使用的子树）。`--trace-budget N` 可将上限调低至 1。每条路径另限 48 个事实。两个上限是工程默认值，尚未进行规模标定。
 
-预算恰好用完时仍可返回完整结果；下一步超过预算或路径深度时，CLI 退出码为 3，stdout 为空，stderr 返回 JSON 错误 `trace_limit_exceeded`、资源名及上限。Python 入口抛出 `TraceLimitError`。调用者可缩小查询所用规则集或输入分区后重试。这些上限覆盖解释枚举，事实闭包的连接开销、原始 JSON 字节数和诊断图大小需独立评估。
+预算恰好用完时仍可返回完整结果；下一步超过预算或路径深度时，CLI 退出码为 3，stdout 为空，stderr 返回 JSON 错误 `trace_limit_exceeded`、资源名及上限。Python 入口抛出 `TraceLimitError`。
+
+### 读取、连接与写出
+
+| 资源名 | 默认硬上限 | 计量位置 |
+|---|---:|---|
+| ir_bytes | 2 MiB | 打开 IR 后限量读取，再解码 UTF-8 |
+| rule_bytes / rule_set_bytes | 128 KiB / 512 KiB | 逐文件限量读取；同一查询累计所有规则文件字节 |
+| join_attempts | 1,000,000 | 每扫描一个事实或尝试一个事实与已有绑定的组合前计费 |
+| join_rows | 8,192 | 每追加一个匹配中间行前计费，覆盖所有规则和闭包轮次 |
+| output_bytes | 1 MiB | 整个响应按 UTF-8 增量编码，含缩进和末尾 LF，验证完毕才写出 |
+
+这些上限面向本地预览，超限返回 `query_limit_exceeded`、资源名和上限，退出码 3。输入或输出超限时可缩小文档、来源说明或规则集；连接超限时优先减少同一分区的候选事实。超过解析器嵌套能力时返回 `nesting_limit_exceeded`。文件和输出字节限制在 CLI 边界生效，直接传入 Python 对象的 API 仍执行连接和证明预算。复测命令为 `PYTHONPATH=. python3 benchmarks/preview_limits.py`，输出依次为场景、耗时中位数（毫秒）、Python 分配峰值（MiB）及结果。

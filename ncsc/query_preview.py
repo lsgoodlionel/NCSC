@@ -14,13 +14,35 @@ Fact = Tuple[str, str, str, str]
 Binding = Dict[str, str]
 DEFAULT_TRACE_BUDGET = 10000
 MAX_TRACE_DEPTH = 48
+MAX_JOIN_ATTEMPTS = 1_000_000
+MAX_JOIN_ROWS = 8192
 
 
-class TraceLimitError(Exception):
+class QueryLimitError(Exception):
     def __init__(self, resource: str, limit: int):
         self.resource = resource
         self.limit = limit
-        super().__init__(f"证明展开超限: {resource}={limit}")
+        super().__init__(f"查询资源超限: {resource}={limit}")
+
+
+class TraceLimitError(QueryLimitError):
+    pass
+
+
+class _JoinBudget:
+    def __init__(self) -> None:
+        self.attempts = 0
+        self.rows = 0
+
+    def attempt(self) -> None:
+        self.attempts += 1
+        if self.attempts > MAX_JOIN_ATTEMPTS:
+            raise QueryLimitError("join_attempts", MAX_JOIN_ATTEMPTS)
+
+    def retain(self) -> None:
+        self.rows += 1
+        if self.rows > MAX_JOIN_ROWS:
+            raise QueryLimitError("join_rows", MAX_JOIN_ROWS)
 
 
 class _Budget:
@@ -47,14 +69,16 @@ def _ground(pattern: Dict[str, str], binding: Binding) -> Fact:
             binding.get(pattern["object"], pattern["object"]), pattern["polarity"])
 
 
-def _matches(rule: Dict[str, Any], facts: Set[Fact]) -> Iterator[Edge]:
+def _matches(rule: Dict[str, Any], facts: Set[Fact], budget: _JoinBudget) -> Iterator[Edge]:
     rows: List[Tuple[Binding, Tuple[Fact, ...]]] = [({}, ())]
     for pattern in rule["premises"]:
         joined = []
         for s, r, o, p in facts:
+            budget.attempt()
             if (r, p) != (pattern["relation"], pattern["polarity"]):
                 continue
             for binding, premises in rows:
+                budget.attempt()
                 extended = binding.copy()
                 for term, val in ((pattern["subject"], s), (pattern["object"], o)):
                     if term.startswith("?"):
@@ -62,8 +86,11 @@ def _matches(rule: Dict[str, Any], facts: Set[Fact]) -> Iterator[Edge]:
                     if term != val:
                         break
                 else:
+                    budget.retain()
                     joined.append((extended, premises + ((s, r, o, p),)))
         rows = joined
+        if not rows:
+            return
     for binding, premises in rows:
         yield Edge(rule["id"], premises, _ground(rule["conclusion"], binding))
 
@@ -128,8 +155,9 @@ def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: s
             originals[roles["subject"], roles["relation"], roles["object"], a["polarity"]].append(a["id"])
 
     facts = set(originals)
+    join_budget = _JoinBudget()
     while True:
-        matches = {edge for rule in active for edge in _matches(rule, facts)}
+        matches = {edge for rule in active for edge in _matches(rule, facts, join_budget)}
         accepted = {edge for edge in matches if all(_opposite(p) not in facts for p in edge.premises)}
         new = {edge.result for edge in accepted} - facts
         if not new:
@@ -155,10 +183,12 @@ def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: s
                 queue.extend(edge.premises)
 
     suppressed = []
+    for ids in originals.values():
+        ids.sort()
     for edge in sorted(matches - accepted):
         if edge.result == pos:
             suppressed.append({**edge._asdict(),
-                               "premise_originals": [sorted(originals[p]) for p in edge.premises],
+                               "premise_originals": [originals[p] for p in edge.premises],
                                "contested": [_opposite(p) for p in edge.premises if _opposite(p) in facts]})
     assertions = {a["id"]: a for a in doc["assertions"]}
     evidence = sorted((e for root in (pos, neg) if root in facts
