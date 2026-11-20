@@ -6,6 +6,7 @@
     "0.3": "ir-0.3.draft.schema.json"
   },
   "query_result_schema": "query-result-0.2.draft.schema.json",
+  "p6_query_result_schema": "query-result-0.3.draft.schema.json",
   "fixtures": [
     {
       "path": "fixtures/0.1/valid/example-regression.json",
@@ -631,6 +632,7 @@
     "cases/d1-premise-conflict-direct-negative.json",
     "cases/d1-need-premise-conflict.json",
     "cases/p6-open-interval-rule.json",
+    "cases/p6-interrupted-rule.json",
     "cases/p6-recovery.json",
     "cases/p6-overlap-conflict.json",
     "cases/p6-undated-not-always.json"

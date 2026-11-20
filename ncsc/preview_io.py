@@ -1,4 +1,4 @@
-"""query-preview 的 UTF-8 文件与响应边界。"""
+"""CLI 查询的 UTF-8 文件读取和响应边界。"""
 import io
 import json
 import os
@@ -25,8 +25,7 @@ def _read(path: str, available: int, resource: str, limit: int) -> bytes:
     return data
 
 
-def load_inputs(path: str, rule_paths: Iterable[str]) -> Tuple[Any, List[Any]]:
-    doc = json.loads(_read(path, IR_BYTES, "ir_bytes", IR_BYTES).decode("utf-8"))
+def _load_rule_files(rule_paths: Iterable[str]) -> List[Any]:
     rules = []
     remaining = RULE_SET_BYTES
     for rule_path in rule_paths:
@@ -36,7 +35,22 @@ def load_inputs(path: str, rule_paths: Iterable[str]) -> Tuple[Any, List[Any]]:
             raw = _read(rule_path, RULE_BYTES, "rule_bytes", RULE_BYTES)
         remaining -= len(raw)
         rules.append(json.loads(raw.decode("utf-8")))
-    return doc, rules
+    return rules
+
+
+def load_inputs(path: str, rule_paths: Iterable[str]) -> Tuple[Any, List[Any]]:
+    doc = json.loads(_read(path, IR_BYTES, "ir_bytes", IR_BYTES).decode("utf-8"))
+    return doc, _load_rule_files(rule_paths)
+
+
+def load_query_inputs(path: str, rule_paths: Iterable[str]) -> Tuple[Any, List[Any]]:
+    # 正式 query 兼容既有 0.1 任意大小的有效输入，完整解析后才知道版本。
+    with Path(path).open("rb") as stream:
+        raw = stream.read()
+    doc = json.loads(raw.decode("utf-8"))
+    if isinstance(doc, dict) and doc.get("version") == "0.2" and len(raw) > IR_BYTES:
+        raise QueryLimitError("ir_bytes", IR_BYTES)
+    return doc, _load_rule_files(rule_paths)
 
 
 def encode_response(answer: Any) -> bytes:

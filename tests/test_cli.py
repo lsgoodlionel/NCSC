@@ -72,3 +72,57 @@ class CLITests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertEqual(result.stdout, "")
         self.assertIn("valid_at", json.loads(result.stderr)["error"])
+
+    def test_ir02_query_matches_d1_and_explicit_rule_replaces_default(self) -> None:
+        case = json.loads((ROOT / "tests/contract/cases/d1-control-no-conflict.json").read_text(encoding="utf-8"))["queries"][0]
+        fixture = ROOT / "tests/contract/fixtures"
+        args = ["query", str(fixture / "0.2/valid/example-migrated.json")]
+        for key, val in case["query"].items():
+            args.extend(["--" + key.replace("_", "-"), val])
+        expected = case["expect"]["p3-option-a"]["result"]
+        result = run_cli(*args)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout), expected)
+        r1 = json.loads((fixture / "rules-0.2/valid/r1-resource-unavailable.json").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as tmp:
+            retired = Path(tmp) / "retired.json"
+            retired.write_text(json.dumps(dict(r1, status="retired")))
+            result = run_cli(*args, "--rule", str(retired))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["reason"], "no_evidence")
+
+    def test_ir02_suppressed_derived_premise_retains_proof_ids(self) -> None:
+        from ncsc import KnowledgeBase
+
+        fixtures = ROOT / "tests/contract/fixtures"
+        doc = json.loads((fixtures / "0.2/valid/example-migrated.json").read_text(encoding="utf-8"))
+        r1 = json.loads((fixtures / "rules-0.2/valid/r1-resource-unavailable.json").read_text(encoding="utf-8"))
+        query = ("c:task:release", "r:status:blocked", "c:value:true", "ctx:project-alpha", "2026-11-19")
+        proof_id = KnowledgeBase(doc).query(*query)["evidence"][0]["assertion_id"]
+        doc["concepts"].append({"id": "r:delayed", "kind": "relation", "aliases": ["延期"]})
+        negative = dict(doc["assertions"][0], id="a:clear", polarity="negative",
+                        roles={"subject": query[0], "relation": query[1], "object": query[2]})
+        doc["assertions"].append(negative)
+        second = dict(r1, id="delay", premises=[r1["conclusion"]],
+                      conclusion=dict(r1["conclusion"], relation="r:delayed"))
+        answer = KnowledgeBase(doc, [r1, second]).query(query[0], "r:delayed", *query[2:])
+        self.assertEqual(answer["reason"], "premise_conflict")
+        self.assertEqual(answer["suppressed"], [
+            {"rule_id": "delay", "premises": [proof_id], "reason": "premise_conflict",
+             "contested_premises": [{"assertion_id": proof_id, "opposing": ["a:clear"]}]}
+        ])
+        doc["assertions"].reverse()
+        self.assertEqual(KnowledgeBase(doc, [second, r1]).query(query[0], "r:delayed", *query[2:]), answer)
+
+    def test_regular_query_preserves_large_legacy_input(self) -> None:
+        from unittest.mock import patch
+        from ncsc import preview_io
+
+        query = ["--subject", "c:task:release", "--relation", "r:status:blocked", "--object", "c:value:true",
+                 "--context", "ctx:project-alpha", "--valid-at", "2026-11-19"]
+        fixture = ROOT / "tests/contract/fixtures/0.2/valid/example-migrated.json"
+        with patch.object(preview_io, "IR_BYTES", 1):
+            self.assertEqual(call_main("query", EXAMPLE, *query).returncode, 0)
+            result = call_main("query", str(fixture), *query)
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(json.loads(result.stderr)["resource"], "ir_bytes")

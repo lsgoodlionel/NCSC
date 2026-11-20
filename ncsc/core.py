@@ -5,11 +5,16 @@ from __future__ import annotations
 import datetime as _dt
 import json
 import re
+from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 
-from .rules import derive_initial_assertions
+from .rules import default_rules_02, derive_initial_assertions
+
+
+if TYPE_CHECKING:
+    from .query_preview import QueryIndex
 
 
 class IRValidationError(ValueError):
@@ -171,11 +176,23 @@ class Evidence:
 
 
 class KnowledgeBase:
-    def __init__(self, doc: Dict[str, Any]) -> None:
+    def __init__(self, doc: Dict[str, Any], rules: Optional[Iterable[Any]] = None) -> None:
         self.doc = validate_document(doc)
-        if self.doc["version"] != "0.1":
-            raise IRValidationError("IR 0.2 已支持校验，查询和推导等待 #5 实现")
-        self.assertions = list(doc["assertions"])
+        if self.doc["version"] == "0.2":
+            self.doc = deepcopy(self.doc)
+        self.assertions = list(self.doc["assertions"])
+        self._index: Optional[QueryIndex] = None
+        self._active: List[Dict[str, Any]] = []
+        if self.doc["version"] == "0.2":
+            from .query_preview import QueryIndex
+            from .rule_loader import load_rules
+
+            self._index = QueryIndex(self.doc)
+            declared = self._index.declared
+            self._active = load_rules(default_rules_02(declared) if rules is None else rules, declared)
+            return
+        if rules is not None:
+            raise IRValidationError("声明式规则仅适用于 IR 0.2")
         self.assertions.extend(derive_initial_assertions(self.doc["assertions"]))
 
     @classmethod
@@ -184,6 +201,10 @@ class KnowledgeBase:
             return cls(json.load(handle))
 
     def query(self, subject: str, relation: str, object_: str, context: str, valid_at: Optional[str] = None) -> Dict[str, Any]:
+        if self._index is not None:
+            from .query_preview import evaluate_query
+
+            return evaluate_query(self._index, self._active, subject, relation, object_, context, valid_at)
         for value, name in [(subject, "subject"), (relation, "relation"), (object_, "object"), (context, "context")]:
             _nonempty_string(value, name)
         if valid_at is not None:

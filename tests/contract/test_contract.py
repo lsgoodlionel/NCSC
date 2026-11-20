@@ -85,7 +85,7 @@ class ManifestTests(unittest.TestCase):
 @unittest.skipIf(jsonschema is None, "未安装 jsonschema；运行 pip install -e \".[dev]\"")
 class StructuralLayerTests(unittest.TestCase):
     def test_schemas_are_valid_2020_12(self) -> None:
-        names = list(MANIFEST["schemas"].values()) + [MANIFEST["query_result_schema"]]
+        names = [*MANIFEST["schemas"].values(), MANIFEST["query_result_schema"], MANIFEST["p6_query_result_schema"]]
         for name in names:
             with self.subTest(schema=name):
                 jsonschema.Draft202012Validator.check_schema(_schema(name))
@@ -98,9 +98,21 @@ class StructuralLayerTests(unittest.TestCase):
                 expected_valid = LAYERS[f["layer"]][0]
                 self.assertEqual(not errors, expected_valid, [e.message for e in errors][:3])
 
+    def test_interval_does_not_extend_a_derived_result(self) -> None:
+        case = _load("cases/p6-interrupted-rule.json")
+        result = case["queries"][0]["expect"]["p6"]["result"]
+        schema_02 = _schema(MANIFEST["query_result_schema"])
+        schema_03 = _schema(MANIFEST["p6_query_result_schema"])
+        derived = result["evidence"][0]
+        self.assertIn("derived_by", derived)
+        self.assertFalse(jsonschema.Draft202012Validator(schema_02).is_valid(result))
+        validator = jsonschema.Draft202012Validator(schema_03)
+        self.assertTrue(validator.is_valid(result))
+        derived["valid_during"] = {"from": "2026-11-19", "to": "2026-11-21"}
+        self.assertFalse(validator.is_valid(result))
+
     def test_proposed_query_results_against_schema(self) -> None:
         """判例中任何带完整 result 的期望（p3-option-a、p6 等）都须符合查询结果 Schema。"""
-        validator = jsonschema.Draft202012Validator(_schema(MANIFEST["query_result_schema"]))
         for rel in MANIFEST["query_cases"]:
             for item in _load(rel)["queries"]:
                 for key, expect in item["expect"].items():
@@ -108,6 +120,8 @@ class StructuralLayerTests(unittest.TestCase):
                         continue
                     with self.subTest(case=rel, query=item["name"], expect=key):
                         result = expect["result"]
+                        schema_key = "p6_query_result_schema" if key == "p6" else "query_result_schema"
+                        validator = jsonschema.Draft202012Validator(_schema(MANIFEST[schema_key]))
                         errors = list(validator.iter_errors(result))
                         self.assertEqual(errors, [], [e.message for e in errors][:3])
                         self.assertEqual(result["query"], item["query"])
@@ -134,11 +148,11 @@ class KernelLayerTests(unittest.TestCase):
                 self.assertEqual(mode, "enforced")
                 self.assertEqual(actual, expected)
 
-    def test_query_cases_current_behaviour(self) -> None:
+    def test_query_cases_ir_01(self) -> None:
         for rel in MANIFEST["query_cases"]:
             case = _load(rel)
             if case["document"]["version"] != "0.1":
-                continue  # 0.2 起的判例只有提议期望，等内核实现后再执行
+                continue
             kb = KnowledgeBase(case["document"])
             for item in case["queries"]:
                 expect = item["expect"]["ir-0.1-current"]
@@ -148,6 +162,34 @@ class KernelLayerTests(unittest.TestCase):
                     result = kb.query(q["subject"], q["relation"], q["object"], q["context"], q["valid_at"])
                     self.assertEqual(result["status"], expect["status"])
                     self.assertEqual(_evidence_summary(result), expect["evidence"])
+
+
+    def test_query_cases_ir_02(self) -> None:
+        for rel in MANIFEST["query_cases"]:
+            case = _load(rel)
+            document = case["document"]
+            if document["version"] == "0.3":  # P-6 判例目前只校验草案结构
+                continue
+            if document["version"] == "0.1":
+                # 同一份事实在两个版本下求值，类别选择由夹具逐概念声明。
+                kinds = case["concept_kinds_0.2"]
+                self.assertEqual(set(kinds), {c["id"] for c in document["concepts"]})
+                concepts = [{**c, "kind": kinds[c["id"]]} for c in document["concepts"]]
+                document = {**document, "version": "0.2", "concepts": concepts}
+            self.assertEqual(document["version"], "0.2")
+            kb = KnowledgeBase(document)
+            for item in case["queries"]:
+                with self.subTest(case=case["id"], query=item["name"]):
+                    key = "p5-d4" if "p5-d4" in item["expect"] else "p3-option-a"
+                    expect = item["expect"][key]
+                    self.assertEqual(expect["kernel"], "enforced")
+                    q = item["query"]
+                    args = (q["subject"], q["relation"], q["object"], q["context"], q["valid_at"])
+                    if "error" in expect:
+                        with self.assertRaisesRegex(IRValidationError, expect["error"]):
+                            kb.query(*args)
+                    else:
+                        self.assertEqual(kb.query(*args), expect["result"])
 
 
 if __name__ == "__main__":

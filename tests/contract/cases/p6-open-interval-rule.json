@@ -1,7 +1,7 @@
 {
   "id": "p6-open-interval-rule",
   "decision": "P-6",
-  "description": "“从 19 日起需要密钥”与“20 日密钥不可用”：规则只在两者都覆盖的日期触发，结论范围取交集。",
+  "description": "19 日起需要密钥，20 日密钥不可用；20 日的查询可推出阻塞。",
   "document": {
     "version": "0.3",
     "concepts": [
@@ -162,11 +162,7 @@
                       }
                     ]
                   }
-                ],
-                "valid_during": {
-                  "from": "2026-11-20",
-                  "to": "2026-11-20"
-                }
+                ]
               }
             ],
             "suppressed": []

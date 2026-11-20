@@ -1,4 +1,4 @@
-"""0.2 局部查询原型。事实按分区闭包；解释为有限图，不展开递归证明 ID。"""
+"""IR 0.2 分区事实闭包、有限溯源，以及预览命令的诊断图。"""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -16,6 +16,25 @@ DEFAULT_TRACE_BUDGET = 10000
 MAX_TRACE_DEPTH = 48
 MAX_JOIN_ATTEMPTS = 1_000_000
 MAX_JOIN_ROWS = 8192
+
+
+class QueryIndex:
+    """已通过校验的 IR 0.2 快照，按分区和断言 ID 建索引。"""
+
+    def __init__(self, doc: Dict[str, Any]) -> None:
+        self.declared = {concept["id"] for concept in doc["concepts"]}
+        self.assertions: Dict[str, Any] = {}
+        self.partitions: Dict[Tuple[str, str | None], Dict[Fact, List[str]]] = {}
+        for assertion in doc["assertions"]:
+            self.assertions[assertion["id"]] = assertion
+            key = (assertion["context"], assertion.get("valid_at"))
+            partition = self.partitions.setdefault(key, {})
+            roles = assertion["roles"]
+            fact = (roles["subject"], roles["relation"], roles["object"], assertion["polarity"])
+            partition.setdefault(fact, []).append(assertion["id"])
+        for partition in self.partitions.values():
+            for original_ids in partition.values():
+                original_ids.sort()
 
 
 class QueryLimitError(Exception):
@@ -135,35 +154,41 @@ def _proofs(fact: Fact, ancestors: FrozenSet[Fact], by_result: Dict[Fact, List[E
 def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: str,
                   obj: str, context: str, day: str | None, *,
                   trace_budget: int = DEFAULT_TRACE_BUDGET) -> Dict[str, Any]:
-    budget = _Budget(trace_budget)
     doc = validate_document(document)
     if doc["version"] != "0.2":
         raise IRValidationError("query-preview 仅用于 IR 0.2")
-    declared = {c["id"] for c in doc["concepts"]}
-    for value, prefix in ((subject, "c"), (relation, "r"), (obj, "c")):
-        _check_id(value, prefix, "query")
-        if value not in declared:
-            raise IRValidationError(f"undeclared_concept: {value}")
-    _check_id(context, "ctx", "query.context")
-    if day is not None:
-        _validate_day(day, "query.valid_at")
-    active = load_rules(rules, declared)
-    originals: Dict[Fact, List[str]] = defaultdict(list)
-    for a in doc["assertions"]:
-        if (a["context"], a.get("valid_at")) == (context, day):
-            roles = a["roles"]
-            originals[roles["subject"], roles["relation"], roles["object"], a["polarity"]].append(a["id"])
+    index = QueryIndex(doc)
+    active = load_rules(rules, index.declared)
+    return evaluate_query(index, active, subject, relation, obj, context, day, trace_budget=trace_budget, preview=True)
 
+
+def _closure(originals: Dict[Fact, List[str]], active: List[Dict[str, Any]],
+             join_budget: _JoinBudget) -> Tuple[Set[Fact], Set[Edge], Set[Edge]]:
     facts = set(originals)
-    join_budget = _JoinBudget()
     while True:
         matches = {edge for rule in active for edge in _matches(rule, facts, join_budget)}
         accepted = {edge for edge in matches if all(_opposite(p) not in facts for p in edge.premises)}
         new = {edge.result for edge in accepted} - facts
         if not new:
-            break
+            return facts, matches, accepted
         facts.update(new)
 
+
+def evaluate_query(index: QueryIndex, active: List[Dict[str, Any]], subject: str, relation: str,
+                   obj: str, context: str, day: str | None, *, trace_budget: int = DEFAULT_TRACE_BUDGET,
+                   preview: bool = False) -> Dict[str, Any]:
+    budget = _Budget(trace_budget)
+    for value, prefix in ((subject, "c"), (relation, "r"), (obj, "c")):
+        _check_id(value, prefix, "query")
+        if value not in index.declared:
+            raise IRValidationError(f"undeclared_concept: {value}")
+    _check_id(context, "ctx", "query.context")
+    if day is not None:
+        _validate_day(day, "query.valid_at")
+    partitions = index.partitions
+    originals = partitions.get((context, day), {})
+    join_budget = _JoinBudget()
+    facts, matches, accepted = _closure(originals, active, join_budget)
     pos: Fact = (subject, relation, obj, "positive")
     neg = _opposite(pos)
     status = {(True, True): "冲突", (True, False): "支持",
@@ -171,6 +196,47 @@ def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: s
     by_result: Dict[Fact, List[Edge]] = defaultdict(list)
     for edge in accepted:
         by_result[edge.result].append(edge)
+    assertions = index.assertions
+    evidence = sorted((e for root in (pos, neg) if root in facts
+                       for e, _ in _proofs(root, frozenset(), by_result, originals, assertions, budget)),
+                      key=lambda e: e["assertion_id"])
+    if not preview:
+        def proof_ids(f: Fact) -> List[str]:
+            return sorted(node["assertion_id"] for node, _ in
+                          _proofs(f, frozenset(), by_result, originals, assertions, budget))
+
+        diagnostics: List[Dict[str, Any]] = []
+        for edge in sorted(matches - accepted):
+            if edge.result != pos:
+                continue
+            opposing = {i: proof_ids(_opposite(p)) for i, p in enumerate(edge.premises)
+                        if _opposite(p) in facts}
+            for ids in product(*(proof_ids(p) for p in edge.premises)):
+                budget.charge(1 + sum(len(items) for items in opposing.values()))
+                contested = [{"assertion_id": ids[i], "opposing": items}
+                             for i, items in opposing.items()]
+                diagnostics.append({"rule_id": edge.rule, "premises": list(ids),
+                                    "reason": "premise_conflict", "contested_premises": contested})
+        diagnostics.sort(key=lambda d: (d["premises"], d["rule_id"]))
+        codes = {"支持": "supported", "反对": "refuted", "冲突": "both", "未知": "undetermined"}
+        result: Dict[str, Any] = {
+            "status": status, "status_code": codes[status],
+            "query": {"subject": subject, "relation": relation, "object": obj,
+                      "context": context, "valid_at": day},
+            "evidence": evidence, "suppressed": diagnostics,
+        }
+        if status == "未知":
+            result["reason"] = "premise_conflict" if diagnostics else "no_evidence"
+            others = []
+            for partition_key in sorted(partitions, key=lambda k: (k[0], k[1] or "")):
+                if partition_key == (context, day):
+                    continue
+                other_facts, _, _ = _closure(partitions[partition_key], active, join_budget)
+                if pos in other_facts or neg in other_facts:
+                    others.append({"context": partition_key[0], "valid_at": partition_key[1]})
+            if others:
+                result["other_partitions"] = others
+        return result
     queue = [f for f in (pos, neg) if f in facts]
     visited: Set[Fact] = set()
     reachable: Set[Edge] = set()
@@ -183,18 +249,12 @@ def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: s
                 queue.extend(edge.premises)
 
     suppressed = []
-    for ids in originals.values():
-        ids.sort()
     for edge in sorted(matches - accepted):
         if edge.result == pos:
             suppressed.append({**edge._asdict(),
-                               "premise_originals": [originals[p] for p in edge.premises],
+                               "premise_originals": [originals.get(p, []) for p in edge.premises],
                                "contested": [_opposite(p) for p in edge.premises if _opposite(p) in facts]})
-    assertions = {a["id"]: a for a in doc["assertions"]}
-    evidence = sorted((e for root in (pos, neg) if root in facts
-                       for e, _ in _proofs(root, frozenset(), by_result, originals, assertions, budget)),
-                      key=lambda e: e["assertion_id"])
     return {"status": status, "context": context, "valid_at": day, "evidence": evidence,
             "experimental_graph": {"edges": [e._asdict() for e in sorted(reachable)],
-                                   "originals": sorted(aid for f in visited for aid in originals[f])},
+                                   "originals": sorted(aid for f in visited for aid in originals.get(f, []))},
             "suppressed_preview": suppressed}

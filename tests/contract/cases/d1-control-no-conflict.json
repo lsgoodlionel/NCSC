@@ -94,6 +94,15 @@
       }
     ]
   },
+  "concept_kinds_0.2": {
+    "c:task:release": "event",
+    "c:resource:signing-key": "entity",
+    "c:value:true": "value",
+    "r:task:requires": "relation",
+    "r:resource:unavailable": "relation",
+    "r:status:blocked": "relation",
+    "r:claim:reported-cause": "relation"
+  },
   "queries": [
     {
       "name": "blocked",
@@ -121,7 +130,7 @@
           ]
         },
         "p3-option-a": {
-          "kernel": "unimplemented:#5",
+          "kernel": "enforced",
           "result": {
             "status": "支持",
             "status_code": "supported",
@@ -200,7 +209,7 @@
           "evidence": []
         },
         "p3-option-a": {
-          "kernel": "unimplemented:#5",
+          "kernel": "enforced",
           "result": {
             "status": "未知",
             "status_code": "undetermined",
@@ -240,7 +249,7 @@
           "evidence": []
         },
         "p5-d4": {
-          "kernel": "unimplemented:#4",
+          "kernel": "enforced",
           "error": "undeclared_concept",
           "note": "0.2 起拼写错误的 ID 报错，而不是返回未知"
         }

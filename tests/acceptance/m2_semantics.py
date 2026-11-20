@@ -1,10 +1,6 @@
-"""#5 功能探针：PYTHONPATH=. python tests/acceptance/m2_semantics.py -v
-
-使用现行 0.1 查询入口作基线。chain/gate 是 #17 的 proposed 示例；
-预期值仅代表隔离测试显式启用示例后的草案行为。切换到 0.2 加载器时，
-在 run_query 中注入测试规则副本，不改变生产白名单。
-"""
+"""IR 0.2 正式接口的两跳、分区隔离和前提极性验收。"""
 import json
+import random
 from pathlib import Path
 import unittest
 
@@ -35,14 +31,21 @@ def leaves(node):
 
 class M2Probes(unittest.TestCase):
     def setUp(self):
-        self.doc = json.loads((ROOT / "examples/project_state.json").read_text(encoding="utf8"))
+        self.doc = json.loads((ROOT / "tests/contract/fixtures/0.2/valid/example-migrated.json").read_text(encoding="utf8"))
         for cid in (NEXT, "c:gate", "r:task:depends-on", "r:task:requires-gate",
                     "r:gate:passed", GATE_RESULT):
-            self.doc["concepts"].append({"id": cid, "kind": "关系" if cid.startswith("r:") else "实体",
+            self.doc["concepts"].append({"id": cid, "kind": "relation" if cid.startswith("r:") else "entity",
                                          "aliases": ["测试项"]})
 
+        self.rules = []
+        path = ROOT / "tests/contract/fixtures/rules-0.2/valid"
+        for filename in ("r1-resource-unavailable", "chain-blocked-delays-release", "r2-gate-negative-premise"):
+            rule = json.loads((path / (filename + ".json")).read_text(encoding="utf8"))
+            rule["status"] = "active"
+            self.rules.append(rule)
+
     def run_query(self, subject, relation):
-        return KnowledgeBase(self.doc).query(subject, relation, TRUE, CTX, DAY)
+        return KnowledgeBase(self.doc, self.rules).query(subject, relation, TRUE, CTX, DAY)
 
     def test_partition_isolation_with_positive_control(self):
         self.assertEqual(self.run_query(TASK, BLOCK)["status"], "支持")
@@ -62,24 +65,22 @@ class M2Probes(unittest.TestCase):
         self.assertEqual(answer["reason"], "premise_conflict")
         self.assertIn("a:disputed", answer["suppressed"][0]["contested_premises"][0]["opposing"])
 
-    def test_draft_two_hop_trace_and_order(self):
+    def test_two_hop_trace_and_order(self):
         self.doc["assertions"].append(fact("a:depends", NEXT, "r:task:depends-on", TASK))
-        snapshots = []
-        for order in ("forward", "reverse"):
-            with self.subTest(order=order):
-                if order == "reverse":
-                    self.doc["assertions"].reverse()
-                answer = self.run_query(NEXT, BLOCK)
-                self.assertEqual(answer["status"], "支持")
-                evidence, = answer["evidence"]
-                self.assertEqual(evidence["derived_by"], "blocked_dependency_blocks_task")
-                self.assertEqual(leaves(evidence), {"a:depends", "a:release-requires-key", "a:key-unavailable"})
-                self.assertIn("resource_unavailable_blocks_task", [e.get("derived_by") for e in evidence["trace"]])
-                snapshots.append(answer["evidence"])
-        if len(snapshots) == 2:
-            self.assertEqual(*snapshots)
+        expected = self.run_query(NEXT, BLOCK)
+        self.assertEqual(expected["status"], "支持")
+        evidence, = expected["evidence"]
+        self.assertEqual(evidence["derived_by"], "blocked_dependency_blocks_task")
+        self.assertEqual(leaves(evidence), {"a:depends", "a:release-requires-key", "a:key-unavailable"})
+        self.assertIn("resource_unavailable_blocks_task", [e.get("derived_by") for e in evidence["trace"]])
+        rng = random.Random(20261120)
+        for trial in range(50):
+            with self.subTest(trial=trial):
+                rng.shuffle(self.doc["assertions"])
+                rng.shuffle(self.rules)
+                self.assertEqual(self.run_query(NEXT, BLOCK), expected)
 
-    def test_draft_negative_premise(self):
+    def test_negative_premise(self):
         self.doc["assertions"] = [fact("a:needs", TASK, "r:task:requires-gate", "c:gate")]
         for polarities, expected in [((), "未知"), (("negative",), "支持"),
                                      (("positive",), "未知"), (("negative", "positive"), "未知")]:

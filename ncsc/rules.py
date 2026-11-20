@@ -53,3 +53,19 @@ def derive_initial_assertions(assertions: Sequence[Assertion]) -> Iterator[Asser
         for conclusion in evaluate(assertions):
             conclusion["_derived_by"] = rule_id
             yield conclusion
+
+
+def default_rules_02(declared: set[str]) -> list[dict[str, Any]]:
+    """使用文档词表中的 R1。只含其他概念的词表无默认规则。"""
+    constants = {"r:task:requires", "r:resource:unavailable", "r:status:blocked", "c:value:true"}
+    if not constants <= declared:
+        return []
+    return [{
+        "format": "ncsc-rules/0.2", "id": "resource_unavailable_blocks_task", "status": "active",
+        "description": "同一分区内，任务需要的资源被确认不可用时，推出任务阻塞。",
+        "premises": [
+            {"subject": "?task", "relation": "r:task:requires", "object": "?resource", "polarity": "positive"},
+            {"subject": "?resource", "relation": "r:resource:unavailable", "object": "c:value:true", "polarity": "positive"},
+        ],
+        "conclusion": {"subject": "?task", "relation": "r:status:blocked", "object": "c:value:true", "polarity": "positive"},
+    }]
