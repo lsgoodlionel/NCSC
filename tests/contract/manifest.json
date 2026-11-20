@@ -369,7 +369,7 @@
       "path": "fixtures/0.2/structural/valid-at-trailing-newline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "D2",
       "note": "日期末尾换行"
     },
@@ -377,7 +377,7 @@
       "path": "fixtures/0.2/structural/id-trailing-newline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-2",
       "note": "ID 末尾换行（Codex 复核指出）"
     },
@@ -385,7 +385,7 @@
       "path": "fixtures/0.2/structural/alias-trailing-newline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "别名末尾换行"
     },
@@ -393,7 +393,7 @@
       "path": "fixtures/0.2/structural/alias-multiline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "别名必须单行"
     },
@@ -401,7 +401,7 @@
       "path": "fixtures/0.2/structural/alias-line-separator.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "U+2028 也算换行"
     },
@@ -409,7 +409,7 @@
       "path": "fixtures/0.2/structural/description-multiline.json",
       "ir": "0.2",
       "layer": "structural",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "来源说明必须单行"
     },
@@ -417,7 +417,7 @@
       "path": "fixtures/0.2/valid/alias-internal-space.json",
       "ir": "0.2",
       "layer": "valid",
-      "kernel": "unimplemented:#4",
+      "kernel": "enforced",
       "decision": "P-7",
       "note": "内部空格允许"
     }

@@ -59,7 +59,7 @@ def _check_id(value: str, prefix: str, where: str) -> None:
 
 
 def _check_text(value: str, where: str) -> None:
-    if value.strip() != value or "\n" in value:
+    if value.strip() != value or value.splitlines() != [value]:
         raise IRValidationError(f"{where}: 文本须单行且首尾无空白")
 
 
