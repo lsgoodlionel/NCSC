@@ -1,0 +1,135 @@
+{
+  "dataset": "synthetic-v0",
+  "ir_version": "0.2",
+  "concepts": [
+    {
+      "id": "c:task:release",
+      "aliases": [
+        "发布任务",
+        "发布",
+        "版本发布"
+      ],
+      "kind": "event"
+    },
+    {
+      "id": "c:task:migration",
+      "aliases": [
+        "数据迁移任务",
+        "数据迁移"
+      ],
+      "kind": "event"
+    },
+    {
+      "id": "c:resource:signing-key",
+      "aliases": [
+        "签名密钥",
+        "密钥"
+      ],
+      "kind": "entity"
+    },
+    {
+      "id": "c:resource:test-server",
+      "aliases": [
+        "测试服务器"
+      ],
+      "kind": "entity"
+    },
+    {
+      "id": "c:resource:db-license",
+      "aliases": [
+        "数据库许可证"
+      ],
+      "kind": "entity"
+    },
+    {
+      "id": "c:value:true",
+      "aliases": [
+        "真",
+        "是"
+      ],
+      "kind": "value"
+    },
+    {
+      "id": "r:task:requires",
+      "aliases": [
+        "需要资源",
+        "需要"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:resource:unavailable",
+      "aliases": [
+        "不可用"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:status:blocked",
+      "aliases": [
+        "阻塞",
+        "受阻",
+        "停下来"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:status:completed",
+      "aliases": [
+        "已完成"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:claim:reported-cause",
+      "aliases": [
+        "报告原因为"
+      ],
+      "kind": "relation"
+    }
+  ],
+  "sources": [
+    {
+      "id": "src:pm-board",
+      "description": "合成：项目看板"
+    },
+    {
+      "id": "src:build-config",
+      "description": "合成：构建配置"
+    },
+    {
+      "id": "src:resource-register",
+      "description": "合成：资源登记表"
+    },
+    {
+      "id": "src:ops-ticket",
+      "description": "合成：运维工单"
+    },
+    {
+      "id": "src:standup",
+      "description": "合成：站会记录"
+    },
+    {
+      "id": "src:release-mail",
+      "description": "合成：发布经理邮件"
+    },
+    {
+      "id": "src:zhang-remark",
+      "description": "合成：张工口述"
+    }
+  ],
+  "contexts": [
+    {
+      "id": "ctx:project-alpha",
+      "description": "合成：Alpha 项目"
+    },
+    {
+      "id": "ctx:project-beta",
+      "description": "合成：Beta 项目"
+    }
+  ],
+  "rules": [
+    "resource_unavailable_blocks_task"
+  ],
+  "document_year": 2026
+}

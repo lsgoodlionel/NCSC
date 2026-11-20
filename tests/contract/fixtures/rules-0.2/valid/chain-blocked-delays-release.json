@@ -1,0 +1,26 @@
+{
+  "format": "ncsc-rules/0.2",
+  "id": "blocked_dependency_blocks_task",
+  "status": "proposed",
+  "description": "同一分区内，任务依赖的另一任务阻塞时，推出该任务阻塞；可与资源规则链式组合。",
+  "premises": [
+    {
+      "subject": "?task",
+      "relation": "r:task:depends-on",
+      "object": "?dep",
+      "polarity": "positive"
+    },
+    {
+      "subject": "?dep",
+      "relation": "r:status:blocked",
+      "object": "c:value:true",
+      "polarity": "positive"
+    }
+  ],
+  "conclusion": {
+    "subject": "?task",
+    "relation": "r:status:blocked",
+    "object": "c:value:true",
+    "polarity": "positive"
+  }
+}

@@ -102,6 +102,11 @@ class StructuralLayerTests(unittest.TestCase):
                     errors = list(validator.iter_errors(expect["result"]))
                     self.assertEqual(errors, [], [e.message for e in errors][:3])
                     self.assertEqual(expect["result"]["query"], item["query"])
+                    # P-4 §5：证据与被抑制推导按 ID 的码位升序排列，与输入顺序无关
+                    ids = [e["assertion_id"] for e in expect["result"]["evidence"]]
+                    self.assertEqual(ids, sorted(ids))
+                    keys = [s["premises"] for s in expect["result"]["suppressed"]]
+                    self.assertEqual(keys, sorted(keys))
 
 
 class KernelLayerTests(unittest.TestCase):

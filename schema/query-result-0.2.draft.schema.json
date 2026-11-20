@@ -65,10 +65,11 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/evidence"
-      }
+      },
+      "description": "按 assertion_id 的 Unicode 码位升序排列（P-4 §5），与输入顺序无关。"
     },
     "suppressed": {
-      "description": "P-3：结论与本查询相同、但因前提在本分区为“冲突”而未推出的推导。只作诊断，不参与四值判定。",
+      "description": "P-3：结论与本查询相同、但因前提在本分区为“冲突”而未推出的推导。只作诊断，不参与四值判定。 按 premises 列表升序排列（P-4 §5）。",
       "type": "array",
       "items": {
         "$ref": "#/$defs/suppressed"
