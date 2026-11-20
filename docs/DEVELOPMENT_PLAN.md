@@ -297,3 +297,75 @@ python -m unittest discover -s tests -v
 python -m ncsc.cli validate examples/project_state.json
 python -m ncsc.cli query examples/project_state.json --subject c:task:release --relation r:status:blocked --object c:value:true --context ctx:project-alpha --valid-at 2026-11-19
 ```
+
+## 11. 执行分工与交付顺序
+
+Claude 延续现有方案，主笔语义契约、中文反例和数据标注。Codex 延续本地内核，负责可执行实现、测试、CI 和 GitHub 集成。设计提案需要可执行反例，工程实现需要语义复核。每项一名主责，另一方交叉评审。角色名用于交接，实际接手后在 Issue 认领。
+
+首轮并行 M0 和 M1 契约草案。优先处理 D1 的两种结论：分别给出冲突前提、独立正证据、独立负证据三个查询的预期四值与溯源，再决定 P-3。D4 和别名策略按版本评审。保留 0.1 输入回归夹具。结构 Schema 负责字段与类型，跨引用、分区与推导语义交给 Python 测试。
+
+每个 PR 关联 Issue，附版本影响、命令和实际结果。看板按 Todo、In Progress、Done 跟踪；通过验收并合并后关闭 Issue。共享文件由当期主责集成。
+
+### M0 · 工程底座与 CLI 回归
+
+主责 Codex，复核 Claude。立即开始。
+
+文件范围：pyproject.toml、CI、ncsc/cli.py、tests/test_cli.py。
+
+验收：D7 编码错误返回 exit 2 和 JSON；在三平台运行现有套件并记录结果。
+
+### M1 · IR 契约、反例与迁移决策
+
+主责 Claude，复核 Codex。立即开始。
+
+文件范围：schema/、docs/proposals/、tests/contract/。
+
+验收：提交 P-1/2/3/5/7 决策样例；分开结构校验和引用完整性；列出破坏性变化、数字身份迁移及人工确认项。
+
+### M1 · 校验器与兼容性
+
+主责 Codex，复核 Claude。D2 可先行；其余依赖契约评审。
+
+文件范围：ncsc/core.py、tests/test_rejections.py。
+
+验收：严格日期覆盖加载及查询；0.1 旧样例通过；D3–D6 按已批准版本处理。
+
+### M2 · 白名单规则与溯源
+
+主责 Codex，复核 Claude。依赖 P-3/4/5，Claude 起草规则格式。
+
+文件范围：ncsc/rules.py、ncsc/store.py、ncsc/query.py、rules/。
+
+验收：前提冲突有判例；两跳和循环均终止；打乱输入仍得到相同证据；验证 D8 及跨分区隔离。
+
+### M3 · 标注协议、数据与假设
+
+主责 Claude，复核 Codex。合成案例可先行；正式评分前冻结数据。
+
+文件范围：annotation/、datasets/、docs/experiments/。
+
+验收：记录独立人工试标和分歧；覆盖四值及报告因果；为十类假设给出可证伪对照；P-6 单独评审。
+
+### M3 · 基线与评分
+
+主责 Codex，复核 Claude。依赖冻结的查询、数据切分与评分口径。
+
+文件范围：baselines/、eval/。
+
+验收：JSON、KG、规则三套基线用同一命令评分；输出混淆矩阵、未知误判及溯源完整率。
+
+### M4 · 可选模型适配
+
+主责 Codex，复核 Claude。依赖 M1 契约及 M3 基准。
+
+文件范围：adapters/、适配专属测试。
+
+验收：默认离线；非法候选返回校验错误；用冻结数据评估抽取质量。Claude 审核中文歧义样例。
+
+### M5 · 规模与可重复性
+
+主责 Codex，复核 Claude。依赖 M2 内核；先冻结测量方法。
+
+文件范围：benchmarks/。
+
+验收：记录硬件、数据规模、重复次数、时间和峰值内存；按实际完成规模报告，复核运行结果。
