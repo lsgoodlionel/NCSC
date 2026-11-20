@@ -5,82 +5,215 @@
   "description": "草案，待 #3 评审。体现 P-1（kind 枚举与角色类别）、P-2（ID 语法）、P-7（别名）。引用存在性、同一断言内来源 ID 唯一、日历有效性、分区与推导语义由 Python 内核检查。",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "concepts", "assertions"],
+  "required": [
+    "version",
+    "concepts",
+    "assertions"
+  ],
   "properties": {
-    "version": {"const": "0.2"},
-    "concepts": {"type": "array", "items": {"$ref": "#/$defs/concept"}},
-    "assertions": {"type": "array", "items": {"$ref": "#/$defs/assertion"}}
+    "version": {
+      "const": "0.2"
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/concept"
+      }
+    },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assertion"
+      }
+    }
   },
   "$defs": {
     "opaqueBody": {
       "description": "P-2：ID 前缀之后的不透明部分。内核不得解析、排序或比较其内部结构。",
       "type": "string",
-      "pattern": "^[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$"
+      "pattern": "^[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "$ref": "#/$defs/singleLine"
     },
-    "conceptId": {"type": "string", "pattern": "^c:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$"},
-    "relationId": {"type": "string", "pattern": "^r:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$"},
-    "assertionId": {"type": "string", "pattern": "^a:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$"},
-    "sourceId": {"type": "string", "pattern": "^src:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$"},
-    "contextId": {"type": "string", "pattern": "^ctx:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$"},
-    "trimmedText": {
-      "description": "非空且首尾无空白。",
+    "conceptId": {
       "type": "string",
-      "pattern": "^\\S(?:.*\\S)?$"
+      "pattern": "^c:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "relationId": {
+      "type": "string",
+      "pattern": "^r:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "assertionId": {
+      "type": "string",
+      "pattern": "^a:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "sourceId": {
+      "type": "string",
+      "pattern": "^src:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "contextId": {
+      "type": "string",
+      "pattern": "^ctx:[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?$",
+      "$ref": "#/$defs/singleLine"
+    },
+    "trimmedText": {
+      "description": "非空、单行、首尾无空白；内部空格允许。",
+      "type": "string",
+      "pattern": "^\\S(?:.*\\S)?$",
+      "$ref": "#/$defs/singleLine"
     },
     "kind": {
       "description": "P-1：本体类别（单值）。角色由断言的边表达，不由 kind 表达；十类不进入 IR。",
-      "enum": ["entity", "event", "state", "quality", "value", "relation"]
+      "enum": [
+        "entity",
+        "event",
+        "state",
+        "quality",
+        "value",
+        "relation"
+      ]
     },
     "concept": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "aliases", "kind"],
+      "required": [
+        "id",
+        "aliases",
+        "kind"
+      ],
       "properties": {
-        "id": {"anyOf": [{"$ref": "#/$defs/conceptId"}, {"$ref": "#/$defs/relationId"}]},
+        "id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/conceptId"
+            },
+            {
+              "$ref": "#/$defs/relationId"
+            }
+          ]
+        },
         "aliases": {
           "description": "P-7：概念内唯一、首尾无空白、至少一个含汉字；跨概念同名（多义）允许。",
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": {"$ref": "#/$defs/trimmedText"},
-          "contains": {"type": "string", "pattern": "[㐀-䶿一-鿿豈-﫿]"}
+          "items": {
+            "$ref": "#/$defs/trimmedText"
+          },
+          "contains": {
+            "type": "string",
+            "pattern": "[㐀-䶿一-鿿豈-﫿]"
+          }
         },
-        "kind": {"$ref": "#/$defs/kind"}
+        "kind": {
+          "$ref": "#/$defs/kind"
+        }
       },
-      "if": {"properties": {"id": {"pattern": "^r:"}}},
-      "then": {"properties": {"kind": {"const": "relation"}}},
-      "else": {"properties": {"kind": {"not": {"const": "relation"}}}}
+      "if": {
+        "properties": {
+          "id": {
+            "pattern": "^r:"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "const": "relation"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "kind": {
+            "not": {
+              "const": "relation"
+            }
+          }
+        }
+      }
     },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "description"],
+      "required": [
+        "id",
+        "description"
+      ],
       "properties": {
-        "id": {"$ref": "#/$defs/sourceId"},
-        "description": {"$ref": "#/$defs/trimmedText"}
+        "id": {
+          "$ref": "#/$defs/sourceId"
+        },
+        "description": {
+          "$ref": "#/$defs/trimmedText"
+        }
       }
     },
     "assertion": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "roles", "polarity", "sources", "context"],
+      "required": [
+        "id",
+        "roles",
+        "polarity",
+        "sources",
+        "context"
+      ],
       "properties": {
-        "id": {"$ref": "#/$defs/assertionId"},
+        "id": {
+          "$ref": "#/$defs/assertionId"
+        },
         "roles": {
           "description": "P-1：relation 位只能是 r: 关系类型；subject/object 只能是 c: 概念（0.2 不支持以关系为论元的元陈述）。",
           "type": "object",
           "additionalProperties": false,
-          "required": ["subject", "relation", "object"],
+          "required": [
+            "subject",
+            "relation",
+            "object"
+          ],
           "properties": {
-            "subject": {"$ref": "#/$defs/conceptId"},
-            "relation": {"$ref": "#/$defs/relationId"},
-            "object": {"$ref": "#/$defs/conceptId"}
+            "subject": {
+              "$ref": "#/$defs/conceptId"
+            },
+            "relation": {
+              "$ref": "#/$defs/relationId"
+            },
+            "object": {
+              "$ref": "#/$defs/conceptId"
+            }
           }
         },
-        "polarity": {"enum": ["positive", "negative"]},
-        "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
-        "context": {"$ref": "#/$defs/contextId"},
-        "valid_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}
+        "polarity": {
+          "enum": [
+            "positive",
+            "negative"
+          ]
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "context": {
+          "$ref": "#/$defs/contextId"
+        },
+        "valid_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "$ref": "#/$defs/singleLine"
+        }
+      }
+    },
+    "singleLine": {
+      "description": "单行：不得含任何换行类字符（与 Python str.splitlines 的行边界一致）。也用于堵住 Python 正则中 $ 可匹配末尾换行之前的差异。",
+      "not": {
+        "pattern": "[\n\r\u000b\f\u001c\u001d\u001e\u0085\u2028\u2029]"
       }
     }
   }

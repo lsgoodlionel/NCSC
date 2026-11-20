@@ -20,6 +20,10 @@
 | 日历有效性（如 `2026-02-30`） | 正则无法表达 |
 | 分区隔离、四值判定、规则推导、冲突抑制 | 运行时语义 |
 
+### 正则方言
+
+Schema 的 `pattern` 要在 ECMA-262 与 Python `re` 下给出相同结论。已知差异：Python 的 `$` 会匹配“末尾换行之前”，`.` 会匹配 U+2028 等行分隔符。为此，所有 ID、日期和 0.2 文本字段都额外引用 `$defs/singleLine`，禁止任何换行类字符（与 Python `str.splitlines` 的行边界一致）。新增带 `$` 或 `.` 的模式时，必须同时引用 `singleLine`，并补一个末尾换行的反例夹具。
+
 内核必须同时执行结构层的全部约束（不能假设调用方先跑过 Schema）。两层对同一夹具的期望由 `tests/contract/manifest.json` 的 `layer` 字段给出，`tests/contract/test_contract.py` 分别验证。
 
 ## 已知差异
