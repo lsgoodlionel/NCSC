@@ -56,6 +56,19 @@
 
 每项给出 JSON 路径、原值、建议值（如有）、备选值和原因。报告中 `rejected` 列出 B4 这类无法迁移、必须由数据负责人修正源数据的项。
 
+### 报告字段
+
+| 字段 | 含义 |
+|---|---|
+| `output_status` | `final`：无待确认项且候选通过 0.2 校验；否则为 `candidate` |
+| `automatic` | 已自动完成的变换 |
+| `needs_confirmation` | 待人工确认的项（本节所列） |
+| `id_changes` | ID 改写（B3、B5），每项含旧 ID、新 ID 与依据 |
+| `rejected` | B4 这类必须回到源数据修正的项 |
+| `unhandled_first_error` | 预览尚未覆盖的不兼容项：候选文档 0.2 校验的**首个**错误，且不属于任何待确认项。出现时 CLI 退出码为 2。B3、B5–B8 全部实现后，应改为完整的错误列表 |
+
+CLI 退出码：0 为 `final`；1 为 `candidate`，需要确认；2 为输入无效、存在 `rejected` 或 `unhandled_first_error`。
+
 ## 5. 验收
 
 - `tests/contract/migration/0.1-to-0.2/project_state.0.2.json` 通过 0.2 结构层 Schema（已由 `fixtures/0.2/valid/example-migrated.json` 覆盖，两者内容相同）。
