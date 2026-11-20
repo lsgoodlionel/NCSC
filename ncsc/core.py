@@ -35,6 +35,18 @@ def _nonempty_string(value: Any, where: str) -> str:
     return value
 
 
+def _validate_day(value: Any, where: str) -> None:
+    message = f"{where}: 仅支持 YYYY-MM-DD 单日"
+    if not isinstance(value, str):
+        raise IRValidationError(message)
+    try:
+        day = _dt.date.fromisoformat(value)
+    except ValueError as exc:
+        raise IRValidationError(message) from exc
+    if day.isoformat() != value:
+        raise IRValidationError(message)
+
+
 def validate_document(doc: Any) -> Dict[str, Any]:
     if not isinstance(doc, dict):
         raise IRValidationError("根节点必须是对象")
@@ -92,11 +104,7 @@ def validate_document(doc: Any) -> Dict[str, Any]:
             _nonempty_string(source["id"], f"{sw}.id")
             _nonempty_string(source["description"], f"{sw}.description")
         if "valid_at" in assertion:
-            value = _nonempty_string(assertion["valid_at"], f"{where}.valid_at")
-            try:
-                _dt.datetime.strptime(value, "%Y-%m-%d")
-            except ValueError as exc:
-                raise IRValidationError(f"{where}.valid_at: 仅支持 YYYY-MM-DD 单日") from exc
+            _validate_day(assertion["valid_at"], f"{where}.valid_at")
     return doc
 
 
@@ -130,10 +138,7 @@ class KnowledgeBase:
         for value, name in [(subject, "subject"), (relation, "relation"), (object_, "object"), (context, "context")]:
             _nonempty_string(value, name)
         if valid_at is not None:
-            try:
-                _dt.datetime.strptime(valid_at, "%Y-%m-%d")
-            except ValueError as exc:
-                raise IRValidationError("查询 valid_at 仅支持 YYYY-MM-DD") from exc
+            _validate_day(valid_at, "查询 valid_at")
         matches = []
         target_roles = {"subject": subject, "relation": relation, "object": object_}
         for a in self.assertions:
