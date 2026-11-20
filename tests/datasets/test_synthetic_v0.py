@@ -1,9 +1,7 @@
 """datasets/synthetic-v0 的一致性与可执行性检查。
 
 每个条目的 IR 文档 = registry 的全部概念 + 条目自己的断言（version 0.2）。
-期望答案按 IR 0.2 / P-3 方案 A 书写。0.2 的查询要等 #5 实现，在此之前：
-把文档降为 0.1（只改 version）交给现行内核执行，逐条核对。
-两种语义不同的查询（D1）在条目里给出 ir01 期望，用它核对现行行为。
+以 IR 0.2 内核验证状态、有序证据和被抑制推导；单独核对显式标记的 0.1 行为差异。
 """
 
 import copy
@@ -92,6 +90,9 @@ class ConsistencyTests(unittest.TestCase):
                     for group in groups:
                         for aid in group:
                             self.assertIn(aid, by_id)
+                            assertion = by_id[aid]
+                            self.assertEqual(assertion["context"], q["query"]["context"])
+                            self.assertEqual(assertion.get("valid_at"), q["query"]["valid_at"])
                     if expect["status"] == "未知":
                         self.assertEqual(expect["evidence"], [])
                     # P-4 §5：原始断言按 ID 升序在前，推导证据（d: ID）在后
@@ -130,22 +131,28 @@ class StructuralTests(unittest.TestCase):
 
 
 class ExecutableTests(unittest.TestCase):
-    def test_expected_answers_against_current_kernel(self) -> None:
+    def test_expected_answers_against_ir02_kernel(self) -> None:
         for item in ITEMS:
-            kb = KnowledgeBase(document(item, "0.1"))
+            kb = KnowledgeBase(document(item))
             for q in item["queries"]:
                 with self.subTest(item=item["id"], query=q["id"]):
                     s = q["query"]
                     result = kb.query(s["subject"], s["relation"], s["object"], s["context"], s["valid_at"])
-                    if "ir01" in q:
+                    expected = q["expect"]
+                    self.assertEqual(result["status"], expected["status"])
+                    self.assertEqual(summarize(result["evidence"]), expected["evidence"])
+                    self.assertEqual([entry["premises"] for entry in result["suppressed"]], expected["suppressed"])
+
+    def test_explicit_ir01_compatibility_cases(self) -> None:
+        for item in ITEMS:
+            for q in item["queries"]:
+                if "ir01" in q:
+                    with self.subTest(item=item["id"], query=q["id"]):
+                        kb = KnowledgeBase(document(item, "0.1"))
+                        s = q["query"]
+                        result = kb.query(s["subject"], s["relation"], s["object"], s["context"], s["valid_at"])
                         self.assertEqual(result["status"], q["ir01"]["status"])
                         self.assertNotEqual(q["ir01"]["status"], q["expect"]["status"])
-                        continue
-                    self.assertEqual(result["status"], q["expect"]["status"])
-                    # 0.1 按文档顺序输出，0.2 按 ID 排序（P-4 §5），所以这里按集合比较
-                    key = lambda e: json.dumps(e, sort_keys=True, ensure_ascii=False)  # noqa: E731
-                    self.assertEqual(sorted(map(key, summarize(result["evidence"]))), sorted(map(key, q["expect"]["evidence"])))
-                    self.assertEqual(q["expect"]["suppressed"], [], "只有 D1 类查询会有被抑制推导")
 
 
 if __name__ == "__main__":
