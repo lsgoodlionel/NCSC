@@ -3,11 +3,12 @@
 import argparse
 import json
 import sys
+from typing import Optional, Sequence
 
 from .core import IRValidationError, KnowledgeBase
 
 
-def main(argv=None) -> int:
+def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="NCSC 确定性语义内核")
     commands = parser.add_subparsers(dest="command", required=True)
     validate = commands.add_parser("validate", help="校验 JSON IR")
@@ -25,9 +26,10 @@ def main(argv=None) -> int:
         if args.command == "validate":
             print(json.dumps({"valid": True, "version": kb.doc["version"]}, ensure_ascii=False))
         else:
-            print(json.dumps(kb.query(args.subject, args.relation, args.object_, args.context, args.valid_at), ensure_ascii=False, indent=2))
+            result = kb.query(args.subject, args.relation, args.object_, args.context, args.valid_at)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
-    except (IRValidationError, OSError, json.JSONDecodeError) as exc:
+    except (IRValidationError, OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
         print(json.dumps({"valid": False, "error": str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 2
 

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ncsc-prototype"
+version = "0.1.0"
+description = "NCSC 确定性中文语义内核"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+ncsc = "ncsc.cli:main"
+
+[project.optional-dependencies]
+dev = ["ruff>=0.9,<1", "mypy>=1.14,<1.19", "coverage[toml]>=7.6,<8"]
+
+[tool.setuptools.packages.find]
+include = ["ncsc", "ncsc.*"]
+
+[tool.ruff]
+target-version = "py39"
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+files = ["ncsc"]
+
+[tool.coverage.run]
+branch = true
+source = ["ncsc"]
+
+[tool.coverage.report]
+show_missing = true

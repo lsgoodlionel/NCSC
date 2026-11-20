@@ -6,7 +6,9 @@ import datetime as _dt
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+from .rules import derive_initial_assertions
 
 
 class IRValidationError(ValueError):
@@ -20,7 +22,7 @@ ROLE_KEYS = {"subject", "relation", "object"}
 SOURCE_KEYS = {"id", "description"}
 
 
-def _exact_keys(value: Dict[str, Any], allowed: set, where: str, required: set) -> None:
+def _exact_keys(value: Dict[str, Any], allowed: set[str], where: str, required: set[str]) -> None:
     unknown = set(value) - allowed
     missing = required - set(value)
     if unknown or missing:
@@ -107,43 +109,22 @@ class Evidence:
     premises: Tuple[str, ...] = ()
 
     def as_dict(self) -> Dict[str, Any]:
-        result = {"assertion_id": self.assertion_id, "polarity": self.polarity, "sources": self.sources}
+        result: Dict[str, Any] = {"assertion_id": self.assertion_id, "polarity": self.polarity, "sources": self.sources}
         if self.derived_by:
             result.update({"derived_by": self.derived_by, "premises": list(self.premises)})
         return result
 
 
 class KnowledgeBase:
-    def __init__(self, doc: Dict[str, Any]):
+    def __init__(self, doc: Dict[str, Any]) -> None:
         self.doc = validate_document(doc)
         self.assertions = list(doc["assertions"])
-        self._apply_whitelist_rules()
+        self.assertions.extend(derive_initial_assertions(self.doc["assertions"]))
 
     @classmethod
     def from_path(cls, path: str) -> "KnowledgeBase":
         with Path(path).open(encoding="utf-8") as handle:
             return cls(json.load(handle))
-
-    @staticmethod
-    def _scope(a: Dict[str, Any]) -> Tuple[str, Optional[str]]:
-        return a["context"], a.get("valid_at")
-
-    def _apply_whitelist_rules(self) -> None:
-        needs = [a for a in self.assertions if a["polarity"] == "positive" and a["roles"]["relation"] == "r:task:requires"]
-        unavailable = [a for a in self.assertions if a["polarity"] == "positive" and a["roles"] == {"subject": a["roles"]["subject"], "relation": "r:resource:unavailable", "object": "c:value:true"}]
-        derived = []
-        for need in needs:
-            resource = need["roles"]["object"]
-            for lack in unavailable:
-                if lack["roles"]["subject"] == resource and self._scope(need) == self._scope(lack):
-                    derived.append({
-                        "id": f"derived:{need['id']}+{lack['id']}",
-                        "roles": {"subject": need["roles"]["subject"], "relation": "r:status:blocked", "object": "c:value:true"},
-                        "polarity": "positive", "sources": need["sources"] + lack["sources"],
-                        "context": need["context"], **({"valid_at": need["valid_at"]} if "valid_at" in need else {}),
-                        "_derived_by": "resource_unavailable_blocks_task", "_premises": (need["id"], lack["id"]),
-                    })
-        self.assertions.extend(derived)
 
     def query(self, subject: str, relation: str, object_: str, context: str, valid_at: Optional[str] = None) -> Dict[str, Any]:
         for value, name in [(subject, "subject"), (relation, "relation"), (object_, "object"), (context, "context")]:
