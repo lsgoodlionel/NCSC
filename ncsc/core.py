@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -47,12 +48,56 @@ def _validate_day(value: Any, where: str) -> None:
         raise IRValidationError(message)
 
 
+_ID_BODY = re.compile(r"[0-9a-z](?:[0-9a-z._:-]{0,126}[0-9a-z])?")
+_HAN = re.compile("[㐀-䶿一-鿿豈-﫿]")
+
+
+def _check_id(value: str, prefix: str, where: str) -> None:
+    namespace, _, body = value.partition(":")
+    if namespace != prefix or not _ID_BODY.fullmatch(body):
+        raise IRValidationError(f"{where}: 非法 {prefix}: 标识符")
+
+
+def _check_text(value: str, where: str) -> None:
+    if value.strip() != value or "\n" in value:
+        raise IRValidationError(f"{where}: 文本须单行且首尾无空白")
+
+
+def _validate_v02(doc: Dict[str, Any]) -> None:
+    """公共结构和引用已经通过检查；这里只检查 0.2 增量约束。"""
+    for i, concept in enumerate(doc["concepts"]):
+        where = f"concepts[{i}]"
+        kind = concept["kind"]
+        if kind not in ("entity", "event", "state", "quality", "value", "relation"):
+            raise IRValidationError(f"{where}.kind: 未声明的类别")
+        _check_id(concept["id"], "r" if kind == "relation" else "c", f"{where}.id")
+        aliases = concept["aliases"]
+        for alias in aliases:
+            _check_text(alias, f"{where}.aliases")
+        if len(set(aliases)) != len(aliases) or not any(_HAN.search(s) for s in aliases):
+            raise IRValidationError(f"{where}.aliases: 须概念内唯一且至少有一个含汉字")
+    for i, fact in enumerate(doc["assertions"]):
+        where = f"assertions[{i}]"
+        _check_id(fact["id"], "a", f"{where}.id")
+        _check_id(fact["context"], "ctx", f"{where}.context")
+        for role, cid in fact["roles"].items():
+            _check_id(cid, "r" if role == "relation" else "c", f"{where}.roles.{role}")
+        seen = set()
+        for j, source in enumerate(fact["sources"]):
+            sw = f"{where}.sources[{j}]"
+            _check_id(source["id"], "src", f"{sw}.id")
+            _check_text(source["description"], f"{sw}.description")
+            if source["id"] in seen:
+                raise IRValidationError(f"{sw}.id: 同一断言内来源 ID 重复")
+            seen.add(source["id"])
+
+
 def validate_document(doc: Any) -> Dict[str, Any]:
     if not isinstance(doc, dict):
         raise IRValidationError("根节点必须是对象")
     _exact_keys(doc, ROOT_KEYS, "根节点", ROOT_KEYS)
-    if doc["version"] != "0.1":
-        raise IRValidationError("仅支持 IR version 0.1")
+    if doc["version"] not in ("0.1", "0.2"):
+        raise IRValidationError("仅支持 IR version 0.1 / 0.2")
     if not isinstance(doc["concepts"], list) or not isinstance(doc["assertions"], list):
         raise IRValidationError("concepts 与 assertions 必须是数组")
 
@@ -90,7 +135,7 @@ def validate_document(doc: Any) -> Dict[str, Any]:
             _nonempty_string(cid, f"{where}.roles.{role}")
             if cid not in concept_ids:
                 raise IRValidationError(f"{where}.roles.{role}: 未声明概念 {cid}")
-        if assertion["polarity"] not in {"positive", "negative"}:
+        if assertion["polarity"] not in ("positive", "negative"):
             raise IRValidationError(f"{where}.polarity: 仅支持 positive/negative")
         _nonempty_string(assertion["context"], f"{where}.context")
         sources = assertion["sources"]
@@ -105,6 +150,8 @@ def validate_document(doc: Any) -> Dict[str, Any]:
             _nonempty_string(source["description"], f"{sw}.description")
         if "valid_at" in assertion:
             _validate_day(assertion["valid_at"], f"{where}.valid_at")
+    if doc["version"] == "0.2":
+        _validate_v02(doc)
     return doc
 
 
@@ -126,6 +173,8 @@ class Evidence:
 class KnowledgeBase:
     def __init__(self, doc: Dict[str, Any]) -> None:
         self.doc = validate_document(doc)
+        if self.doc["version"] != "0.1":
+            raise IRValidationError("IR 0.2 已支持校验，查询和推导等待 #5 实现")
         self.assertions = list(doc["assertions"])
         self.assertions.extend(derive_initial_assertions(self.doc["assertions"]))
 
