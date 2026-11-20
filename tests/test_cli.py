@@ -3,7 +3,11 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
 from pathlib import Path
+
+from ncsc.cli import main
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +24,13 @@ def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+def call_main(*args: str) -> subprocess.CompletedProcess[str]:
+    stdout, stderr = StringIO(), StringIO()
+    with redirect_stdout(stdout), redirect_stderr(stderr):
+        code = main(args)
+    return subprocess.CompletedProcess(args, code, stdout.getvalue(), stderr.getvalue())
+
+
 class CLITests(unittest.TestCase):
     def test_validate_example(self) -> None:
         result = run_cli("validate", EXAMPLE)
@@ -28,7 +39,7 @@ class CLITests(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout), {"valid": True, "version": "0.1"})
 
     def test_query_explains_derived_result(self) -> None:
-        result = run_cli(
+        result = call_main(
             "query", EXAMPLE,
             "--subject", "c:task:release",
             "--relation", "r:status:blocked",
@@ -47,9 +58,17 @@ class CLITests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "invalid.json"
             path.write_bytes(b"\xff")
-            result = run_cli("validate", str(path))
+            result = call_main("validate", str(path))
         self.assertEqual(result.returncode, 2)
         self.assertEqual(result.stdout, "")
         error = json.loads(result.stderr)
         self.assertIs(error["valid"], False)
         self.assertIn("utf-8", error["error"].lower())
+
+    def test_cli_date_typo_is_a_validation_error(self) -> None:
+        result = run_cli("query", EXAMPLE, "--subject", "c:task:release",
+                         "--relation", "r:status:blocked", "--object", "c:value:true",
+                         "--context", "ctx:project-alpha", "--valid-at", "2026-1-5")
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, "")
+        self.assertIn("valid_at", json.loads(result.stderr)["error"])

@@ -2,6 +2,7 @@
 
 import json
 import unittest
+from unittest.mock import patch
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Optional
@@ -30,9 +31,8 @@ class InitialRuleTests(unittest.TestCase):
     def test_each_positive_premise_is_required(self) -> None:
         for fact in [self.need, self.lack]:
             with self.subTest(fact=fact["id"]):
-                fact["polarity"] = "negative"
-                self.assertEqual(self.query()["evidence"], [])
-                fact["polarity"] = "positive"
+                with patch.dict(fact, polarity="negative"):
+                    self.assertEqual(self.query()["evidence"], [])
 
     def test_report_and_need_alone_do_not_prove_resource_unavailable(self) -> None:
         self.doc["assertions"] = [self.need, self.report]
