@@ -1,0 +1,109 @@
+{
+  "version": "0.2",
+  "concepts": [
+    {
+      "id": "c:task:release",
+      "aliases": [
+        "发布任务",
+        "版本发布"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "c:resource:signing-key",
+      "aliases": [
+        "签名密钥"
+      ],
+      "kind": "entity"
+    },
+    {
+      "id": "c:value:true",
+      "aliases": [
+        "真",
+        "是"
+      ],
+      "kind": "value"
+    },
+    {
+      "id": "r:task:requires",
+      "aliases": [
+        "需要资源"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:resource:unavailable",
+      "aliases": [
+        "不可用"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:status:blocked",
+      "aliases": [
+        "阻塞"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:claim:reported-cause",
+      "aliases": [
+        "报告原因为"
+      ],
+      "kind": "relation"
+    }
+  ],
+  "assertions": [
+    {
+      "id": "a:release-requires-key",
+      "roles": {
+        "subject": "c:task:release",
+        "relation": "r:task:requires",
+        "object": "c:resource:signing-key"
+      },
+      "polarity": "positive",
+      "sources": [
+        {
+          "id": "src:build-config",
+          "description": "合成案例：构建配置声明发布需要签名密钥"
+        }
+      ],
+      "context": "ctx:project-alpha",
+      "valid_at": "2026-11-19"
+    },
+    {
+      "id": "a:key-unavailable",
+      "roles": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true"
+      },
+      "polarity": "positive",
+      "sources": [
+        {
+          "id": "src:resource-register",
+          "description": "合成案例：资源登记表记录密钥不可用"
+        }
+      ],
+      "context": "ctx:project-alpha",
+      "valid_at": "2026-11-19"
+    },
+    {
+      "id": "a:team-reports-cause",
+      "roles": {
+        "subject": "c:task:release",
+        "relation": "r:claim:reported-cause",
+        "object": "c:resource:signing-key"
+      },
+      "polarity": "positive",
+      "sources": [
+        {
+          "id": "src:standup-note",
+          "description": "合成案例：站会记录中的因果报告，未验证"
+        }
+      ],
+      "context": "ctx:project-alpha",
+      "valid_at": "2026-11-19"
+    }
+  ]
+}

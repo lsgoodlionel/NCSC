@@ -1,0 +1,250 @@
+{
+  "id": "d1-control-no-conflict",
+  "decision": "P-3/P-5",
+  "description": "对照：两个前提均为“支持”。同时示范 P-5 溯源、P-2 推导 ID 与未知原因。",
+  "document": {
+    "version": "0.1",
+    "concepts": [
+      {
+        "id": "c:task:release",
+        "aliases": [
+          "发布任务",
+          "版本发布"
+        ],
+        "kind": "任务"
+      },
+      {
+        "id": "c:resource:signing-key",
+        "aliases": [
+          "签名密钥"
+        ],
+        "kind": "资源"
+      },
+      {
+        "id": "c:value:true",
+        "aliases": [
+          "真",
+          "是"
+        ],
+        "kind": "值"
+      },
+      {
+        "id": "r:task:requires",
+        "aliases": [
+          "需要资源"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:resource:unavailable",
+        "aliases": [
+          "不可用"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:status:blocked",
+        "aliases": [
+          "阻塞"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:claim:reported-cause",
+        "aliases": [
+          "报告原因为"
+        ],
+        "kind": "关系"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "a:release-requires-key",
+        "roles": {
+          "subject": "c:task:release",
+          "relation": "r:task:requires",
+          "object": "c:resource:signing-key"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:build-config",
+            "description": "合成案例：构建配置声明发布需要签名密钥"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      {
+        "id": "a:key-unavailable",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:resource-register",
+            "description": "合成案例：资源登记表记录密钥不可用"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      }
+    ]
+  },
+  "queries": [
+    {
+      "name": "blocked",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "ir-0.1-current": {
+          "kernel": "enforced",
+          "status": "支持",
+          "evidence": [
+            {
+              "assertion_id": "derived:a:release-requires-key+a:key-unavailable",
+              "polarity": "positive",
+              "derived_by": "resource_unavailable_blocks_task",
+              "premises": [
+                "a:release-requires-key",
+                "a:key-unavailable"
+              ]
+            }
+          ]
+        },
+        "p3-option-a": {
+          "kernel": "unimplemented:#5",
+          "result": {
+            "status": "支持",
+            "status_code": "supported",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [
+              {
+                "assertion_id": "d:resource_unavailable_blocks_task:5a615ab2e519cfda4d4afc87ad93796b",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:build-config",
+                    "description": "合成案例：构建配置声明发布需要签名密钥"
+                  },
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表记录密钥不可用"
+                  }
+                ],
+                "derived_by": "resource_unavailable_blocks_task",
+                "premises": [
+                  "a:release-requires-key",
+                  "a:key-unavailable"
+                ],
+                "trace": [
+                  {
+                    "assertion_id": "a:release-requires-key",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:build-config",
+                        "description": "合成案例：构建配置声明发布需要签名密钥"
+                      }
+                    ]
+                  },
+                  {
+                    "assertion_id": "a:key-unavailable",
+                    "polarity": "positive",
+                    "sources": [
+                      {
+                        "id": "src:resource-register",
+                        "description": "合成案例：资源登记表记录密钥不可用"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "suppressed": []
+          }
+        },
+        "p3-option-b": {
+          "kernel": "rejected",
+          "status": "支持"
+        }
+      }
+    },
+    {
+      "name": "other-date",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-20"
+      },
+      "expect": {
+        "ir-0.1-current": {
+          "kernel": "enforced",
+          "status": "未知",
+          "evidence": []
+        },
+        "p3-option-a": {
+          "kernel": "unimplemented:#5",
+          "result": {
+            "status": "未知",
+            "status_code": "undetermined",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-20"
+            },
+            "evidence": [],
+            "suppressed": [],
+            "reason": "no_evidence",
+            "other_partitions": [
+              {
+                "context": "ctx:project-alpha",
+                "valid_at": "2026-11-19"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "undeclared-id-d4",
+      "query": {
+        "subject": "c:task:relase",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "ir-0.1-current": {
+          "kernel": "enforced",
+          "status": "未知",
+          "evidence": []
+        },
+        "p5-d4": {
+          "kernel": "unimplemented:#4",
+          "error": "undeclared_concept",
+          "note": "0.2 起拼写错误的 ID 报错，而不是返回未知"
+        }
+      }
+    }
+  ]
+}

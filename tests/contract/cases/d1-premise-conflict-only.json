@@ -1,0 +1,245 @@
+{
+  "id": "d1-premise-conflict-only",
+  "decision": "P-3/P-5",
+  "description": "D1：资源不可用前提本身在同分区为“冲突”，且没有关于阻塞的直接证据。",
+  "document": {
+    "version": "0.1",
+    "concepts": [
+      {
+        "id": "c:task:release",
+        "aliases": [
+          "发布任务",
+          "版本发布"
+        ],
+        "kind": "任务"
+      },
+      {
+        "id": "c:resource:signing-key",
+        "aliases": [
+          "签名密钥"
+        ],
+        "kind": "资源"
+      },
+      {
+        "id": "c:value:true",
+        "aliases": [
+          "真",
+          "是"
+        ],
+        "kind": "值"
+      },
+      {
+        "id": "r:task:requires",
+        "aliases": [
+          "需要资源"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:resource:unavailable",
+        "aliases": [
+          "不可用"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:status:blocked",
+        "aliases": [
+          "阻塞"
+        ],
+        "kind": "关系"
+      },
+      {
+        "id": "r:claim:reported-cause",
+        "aliases": [
+          "报告原因为"
+        ],
+        "kind": "关系"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "a:release-requires-key",
+        "roles": {
+          "subject": "c:task:release",
+          "relation": "r:task:requires",
+          "object": "c:resource:signing-key"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:build-config",
+            "description": "合成案例：构建配置声明发布需要签名密钥"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      {
+        "id": "a:key-unavailable",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "positive",
+        "sources": [
+          {
+            "id": "src:resource-register",
+            "description": "合成案例：资源登记表记录密钥不可用"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      {
+        "id": "a:key-available",
+        "roles": {
+          "subject": "c:resource:signing-key",
+          "relation": "r:resource:unavailable",
+          "object": "c:value:true"
+        },
+        "polarity": "negative",
+        "sources": [
+          {
+            "id": "src:ops-ticket",
+            "description": "合成案例：运维工单称密钥可用"
+          }
+        ],
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      }
+    ]
+  },
+  "queries": [
+    {
+      "name": "blocked",
+      "query": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "ir-0.1-current": {
+          "kernel": "enforced",
+          "status": "支持",
+          "evidence": [
+            {
+              "assertion_id": "derived:a:release-requires-key+a:key-unavailable",
+              "polarity": "positive",
+              "derived_by": "resource_unavailable_blocks_task",
+              "premises": [
+                "a:release-requires-key",
+                "a:key-unavailable"
+              ]
+            }
+          ]
+        },
+        "p3-option-a": {
+          "kernel": "unimplemented:#5",
+          "result": {
+            "status": "未知",
+            "status_code": "undetermined",
+            "query": {
+              "subject": "c:task:release",
+              "relation": "r:status:blocked",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [],
+            "suppressed": [
+              {
+                "rule_id": "resource_unavailable_blocks_task",
+                "premises": [
+                  "a:release-requires-key",
+                  "a:key-unavailable"
+                ],
+                "reason": "premise_conflict",
+                "contested_premises": [
+                  {
+                    "assertion_id": "a:key-unavailable",
+                    "opposing": [
+                      "a:key-available"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "reason": "premise_conflict"
+          }
+        },
+        "p3-option-b": {
+          "kernel": "rejected",
+          "status": "冲突",
+          "note": "把“证据对前提有分歧”误报为“证据对结论有分歧”：并无任何来源说发布未阻塞"
+        }
+      }
+    },
+    {
+      "name": "premise-itself",
+      "query": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true",
+        "context": "ctx:project-alpha",
+        "valid_at": "2026-11-19"
+      },
+      "expect": {
+        "ir-0.1-current": {
+          "kernel": "enforced",
+          "status": "冲突",
+          "evidence": [
+            {
+              "assertion_id": "a:key-unavailable",
+              "polarity": "positive"
+            },
+            {
+              "assertion_id": "a:key-available",
+              "polarity": "negative"
+            }
+          ]
+        },
+        "p3-option-a": {
+          "kernel": "unimplemented:#5",
+          "result": {
+            "status": "冲突",
+            "status_code": "both",
+            "query": {
+              "subject": "c:resource:signing-key",
+              "relation": "r:resource:unavailable",
+              "object": "c:value:true",
+              "context": "ctx:project-alpha",
+              "valid_at": "2026-11-19"
+            },
+            "evidence": [
+              {
+                "assertion_id": "a:key-unavailable",
+                "polarity": "positive",
+                "sources": [
+                  {
+                    "id": "src:resource-register",
+                    "description": "合成案例：资源登记表记录密钥不可用"
+                  }
+                ]
+              },
+              {
+                "assertion_id": "a:key-available",
+                "polarity": "negative",
+                "sources": [
+                  {
+                    "id": "src:ops-ticket",
+                    "description": "合成案例：运维工单称密钥可用"
+                  }
+                ]
+              }
+            ],
+            "suppressed": []
+          }
+        }
+      }
+    }
+  ]
+}

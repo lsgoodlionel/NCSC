@@ -1,0 +1,41 @@
+{
+  "from": "0.1",
+  "to": "0.2",
+  "source": "examples/project_state.json",
+  "output_status": "candidate",
+  "automatic": [
+    {
+      "path": "version",
+      "from": "0.1",
+      "to": "0.2"
+    },
+    {
+      "path": "concepts[1].kind",
+      "from": "资源",
+      "to": "entity"
+    },
+    {
+      "path": "concepts[2].kind",
+      "from": "值",
+      "to": "value"
+    },
+    {
+      "path": "concepts[3..6].kind",
+      "from": "关系",
+      "to": "relation"
+    }
+  ],
+  "needs_confirmation": [
+    {
+      "path": "concepts[0].kind",
+      "from": "任务",
+      "proposed": "event",
+      "alternatives": [
+        "entity"
+      ],
+      "why": "“任务”既可视为计划中的活动（event），也可视为被管理的工作项（entity）；影响后续规则的 domain 约束"
+    }
+  ],
+  "id_changes": [],
+  "rejected": []
+}
