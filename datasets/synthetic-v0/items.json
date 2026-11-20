@@ -1470,6 +1470,603 @@
         }
       ],
       "notes": "无日期只与无日期匹配，不得补成文档日期以外的任何日期。"
+    },
+    {
+      "id": "syn-v0-020",
+      "family": "F5-conflict",
+      "text": "11月19日，Alpha 项目看板显示数据迁移已完成，运维工单却记录数据迁移尚未完成。",
+      "assertions": [
+        {
+          "id": "a:s020-board-done",
+          "roles": {
+            "subject": "c:task:migration",
+            "relation": "r:status:completed",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:pm-board",
+              "description": "合成：项目看板"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        },
+        {
+          "id": "a:s020-ticket-not-done",
+          "roles": {
+            "subject": "c:task:migration",
+            "relation": "r:status:completed",
+            "object": "c:value:true"
+          },
+          "polarity": "negative",
+          "sources": [
+            {
+              "id": "src:ops-ticket",
+              "description": "合成：运维工单"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        }
+      ],
+      "not_annotated": [],
+      "queries": [
+        {
+          "id": "q1",
+          "query": {
+            "subject": "c:task:migration",
+            "relation": "r:status:completed",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "冲突",
+            "evidence": [
+              {
+                "assertion_id": "a:s020-board-done"
+              },
+              {
+                "assertion_id": "a:s020-ticket-not-done"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "conflict-direct"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "syn-v0-021",
+      "family": "F5-conflict",
+      "text": "11月19日，Alpha 项目看板和站会记录都说发布阻塞，发布经理邮件说发布没有阻塞。",
+      "assertions": [
+        {
+          "id": "a:s021-board-blocked",
+          "roles": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:pm-board",
+              "description": "合成：项目看板"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        },
+        {
+          "id": "a:s021-standup-blocked",
+          "roles": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:standup",
+              "description": "合成：站会记录"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        },
+        {
+          "id": "a:s021-mail-not-blocked",
+          "roles": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true"
+          },
+          "polarity": "negative",
+          "sources": [
+            {
+              "id": "src:release-mail",
+              "description": "合成：发布经理邮件"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        }
+      ],
+      "not_annotated": [],
+      "queries": [
+        {
+          "id": "q1",
+          "query": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "冲突",
+            "evidence": [
+              {
+                "assertion_id": "a:s021-board-blocked"
+              },
+              {
+                "assertion_id": "a:s021-mail-not-blocked"
+              },
+              {
+                "assertion_id": "a:s021-standup-blocked"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "conflict-direct",
+            "no-majority-vote"
+          ]
+        }
+      ],
+      "notes": "两条正向对一条反向仍是冲突：四值判定不按来源数量投票。"
+    },
+    {
+      "id": "syn-v0-022",
+      "family": "F5-conflict",
+      "text": "11月19日，Alpha 项目的资源登记表记录签名密钥不可用，运维工单称其可用；Beta 项目的资源登记表记录签名密钥不可用。",
+      "assertions": [
+        {
+          "id": "a:s022-alpha-unavail",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:resource-register",
+              "description": "合成：资源登记表"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        },
+        {
+          "id": "a:s022-alpha-available",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "negative",
+          "sources": [
+            {
+              "id": "src:ops-ticket",
+              "description": "合成：运维工单"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        },
+        {
+          "id": "a:s022-beta-unavail",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:resource-register",
+              "description": "合成：资源登记表"
+            }
+          ],
+          "context": "ctx:project-beta",
+          "valid_at": "2026-11-19"
+        }
+      ],
+      "not_annotated": [],
+      "queries": [
+        {
+          "id": "q1",
+          "query": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "冲突",
+            "evidence": [
+              {
+                "assertion_id": "a:s022-alpha-available"
+              },
+              {
+                "assertion_id": "a:s022-alpha-unavail"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "conflict-direct"
+          ]
+        },
+        {
+          "id": "q2",
+          "query": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true",
+            "context": "ctx:project-beta",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "支持",
+            "evidence": [
+              {
+                "assertion_id": "a:s022-beta-unavail"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "context-no-conflict"
+          ]
+        }
+      ],
+      "notes": "Alpha 的冲突不影响 Beta。"
+    },
+    {
+      "id": "syn-v0-023",
+      "family": "F8-undated",
+      "text": "运维工单称签名密钥可用（未注明日期）。",
+      "assertions": [
+        {
+          "id": "a:s023-available",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "negative",
+          "sources": [
+            {
+              "id": "src:ops-ticket",
+              "description": "合成：运维工单"
+            }
+          ],
+          "context": "ctx:project-alpha"
+        }
+      ],
+      "not_annotated": [],
+      "queries": [
+        {
+          "id": "q1",
+          "query": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": null
+          },
+          "expect": {
+            "status": "反对",
+            "evidence": [
+              {
+                "assertion_id": "a:s023-available"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "undated-partition",
+            "explicit-negation"
+          ]
+        },
+        {
+          "id": "q2",
+          "query": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "未知",
+            "evidence": [],
+            "suppressed": []
+          },
+          "phenomena": [
+            "undated-partition"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "syn-v0-024",
+      "family": "F8-undated",
+      "text": "Alpha 项目构建配置声明发布需要签名密钥（未注明日期）；11月19日资源登记表记录签名密钥不可用。",
+      "assertions": [
+        {
+          "id": "a:s024-needs-key",
+          "roles": {
+            "subject": "c:task:release",
+            "relation": "r:task:requires",
+            "object": "c:resource:signing-key"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:build-config",
+              "description": "合成：构建配置"
+            }
+          ],
+          "context": "ctx:project-alpha"
+        },
+        {
+          "id": "a:s024-key-unavail",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:resource-register",
+              "description": "合成：资源登记表"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        }
+      ],
+      "not_annotated": [],
+      "queries": [
+        {
+          "id": "q1",
+          "query": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": null
+          },
+          "expect": {
+            "status": "未知",
+            "evidence": [],
+            "suppressed": []
+          },
+          "phenomena": [
+            "undated-partition",
+            "time-partition"
+          ]
+        },
+        {
+          "id": "q2",
+          "query": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "未知",
+            "evidence": [],
+            "suppressed": []
+          },
+          "phenomena": [
+            "undated-partition",
+            "time-partition"
+          ]
+        }
+      ],
+      "notes": "无日期与有日期是不同分区，规则不跨分区触发；不得把无日期的配置当作“一直有效”。"
+    },
+    {
+      "id": "syn-v0-025",
+      "family": "F8-undated",
+      "text": "资源登记表记录签名密钥不可用，运维工单称签名密钥可用（均未注明日期）。",
+      "assertions": [
+        {
+          "id": "a:s025-unavail",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:resource-register",
+              "description": "合成：资源登记表"
+            }
+          ],
+          "context": "ctx:project-alpha"
+        },
+        {
+          "id": "a:s025-available",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "negative",
+          "sources": [
+            {
+              "id": "src:ops-ticket",
+              "description": "合成：运维工单"
+            }
+          ],
+          "context": "ctx:project-alpha"
+        }
+      ],
+      "not_annotated": [],
+      "queries": [
+        {
+          "id": "q1",
+          "query": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": null
+          },
+          "expect": {
+            "status": "冲突",
+            "evidence": [
+              {
+                "assertion_id": "a:s025-available"
+              },
+              {
+                "assertion_id": "a:s025-unavail"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "undated-partition",
+            "conflict-direct"
+          ]
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "syn-v0-026",
+      "family": "F4-reported-cause",
+      "text": "11月19日站会记录：发布受阻，原因是签名密钥；同日资源登记表记录签名密钥不可用。",
+      "assertions": [
+        {
+          "id": "a:s026-blocked",
+          "roles": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:standup",
+              "description": "合成：站会记录"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        },
+        {
+          "id": "a:s026-cause",
+          "roles": {
+            "subject": "c:task:release",
+            "relation": "r:claim:reported-cause",
+            "object": "c:resource:signing-key"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:standup",
+              "description": "合成：站会记录"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        },
+        {
+          "id": "a:s026-key-unavail",
+          "roles": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true"
+          },
+          "polarity": "positive",
+          "sources": [
+            {
+              "id": "src:resource-register",
+              "description": "合成：资源登记表"
+            }
+          ],
+          "context": "ctx:project-alpha",
+          "valid_at": "2026-11-19"
+        }
+      ],
+      "not_annotated": [],
+      "queries": [
+        {
+          "id": "q1",
+          "query": {
+            "subject": "c:resource:signing-key",
+            "relation": "r:resource:unavailable",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "支持",
+            "evidence": [
+              {
+                "assertion_id": "a:s026-key-unavail"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "reported-cause",
+            "direct-positive"
+          ]
+        },
+        {
+          "id": "q2",
+          "query": {
+            "subject": "c:task:release",
+            "relation": "r:status:blocked",
+            "object": "c:value:true",
+            "context": "ctx:project-alpha",
+            "valid_at": "2026-11-19"
+          },
+          "expect": {
+            "status": "支持",
+            "evidence": [
+              {
+                "assertion_id": "a:s026-blocked"
+              }
+            ],
+            "suppressed": []
+          },
+          "phenomena": [
+            "reported-cause",
+            "missing-premise"
+          ]
+        }
+      ],
+      "notes": "签名密钥不可用的证据只来自资源登记表，不来自站会的因果报告。没有“需要资源”断言，规则不触发；阻塞的证据只有站会的直接陈述。"
     }
   ]
 }
