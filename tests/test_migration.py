@@ -34,3 +34,23 @@ class MigrationTests(unittest.TestCase):
         report = preview_migration(doc, "example")["report"]
         self.assertEqual(report["output_status"], "candidate")
         self.assertIn("concepts[0].id", report["unhandled_first_error"])
+
+    def test_pending_kinds_do_not_hide_independent_02_errors(self):
+        doc = {"version": "0.1", "assertions": [], "concepts": [
+            {"id": "r:p", "kind": "自定谓词", "aliases": ["谓词"]},
+            {"id": "c:x", "kind": "自定类别", "aliases": ["事物"]},
+            {"id": "c:y", "kind": "值", "aliases": ["重复", "重复"]},
+        ]}
+        result = preview_migration(doc, "mixed")
+        self.assertIn("concepts[2].aliases", result["report"]["unhandled_first_error"])
+        self.assertEqual(result["report"]["output_status"], "candidate")
+        self.assertEqual(result["candidate"]["concepts"][:2], doc["concepts"][:2])
+        self.assertEqual([entry["proposed"] for entry in
+                          result["report"]["needs_confirmation"]], [None, None])
+
+    def test_pending_target_kind_preserves_existing_02_error(self):
+        doc = {"version": "0.1", "assertions": [], "concepts": [
+            {"id": "c:x", "kind": "relation", "aliases": ["关系"]},
+        ]}
+        result = preview_migration(doc, "already-in-target-vocabulary")
+        self.assertIn("concepts[0].id", result["report"]["unhandled_first_error"])

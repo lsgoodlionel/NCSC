@@ -20,6 +20,7 @@ def preview_migration(doc: Dict[str, Any], source: str) -> Dict[str, Any]:
         "needs_confirmation": [], "id_changes": [], "rejected": [],
     }
     known = {"关系": "relation", "资源": "entity", "值": "value"}
+    validation_concepts = list(candidate["concepts"])
     for old, group in groupby(enumerate(candidate["concepts"]), key=lambda pair: pair[1]["kind"]):
         entries = list(group)
         if old in known:
@@ -36,14 +37,16 @@ def preview_migration(doc: Dict[str, Any], source: str) -> Dict[str, Any]:
                     decision.update(proposed="event", alternatives=["entity"],
                                     why="“任务”既可视为计划中的活动（event），也可视为被管理的工作项（entity）；影响后续规则的 domain 约束")
                 else:
+                    # 校验副本只用 ID 的记录类型选择占位类别，候选和人工决定保留原值。
+                    if old not in {"entity", "event", "state", "quality", "value", "relation"}:
+                        placeholder = "relation" if concept["id"].startswith("r:") else "entity"
+                        validation_concepts[i] = {**concept, "kind": placeholder}
                     decision.update(proposed=None, alternatives=[], why="源类别没有确定映射")
                 report["needs_confirmation"].append(decision)
     try:
-        validate_document(candidate)
+        validate_document({**candidate, "concepts": validation_concepts})
     except IRValidationError as exc:
-        path = str(exc).partition(":")[0]
-        if not any(item["path"] == path for item in report["needs_confirmation"]):
-            report["unhandled_first_error"] = str(exc)
+        report["unhandled_first_error"] = str(exc)
     else:
         if not report["needs_confirmation"]:
             report["output_status"] = "final"
