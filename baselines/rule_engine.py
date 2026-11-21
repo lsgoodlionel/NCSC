@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 import sqlite3
 
-from .json_exact import ROLES, STATUS
+from .json_exact import ROLES, STATUS, direct_evidence
 
 
 def _atom(subject, relation, obj, polarity="positive"):
@@ -106,7 +106,7 @@ def _close(assertions, rules):
     originals = defaultdict(list)
     for a in assertions:
         fact = (*(a["roles"][field] for field in ROLES), a["polarity"])
-        originals[fact].append(a["id"])
+        originals[fact].append(a)
     insert = "INSERT OR IGNORE INTO facts VALUES (?, ?, ?, ?)"
     with closing(sqlite3.connect(":memory:")) as db:
         db.execute("CREATE TABLE facts(subject, relation, object, polarity, UNIQUE(subject,relation,object,polarity))")
@@ -132,23 +132,24 @@ def _child_id(node):
     return "b:" + sha256(encoded.encode("utf-8")).hexdigest()
 
 
-def _proofs(fact, originals, edges, path):
+def _proofs(fact, originals, edges, path, include_sources):
     if fact in path:
         return []
-    direct = [{"assertion_id": aid, "polarity": fact[3]} for aid in sorted(originals.get(fact, ()))]
+    claims = sorted(originals.get(fact, ()), key=lambda claim: claim["id"])
+    direct = [direct_evidence(claim, include_sources) for claim in claims]
     inferred = []
     for rid, premises in edges.get(fact, ()):
-        options = [_proofs(p, originals, edges, path | {fact}) for p in premises]
+        options = [_proofs(p, originals, edges, path | {fact}, include_sources) for p in premises]
         for children in product(*options):
             ids = [_child_id(child) for child in children]
             node = {"derived_by": rid, "premises": ids, "polarity": "positive"}
-            if any("derived_by" in entry for entry in children):
+            if include_sources or any("derived_by" in entry for entry in children):
                 node["trace"] = [dict(entry, assertion_id=aid) for entry, aid in zip(children, ids)]
             inferred.append(node)
     return direct + sorted(inferred, key=lambda node: (node["derived_by"], node["premises"]))
 
 
-def predictions(dataset, rules=None):
+def predictions(dataset, rules=None, *, include_sources=False):
     if dataset["ir_version"] != "0.2":
         raise ValueError("规则基线仅支持 IR 0.2")
     compiled = _rules([R1] if rules is None else rules)
@@ -168,7 +169,7 @@ def predictions(dataset, rules=None):
             fact = tuple(query[f] for f in ROLES)
             evidence = []
             for sign in ("positive", "negative"):
-                evidence.extend(_proofs((*fact, sign), originals, edges, set()))
+                evidence.extend(_proofs((*fact, sign), originals, edges, set(), include_sources))
             evidence.sort(key=lambda e: (0, e["assertion_id"]) if "assertion_id" in e
                           else (1, e["derived_by"], e["premises"]))
             yield {"item_id": item["id"], "query_id": record["id"],

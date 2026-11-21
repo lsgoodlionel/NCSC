@@ -5,8 +5,10 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
+from .json_exact import direct_evidence
 
-def predictions(dataset):
+
+def predictions(dataset, *, include_sources=False):
     if dataset["ir_version"] != "0.2":
         raise ValueError("KG 基线仅支持 IR 0.2")
     for item in dataset["items"]:
@@ -21,14 +23,14 @@ def predictions(dataset):
             roles = assertion["roles"]
             triple = (roles["subject"], roles["relation"], roles["object"])
             graph = graphs[assertion["context"], assertion.get("valid_at")]
-            graph[triple].append((assertion["id"], polarity))
+            graph[triple].append(assertion)
 
         for record in item["queries"]:
             query = record["query"]
             graph = graphs.get((query["context"], query["valid_at"]), {})
             triple = (query["subject"], query["relation"], query["object"])
-            matches = sorted(graph.get(triple, []))
-            polarities = {polarity for _, polarity in matches}
+            matches = sorted(graph.get(triple, []), key=lambda assertion: assertion["id"])
+            polarities = {assertion["polarity"] for assertion in matches}
             if len(polarities) == 2:
                 status = "冲突"
             elif "positive" in polarities:
@@ -41,7 +43,7 @@ def predictions(dataset):
                 "item_id": item["id"],
                 "query_id": record["id"],
                 "status": status,
-                "evidence": [{"assertion_id": aid, "polarity": p} for aid, p in matches],
+                "evidence": [direct_evidence(assertion, include_sources) for assertion in matches],
             }
 
 

@@ -7,7 +7,20 @@ from pathlib import Path
 STATUSES = ("支持", "反对", "冲突", "未知")
 
 
-def _walk(node, originals, ancestors, path, leaves, paths, gold):
+def _source_records(value):
+    """Compare source IDs and descriptions, preserving multiplicity and ignoring list order."""
+    if not isinstance(value, list) or not value:
+        return None
+    pairs = []
+    for source in value:
+        if (not isinstance(source, dict) or set(source) != {"id", "description"}
+                or not all(isinstance(v, str) and v.strip() for v in source.values())):
+            return None
+        pairs.append((source["id"], source["description"]))
+    return sorted(pairs)
+
+
+def _walk(node, originals, ancestors, path, leaves, paths, source_errors, gold):
     if not isinstance(node, dict):
         raise ValueError("证据节点须为对象")
     aid = node.get("assertion_id")
@@ -16,6 +29,9 @@ def _walk(node, originals, ancestors, path, leaves, paths, gold):
             raise ValueError("无法在查询分区解析原始断言")
         if "polarity" in node and node["polarity"] != originals[aid]["polarity"]:
             raise ValueError("叶子极性与原始断言不符")
+        expected_sources = _source_records(originals[aid].get("sources"))
+        if expected_sources is None or (not gold and _source_records(node.get("sources")) != expected_sources):
+            source_errors.add(aid)
         leaves.add(aid)
         if path:
             paths.add((path, aid))
@@ -34,7 +50,7 @@ def _walk(node, originals, ancestors, path, leaves, paths, gold):
         # 嵌套金标只记录规则及其有序前提，不需要生成生产证明 ID。
         children = [p if isinstance(p, dict) else {"assertion_id": p} for p in premises]
         for position, child in enumerate(children):
-            _walk(child, originals, ancestors, path + ((rule, position),), leaves, paths, gold)
+            _walk(child, originals, ancestors, path + ((rule, position),), leaves, paths, source_errors, gold)
         return
     children = node.get("trace", [{"assertion_id": pid} for pid in premises])
     if not isinstance(children, list) or len(children) != len(premises):
@@ -42,23 +58,24 @@ def _walk(node, originals, ancestors, path, leaves, paths, gold):
     for position, (pid, child) in enumerate(zip(premises, children)):
         if not isinstance(pid, str) or not isinstance(child, dict) or child.get("assertion_id") != pid:
             raise ValueError("规则前提与 trace 顺序或引用不符")
-        _walk(child, originals, ancestors, path + ((rule, position),), leaves, paths, gold)
+        _walk(child, originals, ancestors, path + ((rule, position),), leaves, paths, source_errors, gold)
 
 
 def _evidence(entries, originals, gold=False):
     leaves, paths, invalid = set(), set(), 0
     if not isinstance(entries, list):
         raise ValueError("evidence 须为列表")
+    source_errors = set()
     for node in entries:
         local_leaves, local_paths = set(), set()
         try:
-            _walk(node, originals, set(), (), local_leaves, local_paths, gold)
+            _walk(node, originals, set(), (), local_leaves, local_paths, source_errors, gold)
         except (ValueError, TypeError, RecursionError):
             invalid += 1
         else:
             leaves.update(local_leaves)
             paths.update(local_paths)
-    return leaves, paths, invalid
+    return leaves, paths, invalid, source_errors
 
 
 def _counts():
@@ -98,6 +115,7 @@ def score(dataset, predictions):
     matrix = {status: dict.fromkeys(STATUSES, 0) for status in STATUSES}
     leaf_counts, path_counts = _counts(), _counts()
     eligible = complete = invalid_count = 0
+    source_eligible = source_complete = 0
     for row in predictions:
         key = (row["item_id"], row["query_id"])
         if key not in queries:
@@ -107,16 +125,20 @@ def score(dataset, predictions):
         if gold_status not in STATUSES or status not in STATUSES:
             raise ValueError(f"状态超出四值集合：{key}")
         matrix[gold_status][status] += 1
-        gold_leaves, gold_paths, invalid_gold = _evidence(expect["evidence"], originals, gold=True)
+        gold_leaves, gold_paths, invalid_gold, missing_gold_sources = _evidence(expect["evidence"], originals, gold=True)
         if invalid_gold:
             raise ValueError(f"金标引用未解析、跨分区或成环：{key}")
-        leaves, paths, invalid = _evidence(row["evidence"], originals)
+        leaves, paths, invalid, source_errors = _evidence(row["evidence"], originals)
         invalid_count += invalid
         _add_counts(leaf_counts, gold_leaves, leaves)
         _add_counts(path_counts, gold_paths, paths)
         if gold_leaves:
             eligible += 1
-            complete += leaves == gold_leaves and paths == gold_paths and not invalid
+            proof_matches = leaves == gold_leaves and paths == gold_paths and not invalid
+            complete += proof_matches
+            if not missing_gold_sources:
+                source_eligible += 1
+                source_complete += proof_matches and not source_errors
     if queries:
         raise ValueError(f"缺少预测：{sorted(queries)}")
     for counts in (leaf_counts, path_counts):
@@ -134,6 +156,8 @@ def score(dataset, predictions):
         "known_gold_predicted_unknown": sum(matrix[s]["未知"] for s in STATUSES if s != "未知"),
         "leaves": leaf_counts, "rule_paths": path_counts,
         "invalid_predicted_evidence": invalid_count,
+        "source_complete": {"matched": source_complete, "eligible": source_eligible,
+                            "rate": _ratio(source_complete, source_eligible)},
         "provenance_complete": {"matched": complete, "eligible": eligible, "rate": _ratio(complete, eligible)},
     }
 
@@ -165,7 +189,7 @@ def main():
         registry = json.loads(args.items.with_name("registry.json").read_text(encoding="utf-8"))
         ncsc_report = score(dataset, ncsc_predictions(dataset, registry))
         systems = {"json_exact": json_exact, "kg": kg, "rule_engine": rule_engine}
-        reports = {name: score(dataset, module.predictions(dataset)) for name, module in systems.items()}
+        reports = {name: score(dataset, module.predictions(dataset, include_sources=True)) for name, module in systems.items()}
     except (ValueError, KeyError, TypeError, OSError) as exc:
         parser.exit(2, f"评分输入错误：{exc}\n")
     print(json.dumps({"dataset": dataset["dataset"], "baseline_reports": reports, "ncsc_report": ncsc_report}, ensure_ascii=False, indent=2))

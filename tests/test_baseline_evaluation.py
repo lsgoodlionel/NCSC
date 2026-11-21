@@ -49,6 +49,11 @@ class EvaluationTests(unittest.TestCase):
         unknowns = sum(q["expect"]["status"] == "未知" for q in queries)
         self.assertEqual(ncsc["unknown_as_refuted"], {"count": 0, "eligible": unknowns, "rate": 0.0})
         self.assertEqual(ncsc["provenance_complete"]["rate"], 1.0)
+        for name, result in dict(report["baseline_reports"], ncsc=ncsc).items():
+            with self.subTest(system=name):
+                # On this seed all resolved leaves have complete recorded sources.
+                self.assertEqual(result["source_complete"], result["provenance_complete"])
+                self.assertGreater(result["source_complete"]["eligible"], 0)
 
     def test_invalid_branch_cannot_claim_hits(self):
         self.item["queries"][0]["expect"]["evidence"] = [{"assertion_id": "a:x"}]
