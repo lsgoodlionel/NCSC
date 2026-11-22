@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from hashlib import sha256
-from itertools import product
+from itertools import chain, product
 import json
 from typing import Any, Dict, FrozenSet, Iterable, Iterator, List, NamedTuple, Set, Tuple
 
@@ -12,6 +12,7 @@ from .rule_loader import load_rules
 
 Fact = Tuple[str, str, str, str]
 Binding = Dict[str, str]
+JoinRow = Tuple[Binding, Tuple[Fact, ...]]
 DEFAULT_TRACE_BUDGET = 10000
 MAX_TRACE_DEPTH = 48
 MAX_JOIN_ATTEMPTS = 1_000_000
@@ -123,30 +124,42 @@ def _ground(pattern: Dict[str, str], binding: Binding) -> Fact:
             binding.get(pattern["object"], pattern["object"]), pattern["polarity"])
 
 
-def _matches(rule: Dict[str, Any], facts: Set[Fact], budget: _JoinBudget) -> Iterator[Edge]:
-    rows: List[Tuple[Binding, Tuple[Fact, ...]]] = [({}, ())]
-    for pattern in rule["premises"]:
-        joined = []
-        for s, r, o, p in facts:
-            budget.attempt()
-            if (r, p) != (pattern["relation"], pattern["polarity"]):
-                continue
-            for binding, premises in rows:
-                budget.attempt()
-                extended = binding.copy()
-                for term, val in ((pattern["subject"], s), (pattern["object"], o)):
-                    if term.startswith("?"):
-                        term = extended.setdefault(term, val)
-                    if term != val:
-                        break
-                else:
-                    budget.retain()
-                    joined.append((extended, premises + ((s, r, o, p),)))
-        rows = joined
-        if not rows:
-            return
-    for binding, premises in rows:
-        yield Edge(rule["id"], premises, _ground(rule["conclusion"], binding))
+class _RuleJoin:
+    """按前提位置保存已匹配的前缀，各轮只扩展含新增事实的组合。"""
+
+    def __init__(self, rule: Dict[str, Any]) -> None:
+        self.rule = rule
+        self.prefixes: List[List[JoinRow]] = [[] for _ in rule["premises"]]
+        self.prefixes[0].append(({}, ()))
+
+    def advance(self, facts: Set[Fact], delta: Set[Fact], budget: _JoinBudget) -> Iterator[Edge]:
+        fresh: List[JoinRow] = []
+        for i, pattern in enumerate(self.rule["premises"]):
+            prior = self.prefixes[i]
+            joined: List[JoinRow] = []
+            if prior or fresh:
+                # 新前缀需要所有事实，旧前缀只需要新增事实。两个集合不重叠。
+                for fact in (facts if fresh else delta):
+                    budget.attempt()
+                    s, r, o, polarity = fact
+                    if (r, polarity) != (pattern["relation"], pattern["polarity"]):
+                        continue
+                    rows = chain(prior, fresh) if fact in delta else iter(fresh)
+                    for binding, premises in rows:
+                        budget.attempt()
+                        extended = binding.copy()
+                        for term, val in ((pattern["subject"], s), (pattern["object"], o)):
+                            if term.startswith("?"):
+                                term = extended.setdefault(term, val)
+                            if term != val:
+                                break
+                        else:
+                            budget.retain()
+                            joined.append((extended, premises + (fact,)))
+            prior.extend(fresh)
+            fresh = joined
+        for binding, premises in fresh:
+            yield Edge(self.rule["id"], premises, _ground(self.rule["conclusion"], binding))
 
 
 def _opposite(fact: Fact) -> Fact:
@@ -204,13 +217,26 @@ def query_preview(document: Any, rules: Iterable[Any], subject: str, relation: s
 def _closure(originals: Dict[Fact, List[str]], active: List[Dict[str, Any]],
              join_budget: _JoinBudget) -> Tuple[Set[Fact], Set[Edge], Set[Edge]]:
     facts = set(originals)
-    while True:
-        matches = {edge for rule in active for edge in _matches(rule, facts, join_budget)}
-        accepted = {edge for edge in matches if all(_opposite(p) not in facts for p in edge.premises)}
-        new = {edge.result for edge in accepted} - facts
+    delta = facts.copy()
+    joins = [_RuleJoin(rule) for rule in active]
+    matches: Set[Edge] = set()
+    accepted: Set[Edge] = set()
+    # 每个有产出的轮次至少消耗一个 join_rows 单位，再允许一次检查固定点。
+    for _ in range(MAX_JOIN_ROWS + 1):
+        new: Set[Fact] = set()
+        for join in joins:
+            for edge in join.advance(facts, delta, join_budget):
+                matches.add(edge)
+                # P-4 分层和只允许正向结论，保证已匹配前提的反方不能在后续轮次新增。
+                if all(_opposite(p) not in facts for p in edge.premises):
+                    accepted.add(edge)
+                    if edge.result not in facts:
+                        new.add(edge.result)
         if not new:
             return facts, matches, accepted
         facts.update(new)
+        delta = new
+    raise QueryLimitError("join_rows", MAX_JOIN_ROWS)
 
 
 def evaluate_query(index: QueryIndex, active: List[Dict[str, Any]], subject: str, relation: str,
