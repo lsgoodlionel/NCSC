@@ -107,6 +107,29 @@ class M2Probes(unittest.TestCase):
             self.assertEqual(proof["sources"], [shared, *need["sources"], *lack["sources"]])
             self.assertEqual([leaf["sources"][0] for leaf in proof["trace"]], [shared, shared])
 
+    def test_later_proof_reaches_existing_downstream_fact(self):
+        # 同一阻塞事实先有直接记录，再由 R1 推出；依赖方应保留两条解释。
+        direct = fact("a:direct", TASK, BLOCK, TRUE)
+        link = fact("a:depends", NEXT, "r:task:depends-on", TASK)
+        self.doc["assertions"].extend([direct, link])
+        for version in ("0.2", "0.3"):
+            self.doc["version"] = version
+            with self.subTest(version=version):
+                result = self.run_query(NEXT, BLOCK)
+                self.assertEqual(result["status"], "支持")
+                proofs = result["evidence"]
+                self.assertEqual(len(proofs), 2)
+                self.assertEqual({frozenset(leaves(e)) for e in proofs}, {
+                    frozenset(["a:depends", "a:direct"]),
+                    frozenset(["a:depends", "a:release-requires-key", "a:key-unavailable"]),
+                })
+                sources_by_id = {a["id"]: a["sources"] for a in self.doc["assertions"]}
+                for proof in proofs:
+                    expected = {s["id"]: s for aid in leaves(proof) for s in sources_by_id[aid]}
+                    self.assertCountEqual(proof["sources"], list(expected.values()))
+                self.doc["assertions"].reverse()
+                self.assertEqual(self.run_query(NEXT, BLOCK), result)
+
     def test_negative_premise(self):
         self.doc["assertions"] = [fact("a:needs", TASK, "r:task:requires-gate", "c:gate")]
         for polarities, expected in [((), "未知"), (("negative",), "支持"),
