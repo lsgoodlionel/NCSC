@@ -31,3 +31,20 @@ class CalendarDayTests(unittest.TestCase):
         kb = KnowledgeBase(self.doc)
         self.assertEqual(kb.query(**self.query, valid_at="2024-02-29")["status"], "支持")
         self.assertEqual(kb.query(**self.query, valid_at="2024-03-01")["status"], "未知")
+
+
+class QueryIdentifierTests(unittest.TestCase):
+    def test_non_string_query_ids_raise_validation_error(self):
+        fixture = EXAMPLE.parents[1] / "tests/contract/fixtures/0.2/valid/example-migrated.json"
+        doc = json.loads(fixture.read_text(encoding="utf-8"))
+        assertion = doc["assertions"][0]
+        roles = assertion["roles"]
+        for version in ("0.2", "0.3"):
+            kb = KnowledgeBase(dict(doc, version=version))
+            for field in ("subject", "relation", "object_", "context"):
+                query = dict(subject=roles["subject"], relation=roles["relation"],
+                             object_=roles["object"], context=assertion["context"])
+                with self.subTest(version=version, field=field):
+                    query[field] = None
+                    with self.assertRaises(IRValidationError):
+                        kb.query(**query)
