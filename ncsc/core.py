@@ -69,6 +69,8 @@ _HAN = re.compile("[㐀-䶿一-鿿豈-﫿]")
 
 
 def _check_id(value: str, prefix: str, where: str) -> None:
+    if not isinstance(value, str):
+        raise IRValidationError(f"{where}: 非法 {prefix}: 标识符")
     namespace, _, body = value.partition(":")
     if namespace != prefix or not _ID_BODY.fullmatch(body):
         raise IRValidationError(f"{where}: 非法 {prefix}: 标识符")
