@@ -51,4 +51,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pilot", type=Path)
     verify(parser.parse_args().pilot)
-    print("ai-eng-v1 核对通过")
+    print("ai-eng-v1 verified")
