@@ -1,0 +1,128 @@
+{
+  "version": "0.3",
+  "concepts": [
+    {
+      "id": "c:task:release",
+      "aliases": [
+        "发布任务",
+        "版本发布"
+      ],
+      "kind": "event"
+    },
+    {
+      "id": "c:resource:signing-key",
+      "aliases": [
+        "签名密钥"
+      ],
+      "kind": "entity"
+    },
+    {
+      "id": "c:value:true",
+      "aliases": [
+        "真",
+        "是"
+      ],
+      "kind": "value"
+    },
+    {
+      "id": "r:task:requires",
+      "aliases": [
+        "需要资源"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:resource:unavailable",
+      "aliases": [
+        "不可用"
+      ],
+      "kind": "relation"
+    },
+    {
+      "id": "r:status:blocked",
+      "aliases": [
+        "阻塞"
+      ],
+      "kind": "relation"
+    }
+  ],
+  "assertions": [
+    {
+      "id": "a:release-requires-key",
+      "roles": {
+        "subject": "c:task:release",
+        "relation": "r:task:requires",
+        "object": "c:resource:signing-key"
+      },
+      "polarity": "positive",
+      "sources": [
+        {
+          "id": "src:build-config",
+          "description": "合成案例：构建配置声明发布需要签名密钥"
+        }
+      ],
+      "context": "ctx:project-alpha",
+      "valid_during": {
+        "from": "2026-11-19",
+        "to": "2026-11-21"
+      }
+    },
+    {
+      "id": "a:key-unavailable",
+      "roles": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true"
+      },
+      "polarity": "positive",
+      "sources": [
+        {
+          "id": "src:resource-register",
+          "description": "合成案例：资源登记表记录密钥不可用"
+        }
+      ],
+      "context": "ctx:project-alpha",
+      "valid_during": {
+        "from": "2026-11-19",
+        "to": "2026-11-21"
+      }
+    },
+    {
+      "id": "a:key-recovered",
+      "roles": {
+        "subject": "c:resource:signing-key",
+        "relation": "r:resource:unavailable",
+        "object": "c:value:true"
+      },
+      "polarity": "negative",
+      "sources": [
+        {
+          "id": "src:operations-20",
+          "description": "合成运维回执：11 月 20 日签名密钥可用。"
+        }
+      ],
+      "context": "ctx:project-alpha",
+      "valid_at": "2026-11-20"
+    },
+    {
+      "id": "a:board-clear",
+      "roles": {
+        "subject": "c:task:release",
+        "relation": "r:status:blocked",
+        "object": "c:value:true"
+      },
+      "polarity": "negative",
+      "context": "ctx:project-alpha",
+      "valid_during": {
+        "from": "2026-11-21",
+        "to": "2026-11-22"
+      },
+      "sources": [
+        {
+          "id": "src:board-21",
+          "description": "合成看板：11 月 21 至 22 日发布任务未受阻。"
+        }
+      ]
+    }
+  ]
+}
