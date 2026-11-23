@@ -6,6 +6,18 @@
 
 首次使用请从[项目发布状态核对手册](docs/USAGE.zh-CN.md)开始。手册提供可运行的四日示例、自有数据模板、日常复核流程及系统接入方法。
 
+## 浏览器工作台
+
+在仓库根目录运行 `python3 -m workbench.server`，打开 http://127.0.0.1:8765/ 。可以导入项目 JSON、选择应用、逐日查询、跟踪规则执行、比较四日索引复用耗时，或用已登录的 Codex 调用本机 NCSC 工具后继续提问。[工作台操作与架构](docs/WORKBENCH.md)
+
+| 要完成的工作 | 入口 |
+|---|---|
+| 输入自己的工单、核对状态与依据 | [使用手册](docs/USAGE.zh-CN.md) |
+| 理解内核、开放世界与时间分区 | [架构与可行性](docs/v0.1/README.md) · [版本契约](docs/proposals/README.md) |
+| 复验 AI 工程开发集和四系统评分 | [冻结说明](datasets/freezes/ai-eng-v1/README.md) · [评分说明](baselines/EVALUATION.md) |
+| 启用可选模型候选抽取 | [适配器与测量口径](adapters/README.md) |
+| 复查性能、内存限制及大规模实测 | [规模测量](benchmarks/README.md) |
+
 ## 快速运行
 
 从仓库根目录运行。下列命令使用 Python 3.9 或更高版本。macOS 若只有 `python3`，将 `python` 换成 `python3`；Windows 可用 `py -3`。

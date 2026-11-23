@@ -32,7 +32,7 @@
           <div class="grid"><label>项目上下文<input id="context" list="contexts" placeholder="ctx:project-alpha"><datalist id="contexts"></datalist></label><label><span id="dayLabel">查询日期</span><input id="day" type="date"></label></div>
           <div class="grid triple"><label>主体<select id="subject"></select></label><label>关系<select id="relation"></select></label><label>客体<select id="object"></select></label></div>
         </div>
-        <div id="modelFields" hidden>
+        <div id="modelFields" hidden><p>点击运行将允许 Codex 只读调用本次查询，并将问题和证据交给当前模型处理。</p>
           <label>给 Codex 的任务<textarea id="question" rows="2" maxlength="2000" placeholder="例如：解释判定并列出待核查的记录。"></textarea></label>
           <p class="hint">选用 Codex 时，提问和服务发送的查询证据将由当前登录的 Codex 处理。</p>
         </div>

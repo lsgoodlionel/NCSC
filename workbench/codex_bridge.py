@@ -38,7 +38,8 @@ def explain(answer, question, session, send, *, snapshot_path, receipt_path):
     args = [binary, "-a", "never", "exec", "--sandbox", "read-only"]
     config = {"command": sys.executable, "args": ["-m", "workbench.mcp_tool",
               str(Path(snapshot_path).resolve()), str(Path(receipt_path).resolve())],
-              "cwd": str(ROOT), "enabled": True}
+              "cwd": str(ROOT), "enabled": True, "enabled_tools": ["query"],
+              "tools.query.approval_mode": "writes"}
     for key, value in config.items():
         args.extend(["-c", "mcp_servers.ncsc." + key + "=" + json.dumps(value, ensure_ascii=False)])
     if session:
