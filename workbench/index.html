@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NCSC · 语义工作台</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <aside>
+    <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><b>NCSC</b></div>
+    <div class="rail-label">工作空间</div>
+    <nav aria-label="任务模式">
+      <button type="button" data-program="query" aria-pressed="true"><span class="icon" aria-hidden="true">⌕</span>规则查询</button>
+      <button type="button" data-program="validate" aria-pressed="false"><span class="icon" aria-hidden="true">☑</span>数据校验</button>
+      <button type="button" data-program="optimize" aria-pressed="false"><span class="icon" aria-hidden="true">≋</span>优化对比</button>
+    </nav>
+    <div class="local"><span class="dot"></span>本地工作台</div>
+  </aside>
+  <main>
+    <header><span>语义工作台</span><span class="mono">NCSC / WORKBENCH</span></header>
+    <section class="intro"><div><h1 id="title">规则查询</h1><p id="subtitle">按项目和日期查询事实，沿证据追溯每个结论。</p></div></section>
+    <form id="config" class="card">
+      <div class="cardhead"><h2>运行配置</h2><span id="irInfo" class="mono"></span></div>
+      <fieldset id="fields">
+        <div class="grid">
+          <label>执行应用<select id="engine"><option value="ncsc">NCSC · 本地内核</option><option value="codex" disabled>Codex CLI · 检测中</option><option disabled>Claude Code · 尚未接入</option><option disabled>Claude Desktop / 网页 MCP · 尚未接入</option></select></label>
+          <div><label for="fileButton">事实文件</label><div class="filebox"><span id="fileName">载入中…</span><button type="button" id="fileButton">导入 JSON</button><input type="file" id="file" accept=".json,application/json" hidden></div></div>
+        </div>
+        <div id="queryFields">
+          <div class="grid"><label>项目上下文<input id="context" list="contexts" placeholder="ctx:project-alpha"><datalist id="contexts"></datalist></label><label><span id="dayLabel">查询日期</span><input id="day" type="date"></label></div>
+          <div class="grid triple"><label>主体<select id="subject"></select></label><label>关系<select id="relation"></select></label><label>客体<select id="object"></select></label></div>
+        </div>
+        <div id="modelFields" hidden>
+          <label>给 Codex 的任务<textarea id="question" rows="2" maxlength="2000" placeholder="例如：解释判定并列出待核查的记录。"></textarea></label>
+          <p class="hint">选用 Codex 时，提问和服务发送的查询证据将由当前登录的 Codex 处理。</p>
+        </div>
+      </fieldset>
+      <footer><button class="textbtn" type="button" id="restore">恢复发布示例</button><button type="submit" class="primary" id="run" disabled><span aria-hidden="true">▶</span> <span id="runLabel">运行查询</span></button></footer>
+    </form>
+    <div class="results">
+      <section class="card timeline" aria-labelledby="logTitle"><div class="cardhead"><h2 id="logTitle">执行时间线</h2><span class="state" id="state">就绪</span></div><ol id="log" aria-live="polite"></ol></section>
+      <section class="card output" aria-labelledby="outTitle"><div class="cardhead"><h2 id="outTitle">运行结果</h2><button class="textbtn" id="download" disabled>导出 JSON ↓</button></div><div id="output" aria-live="polite"></div>
+        <form id="followup" hidden><label>继续当前会话<input id="followText" maxlength="2000" placeholder="根据本次证据追加问题" required></label><button class="primary">继续处理</button></form>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
