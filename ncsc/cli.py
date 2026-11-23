@@ -8,7 +8,7 @@ from typing import Optional, Sequence
 
 from .core import IRValidationError, KnowledgeBase, validate_document
 from .migration import preview_migration
-from .preview_io import encode_response, load_inputs, load_query_inputs
+from .preview_io import encode_response, load_inputs, load_query_inputs, parse_input
 from .query_preview import DEFAULT_TRACE_BUDGET, QueryLimitError, TraceLimitError, query_preview
 
 
@@ -54,7 +54,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return 0
         if args.command == "migrate":
             with Path(args.file).open(encoding="utf-8") as handle:
-                preview = preview_migration(json.load(handle), args.file)
+                preview = preview_migration(parse_input(handle.read(), args.file), args.file)
             print(json.dumps(preview, ensure_ascii=False, indent=2))
             report = preview["report"]
             if report["rejected"] or "unhandled_first_error" in report:
@@ -62,7 +62,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return 1 if report["output_status"] == "candidate" else 0
         if args.command == "validate":
             with Path(args.file).open(encoding="utf-8") as handle:
-                doc = validate_document(json.load(handle))
+                doc = validate_document(parse_input(handle.read(), args.file))
             print(json.dumps({"valid": True, "version": doc["version"]}, ensure_ascii=False))
         return 0
     except QueryLimitError as exc:
