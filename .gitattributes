@@ -1,0 +1,10 @@
+# Freeze verification hashes exact UTF-8/LF bytes on every platform.
+/annotation/GUIDE.md text eol=lf
+/annotation/TRIAL_PROTOCOL.md text eol=lf
+/annotation/trial.py text eol=lf
+/baselines/evaluate.py text eol=lf
+/datasets/freezes/ai-eng-v1/FROZEN.json text eol=lf
+/datasets/freezes/ai-eng-v1/README.md text eol=lf
+/datasets/synthetic-v0/items.json text eol=lf
+/datasets/synthetic-v0/registry.json text eol=lf
+/docs/experiments/ten-classes.md text eol=lf

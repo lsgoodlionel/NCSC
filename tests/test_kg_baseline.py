@@ -1,4 +1,7 @@
 import json
+import os
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -8,6 +11,13 @@ DATA = Path(__file__).resolve().parents[1] / "datasets/synthetic-v0/items.json"
 
 
 class GraphBaselineTests(unittest.TestCase):
+    def test_direct_script_matches_module_output(self):
+        root = Path(__file__).resolve().parents[1]
+        def output(*entry):
+            return subprocess.check_output([sys.executable, *entry, str(DATA)], cwd=root,
+                                           env=dict(os.environ, PYTHONIOENCODING="cp1252"))
+        self.assertEqual(output("baselines/kg.py"), output("-m", "baselines.kg"))
+
     def test_all_seed_queries_match_json_baseline(self):
         data = json.loads(DATA.read_text(encoding="utf-8"))
         expected = list(json_exact.predictions(data))

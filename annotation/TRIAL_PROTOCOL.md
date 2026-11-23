@@ -18,9 +18,13 @@
 
   ```bash
   python3 -m annotation.trial prepare /tmp/ncsc-trial-r1
+  cp annotation/GUIDE.md annotation/TRIAL_PROTOCOL.md /tmp/ncsc-trial-r1/
+  python3 -m annotation.round_manifest create /tmp/ncsc-trial-r1 --documents /tmp/ncsc-trial-r1
+  python3 -m annotation.round_manifest verify /tmp/ncsc-trial-r1 --documents /tmp/ncsc-trial-r1
   python3 -m annotation.trial check /tmp/ncsc-trial-r1 a
   ```
 
+- 准备清单将盲包、登记表、指南、协议绑定到精确文件摘要，初始状态为 `pending`。裁决者按本协议另存正式冻结决定与标注者代号，保留可供 verify 核对的原始准备清单。
 - 空表每行两个答案栏初始为 `null`。标完一行后都填数组，无内容时填 `[]`。`check` 校验条目覆盖、IR、登记表、未标注说明，列出未填写的条目。两人完成后由准备者在同一个工作目录收齐两份表。
 - 输出：每位标注者为每个条目提交 `assertions` 与 `not_annotated`，格式同 `items.json`。
 
@@ -46,7 +50,7 @@
 python3 -m annotation.trial polarity /tmp/ncsc-trial-r1
 ```
 
-按条目、三元组、上下文和日期配对，报告共同键数、单方键数、双人单极性配对数，以及 A 为行、B 为列的原始混淆表。空白或未完成的表退出码为 2。已完成但无共同键、边际恒定导致分母为零时，结果给出 `kappa: null` 和原因。如果共同键出现来自不同来源的正反断言，协议尚无多标签 κ 约定，保留样本计数并返回 `multi_label_policy_required`，供指标负责人决定后续轮次口径。其余指标及分歧裁决仍按本协议办理。工具输出单独保留，汇总本轮指标时记录工具所在的 Git 提交。
+按条目、三元组、上下文和日期配对，报告共同键数、单方键数、双人单极性配对数，以及 A 为行、B 为列的原始混淆表。空白或未完成的表退出码为 2。已完成但无共同键、边际恒定导致分母为零时，结果给出 `kappa: null` 和原因。如果共同键出现来自不同来源的正反断言，协议尚无多标签 κ 约定，保留样本计数并返回 `multi_label_policy_required`，供指标负责人决定后续轮次口径。完整配对报告使用 `python3 -m annotation.trial metrics /tmp/ncsc-trial-r1`。若准备者持有本轮同一批金标，可追加 `--gold datasets/synthetic-v0/items.json`，分别计算 A、B 对金标的断言集合 F1。工具核对条目 ID 与原文。每个集合指标报告双方去重数量及交集数；两边均为空时报 NA。报告因果误升级数须由裁决者读原文后填写。工具输出单独保留，汇总本轮指标时记录工具所在的 Git 提交。
 
 ## 4. 步骤
 

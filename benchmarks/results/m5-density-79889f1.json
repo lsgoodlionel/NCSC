@@ -1,0 +1,3532 @@
+{
+  "expired": [
+    {
+      "protocol": "expired-density-v1",
+      "ir": "0.3",
+      "day": "2026-11-19",
+      "head": "e27a1951f79991485e4ecff453957f1705384a18",
+      "python": "3.9.6",
+      "platform": "macOS-27.0.1-arm64-arm-64bit",
+      "hashseed": "0",
+      "pairs": 10,
+      "batch": 7,
+      "warmup_pairs": 2,
+      "rows": [
+        {
+          "expired": 0,
+          "active": 2,
+          "total": 2,
+          "corpus_sha256": {
+            "same": "ef8b2dcaa7c922e147b5923640430567e455fbce3499b8e43db7f31b2885b0b1",
+            "other": "ef8b2dcaa7c922e147b5923640430567e455fbce3499b8e43db7f31b2885b0b1"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 129958,
+                "queries_ns": [
+                  32292,
+                  29125,
+                  26709,
+                  25666,
+                  25459,
+                  26125,
+                  25708
+                ],
+                "query_median_ns": 26125
+              },
+              "other": {
+                "build_ns": 128083,
+                "queries_ns": [
+                  32292,
+                  28583,
+                  28042,
+                  26375,
+                  25542,
+                  25833,
+                  27750
+                ],
+                "query_median_ns": 27750
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 132792,
+                "queries_ns": [
+                  32167,
+                  28583,
+                  26667,
+                  26083,
+                  26000,
+                  26250,
+                  25958
+                ],
+                "query_median_ns": 26250
+              },
+              "same": {
+                "build_ns": 123583,
+                "queries_ns": [
+                  32458,
+                  29458,
+                  27083,
+                  26375,
+                  26458,
+                  25958,
+                  25834
+                ],
+                "query_median_ns": 26458
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 124750,
+                "queries_ns": [
+                  32458,
+                  29250,
+                  26792,
+                  25792,
+                  25833,
+                  26042,
+                  26042
+                ],
+                "query_median_ns": 26042
+              },
+              "other": {
+                "build_ns": 123167,
+                "queries_ns": [
+                  32167,
+                  28625,
+                  27250,
+                  26250,
+                  26000,
+                  26000,
+                  25666
+                ],
+                "query_median_ns": 26250
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 134542,
+                "queries_ns": [
+                  32292,
+                  28750,
+                  27208,
+                  26000,
+                  25916,
+                  25834,
+                  25833
+                ],
+                "query_median_ns": 26000
+              },
+              "same": {
+                "build_ns": 124375,
+                "queries_ns": [
+                  32083,
+                  28500,
+                  27792,
+                  33000,
+                  26583,
+                  25875,
+                  25583
+                ],
+                "query_median_ns": 27792
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 123834,
+                "queries_ns": [
+                  31833,
+                  28292,
+                  26541,
+                  25791,
+                  25583,
+                  25583,
+                  25875
+                ],
+                "query_median_ns": 25875
+              },
+              "other": {
+                "build_ns": 122750,
+                "queries_ns": [
+                  32125,
+                  28958,
+                  26875,
+                  26500,
+                  26417,
+                  25584,
+                  25959
+                ],
+                "query_median_ns": 26500
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 135375,
+                "queries_ns": [
+                  32667,
+                  28667,
+                  26333,
+                  26166,
+                  25958,
+                  26083,
+                  25542
+                ],
+                "query_median_ns": 26166
+              },
+              "same": {
+                "build_ns": 122625,
+                "queries_ns": [
+                  32000,
+                  28333,
+                  27250,
+                  26083,
+                  25667,
+                  26250,
+                  25333
+                ],
+                "query_median_ns": 26250
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 123167,
+                "queries_ns": [
+                  31917,
+                  28792,
+                  26875,
+                  26084,
+                  26291,
+                  25625,
+                  25792
+                ],
+                "query_median_ns": 26291
+              },
+              "other": {
+                "build_ns": 123208,
+                "queries_ns": [
+                  31708,
+                  28958,
+                  26958,
+                  26042,
+                  26250,
+                  25750,
+                  25542
+                ],
+                "query_median_ns": 26250
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 132209,
+                "queries_ns": [
+                  33792,
+                  29542,
+                  27875,
+                  26208,
+                  25792,
+                  26042,
+                  25916
+                ],
+                "query_median_ns": 26208
+              },
+              "same": {
+                "build_ns": 124000,
+                "queries_ns": [
+                  32416,
+                  28542,
+                  27666,
+                  26083,
+                  25709,
+                  25834,
+                  25583
+                ],
+                "query_median_ns": 26083
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 123500,
+                "queries_ns": [
+                  32083,
+                  28667,
+                  26917,
+                  25958,
+                  25708,
+                  25875,
+                  25500
+                ],
+                "query_median_ns": 25958
+              },
+              "other": {
+                "build_ns": 122625,
+                "queries_ns": [
+                  32084,
+                  28500,
+                  26708,
+                  26083,
+                  26167,
+                  26500,
+                  25959
+                ],
+                "query_median_ns": 26500
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 129959,
+                "queries_ns": [
+                  34334,
+                  30959,
+                  28041,
+                  25959,
+                  25584,
+                  25750,
+                  25916
+                ],
+                "query_median_ns": 25959
+              },
+              "same": {
+                "build_ns": 122000,
+                "queries_ns": [
+                  32208,
+                  28417,
+                  28250,
+                  26166,
+                  25542,
+                  25792,
+                  25375
+                ],
+                "query_median_ns": 26166
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 12364,
+              "query": 4414
+            },
+            "other": {
+              "build": 11876,
+              "query": 6417
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 25875,
+              "median": 26145.5,
+              "max": 27792
+            },
+            "other": {
+              "min": 25959,
+              "median": 26250.0,
+              "max": 27750
+            }
+          },
+          "paired_difference_ns": {
+            "min": -1625,
+            "median": -42.0,
+            "max": 1792
+          }
+        },
+        {
+          "expired": 128,
+          "active": 2,
+          "total": 130,
+          "corpus_sha256": {
+            "same": "4f113a9af88d72fa19cdf40987ce5d5e00fe8e14c75b2c820d56f2cb20d51e48",
+            "other": "9a5ed30e9ac12c4cf48c4339b0a8f2a4f3d3ae6287a1f06e739295bb11e79a0d"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2519833,
+                "queries_ns": [
+                  43584,
+                  39958,
+                  38375,
+                  36125,
+                  35625,
+                  35875,
+                  35708
+                ],
+                "query_median_ns": 36125
+              },
+              "other": {
+                "build_ns": 2537000,
+                "queries_ns": [
+                  34292,
+                  45375,
+                  28250,
+                  26292,
+                  25750,
+                  25792,
+                  26208
+                ],
+                "query_median_ns": 26292
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2633167,
+                "queries_ns": [
+                  41416,
+                  31917,
+                  29958,
+                  28125,
+                  27958,
+                  27667,
+                  27208
+                ],
+                "query_median_ns": 28125
+              },
+              "same": {
+                "build_ns": 2632875,
+                "queries_ns": [
+                  45834,
+                  39334,
+                  38167,
+                  36417,
+                  41958,
+                  37417,
+                  45750
+                ],
+                "query_median_ns": 39334
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2500917,
+                "queries_ns": [
+                  49875,
+                  41875,
+                  41625,
+                  36667,
+                  35916,
+                  35667,
+                  36166
+                ],
+                "query_median_ns": 36667
+              },
+              "other": {
+                "build_ns": 2526792,
+                "queries_ns": [
+                  34083,
+                  29583,
+                  27500,
+                  26417,
+                  25750,
+                  25375,
+                  26083
+                ],
+                "query_median_ns": 26417
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2504375,
+                "queries_ns": [
+                  33375,
+                  28750,
+                  27834,
+                  26209,
+                  25375,
+                  25666,
+                  25584
+                ],
+                "query_median_ns": 26209
+              },
+              "same": {
+                "build_ns": 2525125,
+                "queries_ns": [
+                  43792,
+                  40084,
+                  36834,
+                  36042,
+                  35708,
+                  35875,
+                  36375
+                ],
+                "query_median_ns": 36375
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2535000,
+                "queries_ns": [
+                  46250,
+                  41542,
+                  40583,
+                  41125,
+                  46417,
+                  44875,
+                  37833
+                ],
+                "query_median_ns": 41542
+              },
+              "other": {
+                "build_ns": 2614375,
+                "queries_ns": [
+                  34208,
+                  29041,
+                  28000,
+                  26333,
+                  25708,
+                  25375,
+                  25375
+                ],
+                "query_median_ns": 26333
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2506584,
+                "queries_ns": [
+                  33500,
+                  29125,
+                  27750,
+                  26166,
+                  25417,
+                  25791,
+                  25459
+                ],
+                "query_median_ns": 26166
+              },
+              "same": {
+                "build_ns": 2510291,
+                "queries_ns": [
+                  43208,
+                  38750,
+                  37791,
+                  36000,
+                  35417,
+                  35584,
+                  35167
+                ],
+                "query_median_ns": 36000
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2493625,
+                "queries_ns": [
+                  43375,
+                  39250,
+                  37542,
+                  36083,
+                  35750,
+                  35708,
+                  35292
+                ],
+                "query_median_ns": 36083
+              },
+              "other": {
+                "build_ns": 2496833,
+                "queries_ns": [
+                  33833,
+                  29459,
+                  27708,
+                  26542,
+                  25542,
+                  25792,
+                  25250
+                ],
+                "query_median_ns": 26542
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2584625,
+                "queries_ns": [
+                  33791,
+                  34750,
+                  29708,
+                  30333,
+                  30458,
+                  27792,
+                  27208
+                ],
+                "query_median_ns": 30333
+              },
+              "same": {
+                "build_ns": 2619333,
+                "queries_ns": [
+                  46458,
+                  39416,
+                  44375,
+                  38333,
+                  35792,
+                  36041,
+                  35417
+                ],
+                "query_median_ns": 38333
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2492750,
+                "queries_ns": [
+                  50500,
+                  39000,
+                  38250,
+                  36250,
+                  35667,
+                  36250,
+                  35291
+                ],
+                "query_median_ns": 36250
+              },
+              "other": {
+                "build_ns": 2519041,
+                "queries_ns": [
+                  33709,
+                  29250,
+                  27917,
+                  26083,
+                  25459,
+                  25625,
+                  25750
+                ],
+                "query_median_ns": 26083
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2505333,
+                "queries_ns": [
+                  33209,
+                  28667,
+                  28000,
+                  26125,
+                  25583,
+                  25375,
+                  25625
+                ],
+                "query_median_ns": 26125
+              },
+              "same": {
+                "build_ns": 2507834,
+                "queries_ns": [
+                  42916,
+                  39584,
+                  37792,
+                  36083,
+                  35833,
+                  36125,
+                  35792
+                ],
+                "query_median_ns": 36125
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 418083,
+              "query": 4246
+            },
+            "other": {
+              "build": 418019,
+              "query": 4246
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 36000,
+              "median": 36312.5,
+              "max": 41542
+            },
+            "other": {
+              "min": 26083,
+              "median": 26312.5,
+              "max": 30333
+            }
+          },
+          "paired_difference_ns": {
+            "min": 8000,
+            "median": 10083.0,
+            "max": 15209
+          }
+        },
+        {
+          "expired": 1024,
+          "active": 2,
+          "total": 1026,
+          "corpus_sha256": {
+            "same": "88c6ab8812214f14c4362228a03dfa6c484febd1cff2ed9026ab3544f5705195",
+            "other": "b6640a110250abaf2b01dbceb1aa3c791b4b8179392afbe6141331c52a5d24c4"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 20957125,
+                "queries_ns": [
+                  126250,
+                  131542,
+                  105042,
+                  121250,
+                  138875,
+                  113458,
+                  108208
+                ],
+                "query_median_ns": 121250
+              },
+              "other": {
+                "build_ns": 19782000,
+                "queries_ns": [
+                  39542,
+                  31042,
+                  27916,
+                  27041,
+                  26500,
+                  26208,
+                  25375
+                ],
+                "query_median_ns": 27041
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19413916,
+                "queries_ns": [
+                  37250,
+                  29833,
+                  27958,
+                  26416,
+                  25875,
+                  26208,
+                  26875
+                ],
+                "query_median_ns": 26875
+              },
+              "same": {
+                "build_ns": 20333792,
+                "queries_ns": [
+                  149542,
+                  118375,
+                  108209,
+                  104750,
+                  103625,
+                  103667,
+                  103250
+                ],
+                "query_median_ns": 104750
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 19514417,
+                "queries_ns": [
+                  122041,
+                  107625,
+                  104459,
+                  103375,
+                  103167,
+                  103084,
+                  102917
+                ],
+                "query_median_ns": 103375
+              },
+              "other": {
+                "build_ns": 19844459,
+                "queries_ns": [
+                  47375,
+                  33209,
+                  28167,
+                  26833,
+                  26417,
+                  26792,
+                  25875
+                ],
+                "query_median_ns": 26833
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19416500,
+                "queries_ns": [
+                  39125,
+                  30542,
+                  28209,
+                  27042,
+                  26166,
+                  25875,
+                  25708
+                ],
+                "query_median_ns": 27042
+              },
+              "same": {
+                "build_ns": 20729875,
+                "queries_ns": [
+                  160083,
+                  121750,
+                  114833,
+                  119583,
+                  114541,
+                  297792,
+                  130125
+                ],
+                "query_median_ns": 121750
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 24293333,
+                "queries_ns": [
+                  163583,
+                  121500,
+                  114750,
+                  110291,
+                  109709,
+                  108666,
+                  108750
+                ],
+                "query_median_ns": 110291
+              },
+              "other": {
+                "build_ns": 21315917,
+                "queries_ns": [
+                  66459,
+                  34875,
+                  29709,
+                  27625,
+                  26666,
+                  32167,
+                  27916
+                ],
+                "query_median_ns": 29709
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 20077500,
+                "queries_ns": [
+                  56083,
+                  39500,
+                  34750,
+                  32875,
+                  26000,
+                  25958,
+                  26042
+                ],
+                "query_median_ns": 32875
+              },
+              "same": {
+                "build_ns": 19729958,
+                "queries_ns": [
+                  119083,
+                  107167,
+                  105125,
+                  106084,
+                  103667,
+                  103250,
+                  103042
+                ],
+                "query_median_ns": 105125
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 19917875,
+                "queries_ns": [
+                  120166,
+                  128625,
+                  105833,
+                  103583,
+                  102958,
+                  103459,
+                  102792
+                ],
+                "query_median_ns": 103583
+              },
+              "other": {
+                "build_ns": 19554709,
+                "queries_ns": [
+                  38833,
+                  30042,
+                  29125,
+                  26417,
+                  25750,
+                  25458,
+                  25334
+                ],
+                "query_median_ns": 26417
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19703500,
+                "queries_ns": [
+                  56750,
+                  35791,
+                  31292,
+                  27791,
+                  27833,
+                  32084,
+                  31417
+                ],
+                "query_median_ns": 31417
+              },
+              "same": {
+                "build_ns": 19752791,
+                "queries_ns": [
+                  123708,
+                  109041,
+                  105334,
+                  103750,
+                  103083,
+                  103000,
+                  105708
+                ],
+                "query_median_ns": 105334
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 19429917,
+                "queries_ns": [
+                  115583,
+                  108000,
+                  105292,
+                  110958,
+                  106500,
+                  103125,
+                  102791
+                ],
+                "query_median_ns": 106500
+              },
+              "other": {
+                "build_ns": 20798708,
+                "queries_ns": [
+                  52792,
+                  34458,
+                  30458,
+                  28167,
+                  26125,
+                  25667,
+                  25542
+                ],
+                "query_median_ns": 28167
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19335125,
+                "queries_ns": [
+                  37875,
+                  30583,
+                  28250,
+                  26334,
+                  25916,
+                  25750,
+                  25708
+                ],
+                "query_median_ns": 26334
+              },
+              "same": {
+                "build_ns": 19552500,
+                "queries_ns": [
+                  127333,
+                  111291,
+                  106833,
+                  112875,
+                  105750,
+                  102708,
+                  102667
+                ],
+                "query_median_ns": 106833
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 3396131,
+              "query": 5043
+            },
+            "other": {
+              "build": 3396067,
+              "query": 4246
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 103375,
+              "median": 105917.0,
+              "max": 121750
+            },
+            "other": {
+              "min": 26334,
+              "median": 27041.5,
+              "max": 32875
+            }
+          },
+          "paired_difference_ns": {
+            "min": 72250,
+            "median": 78104.0,
+            "max": 94708
+          }
+        },
+        {
+          "expired": 4096,
+          "active": 2,
+          "total": 4098,
+          "corpus_sha256": {
+            "same": "b2187559be2176bfee939dd1bd13ef87a45234b51ef122cef725fd75d852e1df",
+            "other": "86964e082925570e5ee6ae386e83f8e9e83825dae080a2814ad315d40ec1db39"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 82111375,
+                "queries_ns": [
+                  411708,
+                  344500,
+                  357875,
+                  334584,
+                  332958,
+                  334375,
+                  343417
+                ],
+                "query_median_ns": 343417
+              },
+              "other": {
+                "build_ns": 81119791,
+                "queries_ns": [
+                  75208,
+                  35958,
+                  28875,
+                  27000,
+                  26667,
+                  26125,
+                  26667
+                ],
+                "query_median_ns": 27000
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 83273709,
+                "queries_ns": [
+                  94125,
+                  38375,
+                  31083,
+                  39458,
+                  27250,
+                  26833,
+                  25708
+                ],
+                "query_median_ns": 31083
+              },
+              "same": {
+                "build_ns": 85172958,
+                "queries_ns": [
+                  434125,
+                  344250,
+                  340250,
+                  333541,
+                  358666,
+                  356333,
+                  432416
+                ],
+                "query_median_ns": 356333
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 80418375,
+                "queries_ns": [
+                  472750,
+                  393500,
+                  349542,
+                  360166,
+                  332916,
+                  336084,
+                  341500
+                ],
+                "query_median_ns": 349542
+              },
+              "other": {
+                "build_ns": 82545583,
+                "queries_ns": [
+                  66208,
+                  35958,
+                  28958,
+                  26916,
+                  26208,
+                  26000,
+                  25791
+                ],
+                "query_median_ns": 26916
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 80070292,
+                "queries_ns": [
+                  81500,
+                  44792,
+                  31917,
+                  29916,
+                  27541,
+                  27000,
+                  26125
+                ],
+                "query_median_ns": 29916
+              },
+              "same": {
+                "build_ns": 82914750,
+                "queries_ns": [
+                  451709,
+                  381667,
+                  365208,
+                  359875,
+                  364541,
+                  353167,
+                  379583
+                ],
+                "query_median_ns": 365208
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 79800000,
+                "queries_ns": [
+                  443708,
+                  346167,
+                  343958,
+                  347458,
+                  335792,
+                  347958,
+                  335166
+                ],
+                "query_median_ns": 346167
+              },
+              "other": {
+                "build_ns": 81653292,
+                "queries_ns": [
+                  66750,
+                  33292,
+                  30417,
+                  27333,
+                  26250,
+                  25750,
+                  25958
+                ],
+                "query_median_ns": 27333
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 83037417,
+                "queries_ns": [
+                  120667,
+                  43291,
+                  34291,
+                  30417,
+                  28791,
+                  27916,
+                  27167
+                ],
+                "query_median_ns": 30417
+              },
+              "same": {
+                "build_ns": 82030000,
+                "queries_ns": [
+                  393500,
+                  342250,
+                  335416,
+                  355375,
+                  333083,
+                  332250,
+                  332167
+                ],
+                "query_median_ns": 335416
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 80057584,
+                "queries_ns": [
+                  482542,
+                  372042,
+                  341500,
+                  334875,
+                  344167,
+                  332416,
+                  335250
+                ],
+                "query_median_ns": 341500
+              },
+              "other": {
+                "build_ns": 81427083,
+                "queries_ns": [
+                  95459,
+                  37500,
+                  30709,
+                  28459,
+                  26625,
+                  26500,
+                  25917
+                ],
+                "query_median_ns": 28459
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 88033084,
+                "queries_ns": [
+                  100708,
+                  43375,
+                  34209,
+                  30000,
+                  28583,
+                  27833,
+                  28500
+                ],
+                "query_median_ns": 30000
+              },
+              "same": {
+                "build_ns": 82373792,
+                "queries_ns": [
+                  428875,
+                  350916,
+                  338208,
+                  355833,
+                  333000,
+                  332875,
+                  331709
+                ],
+                "query_median_ns": 338208
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 83148708,
+                "queries_ns": [
+                  424417,
+                  343584,
+                  337917,
+                  343834,
+                  332458,
+                  357375,
+                  332583
+                ],
+                "query_median_ns": 343584
+              },
+              "other": {
+                "build_ns": 80742250,
+                "queries_ns": [
+                  98875,
+                  37167,
+                  29958,
+                  27583,
+                  26583,
+                  26917,
+                  25666
+                ],
+                "query_median_ns": 27583
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 81549166,
+                "queries_ns": [
+                  76667,
+                  36625,
+                  29209,
+                  26875,
+                  26584,
+                  25833,
+                  25584
+                ],
+                "query_median_ns": 26875
+              },
+              "same": {
+                "build_ns": 79097542,
+                "queries_ns": [
+                  372417,
+                  339875,
+                  335167,
+                  343625,
+                  332042,
+                  331667,
+                  331459
+                ],
+                "query_median_ns": 335167
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 13612955,
+              "query": 5206
+            },
+            "other": {
+              "build": 13611811,
+              "query": 5326
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 335167,
+              "median": 343500.5,
+              "max": 365208
+            },
+            "other": {
+              "min": 26875,
+              "median": 28021.0,
+              "max": 31083
+            }
+          },
+          "paired_difference_ns": {
+            "min": 304999,
+            "median": 316209.0,
+            "max": 335292
+          }
+        }
+      ]
+    },
+    {
+      "protocol": "expired-density-v1",
+      "ir": "0.3",
+      "day": "2026-11-19",
+      "head": "e27a1951f79991485e4ecff453957f1705384a18",
+      "python": "3.9.6",
+      "platform": "macOS-27.0.1-arm64-arm-64bit",
+      "hashseed": "1",
+      "pairs": 10,
+      "batch": 7,
+      "warmup_pairs": 2,
+      "rows": [
+        {
+          "expired": 0,
+          "active": 2,
+          "total": 2,
+          "corpus_sha256": {
+            "same": "ef8b2dcaa7c922e147b5923640430567e455fbce3499b8e43db7f31b2885b0b1",
+            "other": "ef8b2dcaa7c922e147b5923640430567e455fbce3499b8e43db7f31b2885b0b1"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 135250,
+                "queries_ns": [
+                  31958,
+                  29083,
+                  27083,
+                  26000,
+                  25625,
+                  26250,
+                  26041
+                ],
+                "query_median_ns": 26250
+              },
+              "other": {
+                "build_ns": 129083,
+                "queries_ns": [
+                  32166,
+                  28583,
+                  27208,
+                  26125,
+                  25833,
+                  26500,
+                  26041
+                ],
+                "query_median_ns": 26500
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 124000,
+                "queries_ns": [
+                  31917,
+                  28667,
+                  28000,
+                  26542,
+                  25959,
+                  26292,
+                  26750
+                ],
+                "query_median_ns": 26750
+              },
+              "same": {
+                "build_ns": 124250,
+                "queries_ns": [
+                  32000,
+                  29000,
+                  28083,
+                  26792,
+                  26250,
+                  26250,
+                  31709
+                ],
+                "query_median_ns": 28083
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 128833,
+                "queries_ns": [
+                  32000,
+                  28875,
+                  26500,
+                  25875,
+                  25959,
+                  26209,
+                  25583
+                ],
+                "query_median_ns": 26209
+              },
+              "other": {
+                "build_ns": 124584,
+                "queries_ns": [
+                  31625,
+                  27875,
+                  26666,
+                  26750,
+                  32375,
+                  57083,
+                  63708
+                ],
+                "query_median_ns": 31625
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 158834,
+                "queries_ns": [
+                  41167,
+                  33209,
+                  30417,
+                  27542,
+                  26792,
+                  26750,
+                  26125
+                ],
+                "query_median_ns": 27542
+              },
+              "same": {
+                "build_ns": 136583,
+                "queries_ns": [
+                  34208,
+                  30125,
+                  27375,
+                  63959,
+                  41625,
+                  31167,
+                  28541
+                ],
+                "query_median_ns": 31167
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 146958,
+                "queries_ns": [
+                  36708,
+                  30458,
+                  29166,
+                  27541,
+                  26417,
+                  26667,
+                  26167
+                ],
+                "query_median_ns": 27541
+              },
+              "other": {
+                "build_ns": 133875,
+                "queries_ns": [
+                  33833,
+                  30042,
+                  27500,
+                  35667,
+                  26875,
+                  26125,
+                  26291
+                ],
+                "query_median_ns": 27500
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 129458,
+                "queries_ns": [
+                  32791,
+                  29125,
+                  32291,
+                  30167,
+                  25958,
+                  25958,
+                  25458
+                ],
+                "query_median_ns": 29125
+              },
+              "same": {
+                "build_ns": 134833,
+                "queries_ns": [
+                  34709,
+                  30042,
+                  26667,
+                  26083,
+                  25875,
+                  25959,
+                  25750
+                ],
+                "query_median_ns": 26083
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 125333,
+                "queries_ns": [
+                  32042,
+                  29584,
+                  27083,
+                  26208,
+                  26000,
+                  26084,
+                  26250
+                ],
+                "query_median_ns": 26250
+              },
+              "other": {
+                "build_ns": 126042,
+                "queries_ns": [
+                  31750,
+                  28666,
+                  27625,
+                  26458,
+                  25750,
+                  26208,
+                  25917
+                ],
+                "query_median_ns": 26458
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 127625,
+                "queries_ns": [
+                  31875,
+                  28834,
+                  26834,
+                  26000,
+                  26250,
+                  26125,
+                  25625
+                ],
+                "query_median_ns": 26250
+              },
+              "same": {
+                "build_ns": 131750,
+                "queries_ns": [
+                  34417,
+                  30666,
+                  27042,
+                  26208,
+                  26459,
+                  25666,
+                  25625
+                ],
+                "query_median_ns": 26459
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 123958,
+                "queries_ns": [
+                  32541,
+                  29625,
+                  27208,
+                  26292,
+                  26167,
+                  26334,
+                  25750
+                ],
+                "query_median_ns": 26334
+              },
+              "other": {
+                "build_ns": 123625,
+                "queries_ns": [
+                  32250,
+                  28583,
+                  27167,
+                  29875,
+                  26416,
+                  26166,
+                  26084
+                ],
+                "query_median_ns": 27167
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 122917,
+                "queries_ns": [
+                  32750,
+                  29542,
+                  27166,
+                  26375,
+                  26333,
+                  25875,
+                  25708
+                ],
+                "query_median_ns": 26375
+              },
+              "same": {
+                "build_ns": 129541,
+                "queries_ns": [
+                  33792,
+                  29833,
+                  29166,
+                  26333,
+                  26000,
+                  26334,
+                  25708
+                ],
+                "query_median_ns": 26334
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 12364,
+              "query": 4414
+            },
+            "other": {
+              "build": 11876,
+              "query": 6417
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 26083,
+              "median": 26334.0,
+              "max": 31167
+            },
+            "other": {
+              "min": 26250,
+              "median": 26958.5,
+              "max": 31625
+            }
+          },
+          "paired_difference_ns": {
+            "min": -5416,
+            "median": -124.5,
+            "max": 3625
+          }
+        },
+        {
+          "expired": 128,
+          "active": 2,
+          "total": 130,
+          "corpus_sha256": {
+            "same": "4f113a9af88d72fa19cdf40987ce5d5e00fe8e14c75b2c820d56f2cb20d51e48",
+            "other": "9a5ed30e9ac12c4cf48c4339b0a8f2a4f3d3ae6287a1f06e739295bb11e79a0d"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2516000,
+                "queries_ns": [
+                  43750,
+                  39334,
+                  37708,
+                  36417,
+                  36334,
+                  35792,
+                  36083
+                ],
+                "query_median_ns": 36417
+              },
+              "other": {
+                "build_ns": 2528500,
+                "queries_ns": [
+                  33667,
+                  29333,
+                  28500,
+                  26500,
+                  26000,
+                  25625,
+                  25875
+                ],
+                "query_median_ns": 26500
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2504917,
+                "queries_ns": [
+                  35167,
+                  29791,
+                  28334,
+                  26500,
+                  26125,
+                  25791,
+                  25750
+                ],
+                "query_median_ns": 26500
+              },
+              "same": {
+                "build_ns": 2506417,
+                "queries_ns": [
+                  43458,
+                  39042,
+                  37583,
+                  36166,
+                  35750,
+                  35750,
+                  36000
+                ],
+                "query_median_ns": 36166
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2509791,
+                "queries_ns": [
+                  43333,
+                  38916,
+                  38417,
+                  36166,
+                  35917,
+                  35833,
+                  35708
+                ],
+                "query_median_ns": 36166
+              },
+              "other": {
+                "build_ns": 2530500,
+                "queries_ns": [
+                  35667,
+                  30166,
+                  27792,
+                  26500,
+                  25875,
+                  25875,
+                  25792
+                ],
+                "query_median_ns": 26500
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2506792,
+                "queries_ns": [
+                  33542,
+                  29292,
+                  28208,
+                  26584,
+                  26000,
+                  25875,
+                  25834
+                ],
+                "query_median_ns": 26584
+              },
+              "same": {
+                "build_ns": 2511917,
+                "queries_ns": [
+                  43250,
+                  38875,
+                  37292,
+                  36167,
+                  36000,
+                  35500,
+                  36375
+                ],
+                "query_median_ns": 36375
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2500541,
+                "queries_ns": [
+                  43709,
+                  39709,
+                  37750,
+                  36250,
+                  36167,
+                  36333,
+                  42083
+                ],
+                "query_median_ns": 37750
+              },
+              "other": {
+                "build_ns": 2492000,
+                "queries_ns": [
+                  33625,
+                  29584,
+                  27375,
+                  26375,
+                  31708,
+                  27667,
+                  27542
+                ],
+                "query_median_ns": 27667
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2505291,
+                "queries_ns": [
+                  33208,
+                  31583,
+                  32500,
+                  27792,
+                  33000,
+                  31417,
+                  25750
+                ],
+                "query_median_ns": 31583
+              },
+              "same": {
+                "build_ns": 2634917,
+                "queries_ns": [
+                  45500,
+                  39208,
+                  38334,
+                  36334,
+                  35875,
+                  36042,
+                  35417
+                ],
+                "query_median_ns": 36334
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2509417,
+                "queries_ns": [
+                  43583,
+                  39333,
+                  37291,
+                  36250,
+                  35750,
+                  36042,
+                  36333
+                ],
+                "query_median_ns": 36333
+              },
+              "other": {
+                "build_ns": 2487875,
+                "queries_ns": [
+                  33458,
+                  29417,
+                  27333,
+                  26125,
+                  25542,
+                  25833,
+                  25542
+                ],
+                "query_median_ns": 26125
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2507042,
+                "queries_ns": [
+                  33125,
+                  29167,
+                  28000,
+                  27041,
+                  26583,
+                  25834,
+                  25875
+                ],
+                "query_median_ns": 27041
+              },
+              "same": {
+                "build_ns": 2503792,
+                "queries_ns": [
+                  42792,
+                  39041,
+                  37375,
+                  35750,
+                  35541,
+                  36375,
+                  35458
+                ],
+                "query_median_ns": 36375
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 2499458,
+                "queries_ns": [
+                  42917,
+                  38709,
+                  37833,
+                  36166,
+                  35667,
+                  35667,
+                  35375
+                ],
+                "query_median_ns": 36166
+              },
+              "other": {
+                "build_ns": 2513416,
+                "queries_ns": [
+                  33125,
+                  29167,
+                  27375,
+                  26000,
+                  25833,
+                  26250,
+                  25375
+                ],
+                "query_median_ns": 26250
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 2493292,
+                "queries_ns": [
+                  33209,
+                  29084,
+                  28125,
+                  26292,
+                  25875,
+                  25375,
+                  26125
+                ],
+                "query_median_ns": 26292
+              },
+              "same": {
+                "build_ns": 2477625,
+                "queries_ns": [
+                  42708,
+                  39208,
+                  37583,
+                  36000,
+                  35542,
+                  36000,
+                  35541
+                ],
+                "query_median_ns": 36000
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 418083,
+              "query": 4246
+            },
+            "other": {
+              "build": 418019,
+              "query": 4246
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 36000,
+              "median": 36333.5,
+              "max": 37750
+            },
+            "other": {
+              "min": 26125,
+              "median": 26500.0,
+              "max": 31583
+            }
+          },
+          "paired_difference_ns": {
+            "min": 4751,
+            "median": 9749.5,
+            "max": 10208
+          }
+        },
+        {
+          "expired": 1024,
+          "active": 2,
+          "total": 1026,
+          "corpus_sha256": {
+            "same": "88c6ab8812214f14c4362228a03dfa6c484febd1cff2ed9026ab3544f5705195",
+            "other": "b6640a110250abaf2b01dbceb1aa3c791b4b8179392afbe6141331c52a5d24c4"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 20988167,
+                "queries_ns": [
+                  122167,
+                  108833,
+                  108166,
+                  129708,
+                  107375,
+                  102917,
+                  102916
+                ],
+                "query_median_ns": 108166
+              },
+              "other": {
+                "build_ns": 19451083,
+                "queries_ns": [
+                  41250,
+                  32875,
+                  31042,
+                  28375,
+                  27791,
+                  27625,
+                  27458
+                ],
+                "query_median_ns": 28375
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19813250,
+                "queries_ns": [
+                  40042,
+                  30292,
+                  28125,
+                  26625,
+                  26708,
+                  26208,
+                  25834
+                ],
+                "query_median_ns": 26708
+              },
+              "same": {
+                "build_ns": 20263666,
+                "queries_ns": [
+                  142250,
+                  112083,
+                  106792,
+                  104417,
+                  104042,
+                  103833,
+                  103625
+                ],
+                "query_median_ns": 104417
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 19465458,
+                "queries_ns": [
+                  119333,
+                  107334,
+                  104500,
+                  103542,
+                  104041,
+                  103167,
+                  110875
+                ],
+                "query_median_ns": 104500
+              },
+              "other": {
+                "build_ns": 19585167,
+                "queries_ns": [
+                  45708,
+                  33542,
+                  29167,
+                  27041,
+                  26500,
+                  26667,
+                  31000
+                ],
+                "query_median_ns": 29167
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19379417,
+                "queries_ns": [
+                  38709,
+                  30333,
+                  28458,
+                  27208,
+                  26500,
+                  26750,
+                  25959
+                ],
+                "query_median_ns": 27208
+              },
+              "same": {
+                "build_ns": 19431209,
+                "queries_ns": [
+                  114375,
+                  107667,
+                  105792,
+                  103792,
+                  103333,
+                  103375,
+                  114125
+                ],
+                "query_median_ns": 105792
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 20930208,
+                "queries_ns": [
+                  124208,
+                  122000,
+                  106459,
+                  103459,
+                  102875,
+                  102792,
+                  103083
+                ],
+                "query_median_ns": 103459
+              },
+              "other": {
+                "build_ns": 19460625,
+                "queries_ns": [
+                  47583,
+                  32292,
+                  35458,
+                  39000,
+                  35417,
+                  31666,
+                  30250
+                ],
+                "query_median_ns": 35417
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19432667,
+                "queries_ns": [
+                  46583,
+                  33667,
+                  30708,
+                  28208,
+                  26750,
+                  26250,
+                  26292
+                ],
+                "query_median_ns": 28208
+              },
+              "same": {
+                "build_ns": 19825208,
+                "queries_ns": [
+                  126959,
+                  110375,
+                  105250,
+                  104125,
+                  103667,
+                  103375,
+                  102750
+                ],
+                "query_median_ns": 104125
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 19330083,
+                "queries_ns": [
+                  115375,
+                  106791,
+                  104541,
+                  103750,
+                  103875,
+                  102792,
+                  103708
+                ],
+                "query_median_ns": 103875
+              },
+              "other": {
+                "build_ns": 19643417,
+                "queries_ns": [
+                  54416,
+                  32042,
+                  29333,
+                  27208,
+                  26500,
+                  26750,
+                  29084
+                ],
+                "query_median_ns": 29084
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19490459,
+                "queries_ns": [
+                  48292,
+                  30875,
+                  29083,
+                  26833,
+                  26125,
+                  26333,
+                  26167
+                ],
+                "query_median_ns": 26833
+              },
+              "same": {
+                "build_ns": 19271375,
+                "queries_ns": [
+                  117792,
+                  107875,
+                  105167,
+                  103500,
+                  103250,
+                  103334,
+                  112000
+                ],
+                "query_median_ns": 105167
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 19350417,
+                "queries_ns": [
+                  115500,
+                  106625,
+                  104250,
+                  109333,
+                  107833,
+                  102958,
+                  103000
+                ],
+                "query_median_ns": 106625
+              },
+              "other": {
+                "build_ns": 20648125,
+                "queries_ns": [
+                  44208,
+                  33291,
+                  29125,
+                  26833,
+                  26500,
+                  26292,
+                  32125
+                ],
+                "query_median_ns": 29125
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 19681750,
+                "queries_ns": [
+                  44375,
+                  31084,
+                  28667,
+                  27375,
+                  31709,
+                  27459,
+                  27708
+                ],
+                "query_median_ns": 28667
+              },
+              "same": {
+                "build_ns": 19908166,
+                "queries_ns": [
+                  123666,
+                  106791,
+                  104125,
+                  103375,
+                  103708,
+                  103084,
+                  102792
+                ],
+                "query_median_ns": 103708
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 3396131,
+              "query": 5043
+            },
+            "other": {
+              "build": 3396067,
+              "query": 4246
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 103459,
+              "median": 104458.5,
+              "max": 108166
+            },
+            "other": {
+              "min": 26708,
+              "median": 28521.0,
+              "max": 35417
+            }
+          },
+          "paired_difference_ns": {
+            "min": 68042,
+            "median": 76708.5,
+            "max": 79791
+          }
+        },
+        {
+          "expired": 4096,
+          "active": 2,
+          "total": 4098,
+          "corpus_sha256": {
+            "same": "b2187559be2176bfee939dd1bd13ef87a45234b51ef122cef725fd75d852e1df",
+            "other": "86964e082925570e5ee6ae386e83f8e9e83825dae080a2814ad315d40ec1db39"
+          },
+          "answer_sha256": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e",
+          "samples": [
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 81298916,
+                "queries_ns": [
+                  387167,
+                  355292,
+                  336417,
+                  344167,
+                  332625,
+                  334417,
+                  331875
+                ],
+                "query_median_ns": 336417
+              },
+              "other": {
+                "build_ns": 80702375,
+                "queries_ns": [
+                  73166,
+                  33750,
+                  30042,
+                  27417,
+                  26333,
+                  26583,
+                  25917
+                ],
+                "query_median_ns": 27417
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 82873833,
+                "queries_ns": [
+                  77334,
+                  36000,
+                  30667,
+                  27500,
+                  26792,
+                  26167,
+                  25875
+                ],
+                "query_median_ns": 27500
+              },
+              "same": {
+                "build_ns": 85181875,
+                "queries_ns": [
+                  428166,
+                  381250,
+                  346166,
+                  344334,
+                  341375,
+                  332042,
+                  332083
+                ],
+                "query_median_ns": 344334
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 83225084,
+                "queries_ns": [
+                  439709,
+                  349958,
+                  338042,
+                  345834,
+                  335417,
+                  334250,
+                  337625
+                ],
+                "query_median_ns": 338042
+              },
+              "other": {
+                "build_ns": 82494500,
+                "queries_ns": [
+                  74375,
+                  36459,
+                  31500,
+                  35583,
+                  32459,
+                  29459,
+                  25959
+                ],
+                "query_median_ns": 32459
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 82508750,
+                "queries_ns": [
+                  93666,
+                  38042,
+                  36167,
+                  27875,
+                  27000,
+                  26958,
+                  26083
+                ],
+                "query_median_ns": 27875
+              },
+              "same": {
+                "build_ns": 84374209,
+                "queries_ns": [
+                  405500,
+                  352916,
+                  348833,
+                  334458,
+                  333250,
+                  353459,
+                  432708
+                ],
+                "query_median_ns": 352916
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 81171750,
+                "queries_ns": [
+                  447875,
+                  437791,
+                  423875,
+                  372625,
+                  355250,
+                  337667,
+                  343709
+                ],
+                "query_median_ns": 372625
+              },
+              "other": {
+                "build_ns": 82498708,
+                "queries_ns": [
+                  79625,
+                  37083,
+                  31959,
+                  28042,
+                  27000,
+                  33167,
+                  28000
+                ],
+                "query_median_ns": 31959
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 80952083,
+                "queries_ns": [
+                  99583,
+                  41375,
+                  38333,
+                  31000,
+                  26958,
+                  26500,
+                  26625
+                ],
+                "query_median_ns": 31000
+              },
+              "same": {
+                "build_ns": 81478667,
+                "queries_ns": [
+                  491833,
+                  368417,
+                  337875,
+                  334500,
+                  333458,
+                  355250,
+                  332125
+                ],
+                "query_median_ns": 337875
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 79645250,
+                "queries_ns": [
+                  399334,
+                  347542,
+                  334833,
+                  333917,
+                  343625,
+                  331625,
+                  331541
+                ],
+                "query_median_ns": 334833
+              },
+              "other": {
+                "build_ns": 81575167,
+                "queries_ns": [
+                  73833,
+                  34042,
+                  30000,
+                  28458,
+                  26792,
+                  26125,
+                  26292
+                ],
+                "query_median_ns": 28458
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 84957958,
+                "queries_ns": [
+                  87042,
+                  36834,
+                  29791,
+                  27958,
+                  27625,
+                  26375,
+                  26208
+                ],
+                "query_median_ns": 27958
+              },
+              "same": {
+                "build_ns": 79456708,
+                "queries_ns": [
+                  379375,
+                  352875,
+                  336709,
+                  333333,
+                  332458,
+                  343459,
+                  331583
+                ],
+                "query_median_ns": 336709
+              }
+            },
+            {
+              "order": [
+                "same",
+                "other"
+              ],
+              "same": {
+                "build_ns": 82300500,
+                "queries_ns": [
+                  396125,
+                  356333,
+                  335750,
+                  333750,
+                  340125,
+                  338792,
+                  343292
+                ],
+                "query_median_ns": 340125
+              },
+              "other": {
+                "build_ns": 79912875,
+                "queries_ns": [
+                  74250,
+                  33917,
+                  29083,
+                  27167,
+                  26333,
+                  25708,
+                  25709
+                ],
+                "query_median_ns": 27167
+              }
+            },
+            {
+              "order": [
+                "other",
+                "same"
+              ],
+              "other": {
+                "build_ns": 83604208,
+                "queries_ns": [
+                  79875,
+                  36333,
+                  30542,
+                  27709,
+                  26250,
+                  26541,
+                  25709
+                ],
+                "query_median_ns": 27709
+              },
+              "same": {
+                "build_ns": 80072125,
+                "queries_ns": [
+                  389417,
+                  341292,
+                  346917,
+                  333625,
+                  333083,
+                  333167,
+                  340708
+                ],
+                "query_median_ns": 340708
+              }
+            }
+          ],
+          "tracemalloc_peak_bytes": {
+            "same": {
+              "build": 13612955,
+              "query": 5206
+            },
+            "other": {
+              "build": 13611811,
+              "query": 5326
+            }
+          },
+          "query_batch_median_ns": {
+            "same": {
+              "min": 334833,
+              "median": 339083.5,
+              "max": 372625
+            },
+            "other": {
+              "min": 27167,
+              "median": 27916.5,
+              "max": 32459
+            }
+          },
+          "paired_difference_ns": {
+            "min": 305583,
+            "median": 310979.0,
+            "max": 340666
+          }
+        }
+      ]
+    }
+  ],
+  "active": [
+    {
+      "protocol": "ir03-active-density-v1",
+      "query": [
+        "c:task:release",
+        "r:status:blocked",
+        "c:value:true",
+        "ctx:bench-0",
+        "2026-11-19"
+      ],
+      "interval": {
+        "from": "2026-11-18",
+        "to": "2026-11-20"
+      },
+      "version": "0.3",
+      "warmups": 1,
+      "repeats": 7,
+      "trace_budget": 10000,
+      "head": "2e1e171f7b50722ba84508ae3e27cffae18b7059",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "pythonhashseed": "0",
+      "cases": [
+        {
+          "axis": "active_facts",
+          "size": 0,
+          "active_input_facts": 2,
+          "assertions": 2,
+          "premise_combinations": 1,
+          "corpus_sha256": "c731a3e9acc95a7013f54c30fdd6a84a21cc34d4fcf6525f55ef44a73af73f9a",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              2869625,
+              2905584,
+              2858500,
+              2834875,
+              2992625,
+              2825625,
+              2851125
+            ],
+            "query": [
+              39833,
+              38208,
+              36833,
+              43167,
+              37041,
+              42875,
+              36792
+            ]
+          },
+          "median_ns": {
+            "load": 2858500,
+            "query": 38208
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 513731,
+            "query": 4234
+          }
+        },
+        {
+          "axis": "active_facts",
+          "size": 64,
+          "active_input_facts": 66,
+          "assertions": 66,
+          "premise_combinations": 1,
+          "corpus_sha256": "aecefdf42a5905071219966a194777d231e64bf695f901933054a211ba37dea9",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              4042209,
+              4025083,
+              4069792,
+              4348250,
+              4285167,
+              4067583,
+              4128375
+            ],
+            "query": [
+              114625,
+              121208,
+              134542,
+              119708,
+              140833,
+              116584,
+              112750
+            ]
+          },
+          "median_ns": {
+            "load": 4069792,
+            "query": 119708
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 785391,
+            "query": 12446
+          }
+        },
+        {
+          "axis": "active_facts",
+          "size": 512,
+          "active_input_facts": 514,
+          "assertions": 514,
+          "premise_combinations": 1,
+          "corpus_sha256": "fed72a40479b7d34fd54e54ddc224baca8109a5f7197c59f158a6b2d785bce30",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              13150542,
+              12754334,
+              14043167,
+              13156333,
+              12656584,
+              12539584,
+              12833667
+            ],
+            "query": [
+              697916,
+              670208,
+              672333,
+              673542,
+              695125,
+              657916,
+              744417
+            ]
+          },
+          "median_ns": {
+            "load": 12833667,
+            "query": 673542
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 2229335,
+            "query": 96454
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 1,
+          "active_input_facts": 2,
+          "assertions": 2,
+          "premise_combinations": 1,
+          "corpus_sha256": "c69f0d0ab93b9b509d4eb03c7ce7e5bfed66f8783ead6b8b78185ae8db52d25b",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              134042,
+              124667,
+              126417,
+              120792,
+              119666,
+              119792,
+              119041
+            ],
+            "query": [
+              35125,
+              36708,
+              33458,
+              32417,
+              32334,
+              31542,
+              31500
+            ]
+          },
+          "median_ns": {
+            "load": 120792,
+            "query": 32417
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 11382,
+            "query": 4402
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 8,
+          "active_input_facts": 2,
+          "assertions": 16,
+          "premise_combinations": 64,
+          "corpus_sha256": "963808754dfeb956bb91ddea1d218da434318a98e2a72b23b8335e85f85ac278",
+          "result": {
+            "outcome": "success",
+            "evidence": 64,
+            "canonical_answer_sha256": "f6111336de2ea81afd4ea81f9f279d84b25596daa54ffba8da6f665d78a74841"
+          },
+          "elapsed_ns": {
+            "load": [
+              394000,
+              382041,
+              385042,
+              390833,
+              388542,
+              382250,
+              384417
+            ],
+            "query": [
+              289125,
+              289542,
+              287666,
+              289250,
+              292666,
+              303708,
+              286583
+            ]
+          },
+          "median_ns": {
+            "load": 385042,
+            "query": 289250
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 43307,
+            "query": 45792
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 32,
+          "active_input_facts": 2,
+          "assertions": 64,
+          "premise_combinations": 1024,
+          "corpus_sha256": "79395d2319f9ac64fe593ca9267c0a79073116399e086084c091b8fa47dc9ab9",
+          "result": {
+            "outcome": "success",
+            "evidence": 1024,
+            "canonical_answer_sha256": "6d4f67d4565dbe94d03663ad1530d0bbc6d8498342b4bf4dffdea4e5eb152e31"
+          },
+          "elapsed_ns": {
+            "load": [
+              1287916,
+              1285416,
+              1300458,
+              1297291,
+              1449958,
+              1287417,
+              1293958
+            ],
+            "query": [
+              4264375,
+              4131584,
+              4259417,
+              4154125,
+              4280167,
+              4174458,
+              4262042
+            ]
+          },
+          "median_ns": {
+            "load": 1293958,
+            "query": 4259417
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 198631,
+            "query": 777148
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 64,
+          "active_input_facts": 2,
+          "assertions": 128,
+          "premise_combinations": 4096,
+          "corpus_sha256": "76a0d113686820a8291990ff62960728219201f775ae7bb093e5129563059cd2",
+          "result": {
+            "outcome": "limited",
+            "resource": "trace_budget",
+            "limit": 10000
+          },
+          "elapsed_ns": {
+            "load": [
+              2560041,
+              2521750,
+              2784625,
+              2721292,
+              3223041,
+              2585958,
+              2530125
+            ],
+            "query": [
+              13383042,
+              13300792,
+              14172042,
+              13848666,
+              13740334,
+              13420417,
+              15090958
+            ]
+          },
+          "median_ns": {
+            "load": 2585958,
+            "query": 13740334
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 414415,
+            "query": 2455285
+          }
+        }
+      ]
+    },
+    {
+      "protocol": "ir03-active-density-v1",
+      "query": [
+        "c:task:release",
+        "r:status:blocked",
+        "c:value:true",
+        "ctx:bench-0",
+        "2026-11-19"
+      ],
+      "interval": {
+        "from": "2026-11-18",
+        "to": "2026-11-20"
+      },
+      "version": "0.3",
+      "warmups": 1,
+      "repeats": 7,
+      "trace_budget": 10000,
+      "head": "2e1e171f7b50722ba84508ae3e27cffae18b7059",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "pythonhashseed": "1",
+      "cases": [
+        {
+          "axis": "active_facts",
+          "size": 0,
+          "active_input_facts": 2,
+          "assertions": 2,
+          "premise_combinations": 1,
+          "corpus_sha256": "c731a3e9acc95a7013f54c30fdd6a84a21cc34d4fcf6525f55ef44a73af73f9a",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              2846375,
+              2843667,
+              2909500,
+              2874250,
+              2822459,
+              2895709,
+              2821250
+            ],
+            "query": [
+              40042,
+              37500,
+              49875,
+              37291,
+              37041,
+              40791,
+              37792
+            ]
+          },
+          "median_ns": {
+            "load": 2846375,
+            "query": 37792
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 513731,
+            "query": 4234
+          }
+        },
+        {
+          "axis": "active_facts",
+          "size": 64,
+          "active_input_facts": 66,
+          "assertions": 66,
+          "premise_combinations": 1,
+          "corpus_sha256": "aecefdf42a5905071219966a194777d231e64bf695f901933054a211ba37dea9",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              4019083,
+              4042000,
+              3986333,
+              4057667,
+              4030291,
+              4221542,
+              4090000
+            ],
+            "query": [
+              115084,
+              114167,
+              122792,
+              112208,
+              111167,
+              127125,
+              117833
+            ]
+          },
+          "median_ns": {
+            "load": 4042000,
+            "query": 115084
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 785391,
+            "query": 12446
+          }
+        },
+        {
+          "axis": "active_facts",
+          "size": 512,
+          "active_input_facts": 514,
+          "assertions": 514,
+          "premise_combinations": 1,
+          "corpus_sha256": "fed72a40479b7d34fd54e54ddc224baca8109a5f7197c59f158a6b2d785bce30",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              12624000,
+              12554292,
+              14115708,
+              12811000,
+              12688334,
+              12594583,
+              12276958
+            ],
+            "query": [
+              685209,
+              658500,
+              674584,
+              665208,
+              669875,
+              664459,
+              656500
+            ]
+          },
+          "median_ns": {
+            "load": 12624000,
+            "query": 665208
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 2229335,
+            "query": 96454
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 1,
+          "active_input_facts": 2,
+          "assertions": 2,
+          "premise_combinations": 1,
+          "corpus_sha256": "c69f0d0ab93b9b509d4eb03c7ce7e5bfed66f8783ead6b8b78185ae8db52d25b",
+          "result": {
+            "outcome": "success",
+            "evidence": 1,
+            "canonical_answer_sha256": "b13db40fe47a300711a0e0cb1b7387ec5f2239b8791744faefbdff194f8d650b"
+          },
+          "elapsed_ns": {
+            "load": [
+              125125,
+              122541,
+              119917,
+              121208,
+              119000,
+              126417,
+              118792
+            ],
+            "query": [
+              34958,
+              33667,
+              33250,
+              32583,
+              32208,
+              33833,
+              32125
+            ]
+          },
+          "median_ns": {
+            "load": 121208,
+            "query": 33250
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 11382,
+            "query": 4402
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 8,
+          "active_input_facts": 2,
+          "assertions": 16,
+          "premise_combinations": 64,
+          "corpus_sha256": "963808754dfeb956bb91ddea1d218da434318a98e2a72b23b8335e85f85ac278",
+          "result": {
+            "outcome": "success",
+            "evidence": 64,
+            "canonical_answer_sha256": "f6111336de2ea81afd4ea81f9f279d84b25596daa54ffba8da6f665d78a74841"
+          },
+          "elapsed_ns": {
+            "load": [
+              392584,
+              384000,
+              381709,
+              382334,
+              382792,
+              392291,
+              384583
+            ],
+            "query": [
+              319166,
+              299833,
+              289125,
+              290666,
+              310458,
+              289500,
+              303333
+            ]
+          },
+          "median_ns": {
+            "load": 384000,
+            "query": 299833
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 43307,
+            "query": 45792
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 32,
+          "active_input_facts": 2,
+          "assertions": 64,
+          "premise_combinations": 1024,
+          "corpus_sha256": "79395d2319f9ac64fe593ca9267c0a79073116399e086084c091b8fa47dc9ab9",
+          "result": {
+            "outcome": "success",
+            "evidence": 1024,
+            "canonical_answer_sha256": "6d4f67d4565dbe94d03663ad1530d0bbc6d8498342b4bf4dffdea4e5eb152e31"
+          },
+          "elapsed_ns": {
+            "load": [
+              1285083,
+              1279708,
+              1287042,
+              1272000,
+              1295584,
+              1400708,
+              1292334
+            ],
+            "query": [
+              4256792,
+              4206584,
+              4287125,
+              4208584,
+              4325458,
+              4195000,
+              4323875
+            ]
+          },
+          "median_ns": {
+            "load": 1287042,
+            "query": 4256792
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 198631,
+            "query": 777148
+          }
+        },
+        {
+          "axis": "proof_branches",
+          "size": 64,
+          "active_input_facts": 2,
+          "assertions": 128,
+          "premise_combinations": 4096,
+          "corpus_sha256": "76a0d113686820a8291990ff62960728219201f775ae7bb093e5129563059cd2",
+          "result": {
+            "outcome": "limited",
+            "resource": "trace_budget",
+            "limit": 10000
+          },
+          "elapsed_ns": {
+            "load": [
+              2478625,
+              2459292,
+              2901667,
+              2811375,
+              2566459,
+              2576125,
+              2535041
+            ],
+            "query": [
+              13110959,
+              13430000,
+              14324583,
+              14254083,
+              13564791,
+              13748791,
+              14900125
+            ]
+          },
+          "median_ns": {
+            "load": 2566459,
+            "query": 13748791
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 414415,
+            "query": 2455285
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -85,7 +85,7 @@ def polarity_agreement(packet, registry, sheet_a, sheet_b):
     for label, sheet in (("A", sheet_a), ("B", sheet_b)):
         pending = validate_sheet(packet, registry, sheet)
         if pending:
-            raise ValueError(f"{label} 仍有 {len(pending)} 个条目未填写，不能计算 κ")
+            raise ValueError(f"{label} 仍有 {len(pending)} 个条目未填写，不能计算一致性")
     a, b = polarity_keys(sheet_a), polarity_keys(sheet_b)
     shared = a.keys() & b.keys()
     table = {i: {j: 0 for j in POLARITIES} for i in POLARITIES}
@@ -113,14 +113,56 @@ def polarity_agreement(packet, registry, sheet_a, sheet_b):
     return report
 
 
+def _assertions(sheet):
+    return {(*key, polarity) for key, values in polarity_keys(sheet).items() for polarity in values}
+
+
+def _notes(sheet):
+    return {(row["id"], note["span"], note["reason"]) for row in sheet for note in row["not_annotated"]}
+
+
+def _micro_f1(left, right):
+    matched = len(left & right)
+    total = len(left) + len(right)
+    report = {"left": len(left), "right": len(right), "matched": matched,
+              "micro_f1": 2 * matched / total if total else None}
+    if not total:
+        report["reason"] = "both_sets_empty"
+    return report
+
+
+def trial_metrics(packet, registry, sheet_a, sheet_b, gold=None):
+    polarity = polarity_agreement(packet, registry, sheet_a, sheet_b)
+    a, b = _assertions(sheet_a), _assertions(sheet_b)
+    result = {"items": len(packet), "assertions_a_b": _micro_f1(a, b),
+              "not_annotated_a_b": _micro_f1(_notes(sheet_a), _notes(sheet_b)), "polarity": polarity,
+              "reported_cause_upgrades": {"count": None, "status": "requires_adjudication"}}
+    if gold is not None:
+        if not isinstance(gold, dict) or gold.get("ir_version") != "0.2" or not isinstance(gold.get("items"), list):
+            raise ValueError("金标须为本轮 IR 0.2 条目集")
+        items = gold["items"]
+        texts = {item["id"]: item["text"] for item in items}
+        if len(items) != len(texts) or texts != {item["id"]: item["text"] for item in packet}:
+            raise ValueError("金标条目 ID 与文本须逐一匹配盲包")
+        sheet = [{key: item[key] for key in ("id", "assertions", "not_annotated")} for item in items]
+        if validate_sheet(packet, registry, sheet):
+            raise ValueError("金标中存在未完成条目")
+        reference = _assertions(sheet)
+        result["assertions_a_gold"] = _micro_f1(a, reference)
+        result["assertions_b_gold"] = _micro_f1(b, reference)
+    return result
+
+
 def main():
-    parser = argparse.ArgumentParser(description="生成独立试标盲包、校验单表或复核配对极性")
+    parser = argparse.ArgumentParser(description="生成独立试标盲包、校验单表或复核配对指标")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("prepare", "check", "polarity"):
+    for name in ("prepare", "check", "polarity", "metrics"):
         command = commands.add_parser(name)
         command.add_argument("folder", type=Path)
         if name == "check":
             command.add_argument("sheet", choices=("a", "b"))
+        if name == "metrics":
+            command.add_argument("--gold", type=Path, help="人工核对过的本轮 IR 0.2 条目文件")
     args = parser.parse_args()
     folder = args.folder
     try:
@@ -132,8 +174,14 @@ def main():
             pending = validate_sheet(packet, registry, read(folder / f"annotator-{args.sheet}.json"))
             result = {"items": len(packet), "pending": pending}
         else:
-            result = polarity_agreement(packet, registry, read(folder / "annotator-a.json"),
-                                        read(folder / "annotator-b.json"))
+            a, b = (read(folder / f"annotator-{label}.json") for label in ("a", "b"))
+            if args.command == "metrics":
+                gold = read(args.gold) if args.gold else None
+                if args.gold and gold is None:
+                    raise ValueError("指定的金标文件为空值")
+                result = trial_metrics(packet, registry, a, b, gold)
+            else:
+                result = polarity_agreement(packet, registry, a, b)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except (OSError, ValueError, KeyError, TypeError) as exc:
         parser.exit(2, f"试标工具：{exc}\n")

@@ -1,0 +1,587 @@
+{
+  "kernel_commit": "79889f18766a55de03b31eb88189eab617ec2f8d",
+  "hardware": {
+    "cpu": "Apple M2",
+    "memory_bytes": 17179869184
+  },
+  "runs": {
+    "0.2-0": {
+      "protocol": "ir02-partitions-v1",
+      "ir_version": "0.2",
+      "assertions": 10000,
+      "partitions": 5000,
+      "corpus_bytes": 3087221,
+      "corpus_sha256": "856e5829a79d2894934711a7c8aa158a5e90b390f4539d42d6b1551db9385bc6",
+      "query_args": {
+        "direct": [
+          "c:task:release",
+          "r:task:requires",
+          "c:resource:signing-key",
+          "ctx:bench-0",
+          "2026-11-19"
+        ],
+        "inferred": [
+          "c:task:release",
+          "r:status:blocked",
+          "c:value:true",
+          "ctx:bench-0",
+          "2026-11-19"
+        ]
+      },
+      "canonical_answer_sha256": {
+        "direct": "78c48a3718c8d64aafaab8da6d55fae568ab8f297fc446202714e214374664cd",
+        "inferred": "0db30455f2820453563fbdedfdebff5c2a11b9522ce9899a2fc38d3bd68c608c"
+      },
+      "head": "4341fe84ece62bb46e08d42e08475061ae16d9d2",
+      "source_sha256": "53b9a057dc6c3071ac7c214282371b9c6aafd2dd5ba43eab8360393c80576571",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "processor": "arm",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "python_implementation": "CPython",
+      "pythonhashseed": "0",
+      "warmups": 1,
+      "repeats": 5,
+      "elapsed_ns": {
+        "load": [
+          183244000,
+          174737833,
+          183634959,
+          184749417,
+          182083417
+        ],
+        "direct": [
+          55375,
+          88125,
+          60750,
+          141458,
+          60375
+        ],
+        "inferred": [
+          41208,
+          52000,
+          44041,
+          48584,
+          41875
+        ]
+      },
+      "median_ns": {
+        "load": 183244000,
+        "direct": 60750,
+        "inferred": 44041
+      },
+      "tracemalloc_peak_bytes": {
+        "load": 28142566,
+        "direct": 3588,
+        "inferred": 4542
+      }
+    },
+    "0.2-1": {
+      "protocol": "ir02-partitions-v1",
+      "ir_version": "0.2",
+      "assertions": 10000,
+      "partitions": 5000,
+      "corpus_bytes": 3087221,
+      "corpus_sha256": "856e5829a79d2894934711a7c8aa158a5e90b390f4539d42d6b1551db9385bc6",
+      "query_args": {
+        "direct": [
+          "c:task:release",
+          "r:task:requires",
+          "c:resource:signing-key",
+          "ctx:bench-0",
+          "2026-11-19"
+        ],
+        "inferred": [
+          "c:task:release",
+          "r:status:blocked",
+          "c:value:true",
+          "ctx:bench-0",
+          "2026-11-19"
+        ]
+      },
+      "canonical_answer_sha256": {
+        "direct": "78c48a3718c8d64aafaab8da6d55fae568ab8f297fc446202714e214374664cd",
+        "inferred": "0db30455f2820453563fbdedfdebff5c2a11b9522ce9899a2fc38d3bd68c608c"
+      },
+      "head": "4341fe84ece62bb46e08d42e08475061ae16d9d2",
+      "source_sha256": "53b9a057dc6c3071ac7c214282371b9c6aafd2dd5ba43eab8360393c80576571",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "processor": "arm",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "python_implementation": "CPython",
+      "pythonhashseed": "1",
+      "warmups": 1,
+      "repeats": 5,
+      "elapsed_ns": {
+        "load": [
+          175610750,
+          171947334,
+          181574208,
+          179400791,
+          179673958
+        ],
+        "direct": [
+          58708,
+          59875,
+          59666,
+          65958,
+          54208
+        ],
+        "inferred": [
+          40917,
+          47167,
+          48000,
+          81458,
+          46708
+        ]
+      },
+      "median_ns": {
+        "load": 179400791,
+        "direct": 59666,
+        "inferred": 47167
+      },
+      "tracemalloc_peak_bytes": {
+        "load": 28142566,
+        "direct": 3588,
+        "inferred": 4542
+      }
+    },
+    "0.3-0": {
+      "protocol": "ir03-single-day-intervals-v1",
+      "ir_version": "0.3",
+      "assertions": 10000,
+      "partitions": 5000,
+      "corpus_bytes": 3397221,
+      "corpus_sha256": "bc446907bea1141e89ab89ac93597e70bc0b6e521a21c6d539fd8b62e0080f15",
+      "query_args": {
+        "direct": [
+          "c:task:release",
+          "r:task:requires",
+          "c:resource:signing-key",
+          "ctx:bench-0",
+          "2026-11-19"
+        ],
+        "inferred": [
+          "c:task:release",
+          "r:status:blocked",
+          "c:value:true",
+          "ctx:bench-0",
+          "2026-11-19"
+        ]
+      },
+      "canonical_answer_sha256": {
+        "direct": "7166d5b767a91ecd08cc5b38680275c28297d6af4f7b9357110f819133f18298",
+        "inferred": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e"
+      },
+      "head": "4341fe84ece62bb46e08d42e08475061ae16d9d2",
+      "source_sha256": "53b9a057dc6c3071ac7c214282371b9c6aafd2dd5ba43eab8360393c80576571",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "processor": "arm",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "python_implementation": "CPython",
+      "pythonhashseed": "0",
+      "warmups": 1,
+      "repeats": 5,
+      "elapsed_ns": {
+        "load": [
+          216151792,
+          208638875,
+          216347875,
+          207300708,
+          221610750
+        ],
+        "direct": [
+          63083,
+          60500,
+          69291,
+          64875,
+          65875
+        ],
+        "inferred": [
+          44250,
+          42459,
+          46958,
+          59208,
+          44625
+        ]
+      },
+      "median_ns": {
+        "load": 216151792,
+        "direct": 64875,
+        "inferred": 44625
+      },
+      "tracemalloc_peak_bytes": {
+        "load": 34472289,
+        "direct": 3884,
+        "inferred": 5558
+      }
+    },
+    "0.3-1": {
+      "protocol": "ir03-single-day-intervals-v1",
+      "ir_version": "0.3",
+      "assertions": 10000,
+      "partitions": 5000,
+      "corpus_bytes": 3397221,
+      "corpus_sha256": "bc446907bea1141e89ab89ac93597e70bc0b6e521a21c6d539fd8b62e0080f15",
+      "query_args": {
+        "direct": [
+          "c:task:release",
+          "r:task:requires",
+          "c:resource:signing-key",
+          "ctx:bench-0",
+          "2026-11-19"
+        ],
+        "inferred": [
+          "c:task:release",
+          "r:status:blocked",
+          "c:value:true",
+          "ctx:bench-0",
+          "2026-11-19"
+        ]
+      },
+      "canonical_answer_sha256": {
+        "direct": "7166d5b767a91ecd08cc5b38680275c28297d6af4f7b9357110f819133f18298",
+        "inferred": "c47abf58dcb468af9659608cbdc013a0d5034bb3e0d5417a4db50966f989034e"
+      },
+      "head": "4341fe84ece62bb46e08d42e08475061ae16d9d2",
+      "source_sha256": "53b9a057dc6c3071ac7c214282371b9c6aafd2dd5ba43eab8360393c80576571",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "processor": "arm",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "python_implementation": "CPython",
+      "pythonhashseed": "1",
+      "warmups": 1,
+      "repeats": 5,
+      "elapsed_ns": {
+        "load": [
+          213424583,
+          209676750,
+          214840709,
+          207658167,
+          215089208
+        ],
+        "direct": [
+          59917,
+          62250,
+          61208,
+          67292,
+          61125
+        ],
+        "inferred": [
+          44375,
+          43750,
+          43875,
+          45959,
+          46042
+        ]
+      },
+      "median_ns": {
+        "load": 213424583,
+        "direct": 61208,
+        "inferred": 44375
+      },
+      "tracemalloc_peak_bytes": {
+        "load": 34472289,
+        "direct": 3884,
+        "inferred": 5558
+      }
+    },
+    "budget-0": {
+      "protocol": "same-day-proof-budget-v1",
+      "warmups": 1,
+      "repeats": 3,
+      "head": "4341fe84ece62bb46e08d42e08475061ae16d9d2",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "pythonhashseed": "0",
+      "query_args": [
+        "c:task:release",
+        "r:status:blocked",
+        "c:value:true",
+        "ctx:bench-0",
+        "2026-11-19"
+      ],
+      "trace_budget": 10000,
+      "cases": [
+        {
+          "ir_version": "0.2",
+          "assertions": 6,
+          "premise_combinations": 9,
+          "corpus_sha256": "f72693ae3cf90ea4c1437c3520c98f68a56331073603b867d91e4a7da18aa328",
+          "result": {
+            "outcome": "success",
+            "evidence": 9,
+            "canonical_answer_sha256": "afc0255f845c12652554a72c16f3257d6440435be6462892047415076016671c"
+          },
+          "elapsed_ns": {
+            "load": [
+              204584,
+              201833,
+              191625
+            ],
+            "query": [
+              75791,
+              72042,
+              66792
+            ]
+          },
+          "median_ns": {
+            "load": 201833,
+            "query": 72042
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 17593,
+            "query": 8812
+          }
+        },
+        {
+          "ir_version": "0.2",
+          "assertions": 128,
+          "premise_combinations": 4096,
+          "corpus_sha256": "93c3c23ec455fe34ae9aeadac1e46bac20978088da403de04b5c8c3ccd6df58b",
+          "result": {
+            "outcome": "limited",
+            "resource": "trace_budget",
+            "limit": 10000
+          },
+          "elapsed_ns": {
+            "load": [
+              2167333,
+              2230375,
+              2174666
+            ],
+            "query": [
+              13271500,
+              13253416,
+              13132667
+            ]
+          },
+          "median_ns": {
+            "load": 2174666,
+            "query": 13253416
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 339123,
+            "query": 2423421
+          }
+        },
+        {
+          "ir_version": "0.3",
+          "assertions": 6,
+          "premise_combinations": 9,
+          "corpus_sha256": "6125b963d3fdfe9217f598974d285666413e9c3e1ebc2ea6929ccc4cd66a1719",
+          "result": {
+            "outcome": "success",
+            "evidence": 9,
+            "canonical_answer_sha256": "afc0255f845c12652554a72c16f3257d6440435be6462892047415076016671c"
+          },
+          "elapsed_ns": {
+            "load": [
+              194917,
+              189000,
+              181625
+            ],
+            "query": [
+              80250,
+              68959,
+              65166
+            ]
+          },
+          "median_ns": {
+            "load": 189000,
+            "query": 68959
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 16584,
+            "query": 8812
+          }
+        },
+        {
+          "ir_version": "0.3",
+          "assertions": 128,
+          "premise_combinations": 4096,
+          "corpus_sha256": "9b305c8be1698f06eb3f42abbf8f00a4d211871c6c4d25f89b6e8a25ee94f894",
+          "result": {
+            "outcome": "limited",
+            "resource": "trace_budget",
+            "limit": 10000
+          },
+          "elapsed_ns": {
+            "load": [
+              2194334,
+              2160250,
+              2186958
+            ],
+            "query": [
+              13107208,
+              13075833,
+              13239542
+            ]
+          },
+          "median_ns": {
+            "load": 2186958,
+            "query": 13107208
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 339123,
+            "query": 2423421
+          }
+        }
+      ]
+    },
+    "budget-1": {
+      "protocol": "same-day-proof-budget-v1",
+      "warmups": 1,
+      "repeats": 3,
+      "head": "4341fe84ece62bb46e08d42e08475061ae16d9d2",
+      "system": "macOS-27.0.1-arm64-arm-64bit",
+      "architecture": "arm64",
+      "logical_cpus": 8,
+      "python": "3.9.6",
+      "pythonhashseed": "1",
+      "query_args": [
+        "c:task:release",
+        "r:status:blocked",
+        "c:value:true",
+        "ctx:bench-0",
+        "2026-11-19"
+      ],
+      "trace_budget": 10000,
+      "cases": [
+        {
+          "ir_version": "0.2",
+          "assertions": 6,
+          "premise_combinations": 9,
+          "corpus_sha256": "f72693ae3cf90ea4c1437c3520c98f68a56331073603b867d91e4a7da18aa328",
+          "result": {
+            "outcome": "success",
+            "evidence": 9,
+            "canonical_answer_sha256": "afc0255f845c12652554a72c16f3257d6440435be6462892047415076016671c"
+          },
+          "elapsed_ns": {
+            "load": [
+              203000,
+              198750,
+              192125
+            ],
+            "query": [
+              77541,
+              76667,
+              67083
+            ]
+          },
+          "median_ns": {
+            "load": 198750,
+            "query": 76667
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 17593,
+            "query": 8812
+          }
+        },
+        {
+          "ir_version": "0.2",
+          "assertions": 128,
+          "premise_combinations": 4096,
+          "corpus_sha256": "93c3c23ec455fe34ae9aeadac1e46bac20978088da403de04b5c8c3ccd6df58b",
+          "result": {
+            "outcome": "limited",
+            "resource": "trace_budget",
+            "limit": 10000
+          },
+          "elapsed_ns": {
+            "load": [
+              2174000,
+              2338916,
+              2131542
+            ],
+            "query": [
+              13340709,
+              13242542,
+              13336542
+            ]
+          },
+          "median_ns": {
+            "load": 2174000,
+            "query": 13336542
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 339123,
+            "query": 2423421
+          }
+        },
+        {
+          "ir_version": "0.3",
+          "assertions": 6,
+          "premise_combinations": 9,
+          "corpus_sha256": "6125b963d3fdfe9217f598974d285666413e9c3e1ebc2ea6929ccc4cd66a1719",
+          "result": {
+            "outcome": "success",
+            "evidence": 9,
+            "canonical_answer_sha256": "afc0255f845c12652554a72c16f3257d6440435be6462892047415076016671c"
+          },
+          "elapsed_ns": {
+            "load": [
+              187333,
+              183833,
+              183125
+            ],
+            "query": [
+              67417,
+              72375,
+              66084
+            ]
+          },
+          "median_ns": {
+            "load": 183833,
+            "query": 67417
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 16584,
+            "query": 8812
+          }
+        },
+        {
+          "ir_version": "0.3",
+          "assertions": 128,
+          "premise_combinations": 4096,
+          "corpus_sha256": "9b305c8be1698f06eb3f42abbf8f00a4d211871c6c4d25f89b6e8a25ee94f894",
+          "result": {
+            "outcome": "limited",
+            "resource": "trace_budget",
+            "limit": 10000
+          },
+          "elapsed_ns": {
+            "load": [
+              2162958,
+              2157250,
+              2144709
+            ],
+            "query": [
+              13256125,
+              13283917,
+              14566708
+            ]
+          },
+          "median_ns": {
+            "load": 2157250,
+            "query": 13283917
+          },
+          "tracemalloc_peak_bytes": {
+            "load": 339123,
+            "query": 2423421
+          }
+        }
+      ]
+    }
+  }
+}

@@ -65,6 +65,20 @@ class CLITests(unittest.TestCase):
         self.assertIs(error["valid"], False)
         self.assertIn("utf-8", error["error"].lower())
 
+    def test_large_integer_token_has_structured_input_error(self) -> None:
+        # IR has no numeric root. Newer Python versions reject this token before IR validation.
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "number.json"
+            path.write_text("1" * 4500, encoding="utf-8")
+            flags = ["--subject", "c:x", "--relation", "r:y", "--object", "c:z", "--context", "ctx:test"]
+            for command in ("validate", "migrate", "query", "query-preview"):
+                with self.subTest(command=command):
+                    args = flags if command.startswith("query") else []
+                    result = run_cli(command, str(path), *args)
+                    self.assertEqual(result.returncode, 2)
+                    self.assertEqual(result.stdout, "")
+                    self.assertIs(json.loads(result.stderr)["valid"], False)
+
     def test_cli_date_typo_is_a_validation_error(self) -> None:
         result = run_cli("query", EXAMPLE, "--subject", "c:task:release",
                          "--relation", "r:status:blocked", "--object", "c:value:true",
