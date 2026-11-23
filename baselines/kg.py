@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -59,7 +60,7 @@ def main():
     except (ValueError, KeyError, TypeError, OSError) as exc:
         parser.exit(2, f"无法读取基线数据：{exc}\n")
     for row in rows:
-        print(json.dumps(row, ensure_ascii=False))
+        sys.stdout.buffer.write((json.dumps(row, ensure_ascii=False) + "\n").encode("utf-8"))
 
 
 if __name__ == "__main__":
