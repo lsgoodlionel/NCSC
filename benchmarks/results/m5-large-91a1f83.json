@@ -1,0 +1,143 @@
+{
+  "head": "c24941563ed68410b2de261b82a5a3bc6f89eb7a",
+  "system": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.9.6",
+  "cpu": "Apple M2",
+  "physical_bytes": 17179869184,
+  "rss_stop_bytes": 536870912,
+  "wall_stop_seconds": 30,
+  "cells": [
+    {
+      "assertions": 100000,
+      "ir": "0.2",
+      "samples": [
+        {
+          "seed": 0,
+          "preflight_free_percent": 39,
+          "outcome": "success",
+          "stop_resource": null,
+          "sampled_peak_bytes": 489111552,
+          "elapsed_s": 2.958881167,
+          "events": [
+            {
+              "stage": "corpus"
+            },
+            {
+              "stage": "load",
+              "corpus_bytes": 31067221,
+              "corpus_sha256": "6d6587ea72054e747ca516db63edbc573c8380e83c0e8726f71edbf2768d78df"
+            },
+            {
+              "stage": "queries",
+              "load_ns": 2465513208
+            },
+            {
+              "stage": "finished",
+              "query_ns": {
+                "direct": [
+                  21000,
+                  20833,
+                  25792
+                ],
+                "inferred": [
+                  28041,
+                  28125,
+                  27333
+                ]
+              },
+              "query_median_ns": {
+                "direct": 21000,
+                "inferred": 28041
+              },
+              "answer_sha256": {
+                "direct": "78c48a3718c8d64aafaab8da6d55fae568ab8f297fc446202714e214374664cd",
+                "inferred": "0db30455f2820453563fbdedfdebff5c2a11b9522ce9899a2fc38d3bd68c608c"
+              },
+              "process_peak_bytes": 493453312
+            }
+          ]
+        },
+        {
+          "seed": 1,
+          "preflight_free_percent": 37,
+          "outcome": "limited",
+          "stop_resource": "rss",
+          "sampled_peak_bytes": 539164672,
+          "elapsed_s": 2.542979959,
+          "events": [
+            {
+              "stage": "corpus"
+            },
+            {
+              "stage": "load",
+              "corpus_bytes": 31067221,
+              "corpus_sha256": "6d6587ea72054e747ca516db63edbc573c8380e83c0e8726f71edbf2768d78df"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assertions": 100000,
+      "ir": "0.3",
+      "samples": [
+        {
+          "seed": 0,
+          "preflight_free_percent": 38,
+          "outcome": "limited",
+          "stop_resource": "rss",
+          "sampled_peak_bytes": 558645248,
+          "elapsed_s": 3.211604458000001,
+          "events": [
+            {
+              "stage": "corpus"
+            },
+            {
+              "stage": "load",
+              "corpus_bytes": 34167221,
+              "corpus_sha256": "21f9f0eb3c73e817e2e71c191d11559d6e17ae794e6a584cb016564b7dee38e1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assertions": 1000000,
+      "ir": "0.2",
+      "samples": [
+        {
+          "seed": 0,
+          "preflight_free_percent": 39,
+          "outcome": "limited",
+          "stop_resource": "rss",
+          "sampled_peak_bytes": 555499520,
+          "elapsed_s": 1.0878217919999997,
+          "events": [
+            {
+              "stage": "corpus"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assertions": 1000000,
+      "ir": "0.3",
+      "samples": [
+        {
+          "seed": 0,
+          "preflight_free_percent": 39,
+          "outcome": "limited",
+          "stop_resource": "rss",
+          "sampled_peak_bytes": 562544640,
+          "elapsed_s": 1.0849496250000001,
+          "events": [
+            {
+              "stage": "corpus"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
