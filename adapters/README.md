@@ -9,3 +9,18 @@
 ## 指代反例回归
 
 运行 `python3 -m unittest tests.test_adapter_referents -v`。三条开发用例固定项目、日期、看板来源及两个任务，只改变“已完成”所指的任务。每个测试替身返回手写候选，发布和迁移两次查询分别核对。显式指名发布时预期为支持／未知，显式指名迁移时为未知／支持，指代不明时为未知／未知。把完成状态移到另一任务，或在指代不明时任选一个任务，仍能逐字引用原文并通过候选校验，但双向查询会暴露错误。此处的预期只供离线开发回归，正式中文复核和冻结集抽取评测另行进行。
+
+## 回环 Ollama 参考实现与本地抽取评分
+
+从仓库根目录运行，运行时仅依赖 Python 标准库。已由调用者准备并运行的本地 Ollama 接收一次 `POST /api/generate`。发送方固定使用 127.0.0.1、无代理、无重定向，超时 120 秒；生成器使用 JSON 模式并关闭流式接收。启用前须设置 `NCSC_OLLAMA_MODEL`，可设置 `NCSC_OLLAMA_PORT`（默认 11434）。鉴权代理可设置 `NCSC_OLLAMA_REQUIRE_TOKEN=1`，凭据从 `NCSC_OLLAMA_TOKEN` 读取；未设置凭据时返回配置错误。普通本地 Ollama 不需要密钥。[Ollama 生成接口](https://docs.ollama.com/api/generate)
+
+盲输入为仅含 id、text 的 JSON 行数组和对应 IR 登记表。调用者将逐条完整原文登记为本条目的 `src:excerpt`；该 ID 在不同条目中独立解析。取样时记录代码提交、模型名称及模型文件摘要，并锁存输入与输出。以下两个步骤可分别在生成侧和持有冻结参考的评分侧执行。
+
+```sh
+python3 -m eval.extraction predict packet.json registry.json --enable-local-model > predictions.json
+python3 -m eval.extraction score adjudicated.json predictions.json
+```
+
+对先前独立锁存的外部盲预测，可用 `python3 -m eval.extraction validate packet.json registry.json responses.json > predictions.json` 取代第一步。responses.json 每行只含 id 和 assertions。每个候选的来源 ID 与原文片段均通过现有校验；上下文须已登记。provider_error 和 invalid_candidate 的条目保留在报告中。
+
+评分在每条目内对角色三元组、极性、上下文、单日／区间去重，匹配数、预测数和参考数分别跨条目求和。micro-P 为匹配数除以预测数，micro-R 为匹配数除以参考数。零分母返回 null。调用失败或非法候选按该条零预测计；报告另列各状态计数。对文本抽取效果使用逐条独立裁决的标注作为参考。同一报告不评价来源身份识别、模型生成过程、未标注理由或保留来源摘要的质量。
