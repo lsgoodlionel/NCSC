@@ -5,7 +5,10 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-from .json_exact import direct_evidence
+if __package__:
+    from .json_exact import direct_evidence
+else:
+    from json_exact import direct_evidence
 
 
 def predictions(dataset, *, include_sources=False):
