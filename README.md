@@ -4,6 +4,8 @@
 
 “0–9 十类”目前只是待验证研究标签，不是本原型的公理，也不参与推理。
 
+首次使用请从[项目发布状态核对手册](docs/USAGE.zh-CN.md)开始。手册提供可运行的四日示例、自有数据模板、日常复核流程及系统接入方法。
+
 ## 快速运行
 
 从仓库根目录运行。下列命令使用 Python 3.9 或更高版本。macOS 若只有 `python3`，将 `python` 换成 `python3`；Windows 可用 `py -3`。
@@ -56,6 +58,6 @@ python -m ncsc.cli query tests/contract/fixtures/0.2/valid/example-migrated.json
 
 IR 0.2 正式查询按带极性的事实收敛。冲突前提记录在 `suppressed` 中，证据可沿 `trace` 追至来源。超过查询预算时 CLI 以状态码 3 退出。0.2 和 0.3 的 CLI 输入上限为 2 MiB，响应上限为 1 MiB。为兼容既有 0.1 文件，正式 `query` 在解析后检查 IR 字节数；实验入口 `query-preview` 在解析前限制读取。
 
-合成集含 26 个条目、42 个查询。JSON、轻量 KG 和规则基线的复验命令见 [基线说明](baselines/README.md)。0.3 的派生证据只适用于查询当日，原始叶子保留来源声明的区间。人工试标、评分口径冻结及规模实测仍待进行。
+合成集含 26 个条目、42 个查询。JSON、轻量 KG 和规则基线的复验命令见 [基线说明](baselines/README.md)。0.3 的派生证据只适用于查询当日，原始叶子保留来源声明的区间。本轮已完成 AI 工程试标及评分冻结，见[冻结范围](datasets/freezes/ai-eng-v1/README.md)与[规模实测](benchmarks/README.md)。
 
 NCSC V0.1 的第一轮完整工程研究方案已纳入 [docs/v0.1/README.md](docs/v0.1/README.md)，包括工程可行性、架构、语义 Schema、实施计划、风险和研究问题。该研究包仍是启动决策材料，不代表核心公理已经冻结。
