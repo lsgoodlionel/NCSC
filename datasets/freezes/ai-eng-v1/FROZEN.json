@@ -1,0 +1,39 @@
+{
+  "base": "67354745aea47f8ffe4306425d35e880f82c3e9f",
+  "family_partition": {
+    "F1-direct": "engineering-dev",
+    "F2-absence": "engineering-dev",
+    "F3-rule": "engineering-dev",
+    "F4-reported-cause": "engineering-dev",
+    "F5-conflict": "engineering-dev",
+    "F6-time": "engineering-dev",
+    "F7-context": "engineering-dev",
+    "F8-undated": "engineering-dev"
+  },
+  "guide_supplement": "datasets/freezes/ai-eng-v1/README.md",
+  "ir": "0.2",
+  "items": 26,
+  "next_round_guide_sha256": "4a60fc691b20ff941276486f385f3b7085b35be88e0891fe6f1752d5be59ea36",
+  "pilot": "f6f77e8bb394fd9215296ddddb806bc88840fe87",
+  "private_files": {
+    "adjudicated.json": "98d985ec0fe45d677afb8086e4d0d95edd6bcaddfa7966c6e6721a46db338cf3",
+    "decisions.json": "793bafcf4c5d26d161008c782af1915c7df5f2f2fbd21cdcbd8cc8bf0ff35126",
+    "judge-summary.json": "00fb17539d37e86e42473328e4c7f1e05afe85b1a534a1184a39dbb42b463a6a",
+    "manifest.json": "698e6872a8db563a34c988f6bb45090852f7babdb4e165755ccc8f6b8ae59ea7",
+    "metrics-before.json": "198cbd08c900756b98ba019918cebe4ec4fba5f6eee104262da543e68caf53ed"
+  },
+  "public_files": {
+    "annotation/GUIDE.md": "fdbe8c9004161fda5bd1b99e588b579c2d8a672b0bbfb1e5970dd26f6669d72f",
+    "annotation/TRIAL_PROTOCOL.md": "77bda93d54d6785c8c44b0db78793043e7610c0fd73b49dd981126357f475c9e",
+    "annotation/trial.py": "35e771c03d3c855c974afcd8353347809da82b27ed1edeabfcb2978c744af1d6",
+    "baselines/evaluate.py": "8125329339db7c97d4ff15302a300736ca12545302fda07c866f9ee33488863e",
+    "datasets/freezes/ai-eng-v1/README.md": "118249f1b8edbdc57faad20c90c62b476b5c678d305bb7d1745fd1ee307af404",
+    "datasets/synthetic-v0/items.json": "5fc07898ca24778ffe674d3b1ce1002efc7c0eb7fb1163a08984f81ef4cfa012",
+    "datasets/synthetic-v0/registry.json": "1733add5a17b909c0917bb79e9be5d9517723384be3f03d13385b68722bed0fe",
+    "docs/experiments/ten-classes.md": "4e126167f7cb8421fa7053ceacf635c984b908365fe85ec1a87fb9543d608f9c"
+  },
+  "queries": 42,
+  "random_seed": null,
+  "scope": "AI-reviewed engineering development reference",
+  "version": "ai-eng-v1"
+}
