@@ -106,6 +106,9 @@ def main():
     evaluate = commands.add_parser("score")
     evaluate.add_argument("reference", type=Path)
     evaluate.add_argument("predictions", type=Path)
+    frozen = commands.add_parser("score-frozen")
+    for name in ("packet", "registry", "reference", "responses"):
+        frozen.add_argument(name, type=Path)
     def read(path):
         return json.loads(path.read_text(encoding="utf8"))
     args = parser.parse_args()
@@ -114,6 +117,9 @@ def main():
             result = predict(read(args.packet), read(args.registry), enabled=args.enable_local_model)
         elif args.action == "validate":
             result = validate_batch(read(args.packet), read(args.registry), read(args.responses))
+        elif args.action == "score-frozen":
+            from .frozen_extraction import score_frozen
+            result = score_frozen(read(args.packet), read(args.registry), args.reference, read(args.responses))
         else:
             ref = read(args.reference)
             result = score(ref["items"] if isinstance(ref, dict) else ref, read(args.predictions))
