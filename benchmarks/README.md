@@ -106,3 +106,10 @@ PYTHONHASHSEED=0 python3 -m benchmarks.active_density --repeats 7
 | 1,000,000 | 0.3 | 首轮生成合成语料阶段达到预算，采样到 536.5 MiB。 |
 
 受限组按预先约定停止后续重复。此测量只表明相应运行在给定生成器、解释器与进程预算下的完成情况，不能用作系统最大容量。特别是百万档没有进入加载阶段；十万档也没有取得三次跨进程成功样本。超出预算的采样值来自两次检查之间的 RSS 增长。
+
+## 集成候选的一万条复验
+
+在 Mac 候选 6735474 上执行 `python -m benchmarks.replay_scale --assertions 10000 --repeats 3`。两个哈希种子在 IR 0.2 和 0.3 上均通过完整答案、语料摘要和原查询集核验。下表为种子 0 的实测中位数（纳秒）及 tracemalloc 构建峰值。
+
+- 0.2：{'load': 196996333, 'direct': 94042, 'inferred': 49750}；分阶段 Python 分配峰值（字节）{'load': 27933558, 'direct': 3300, 'inferred': 5366}。
+- 0.3：{'load': 239154375, 'direct': 71041, 'inferred': 77875}；分阶段 Python 分配峰值（字节）{'load': 34472289, 'direct': 3428, 'inferred': 5558}。

@@ -4,6 +4,19 @@
 
 自本文合并起，`docs/DEVELOPMENT_PLAN.md` §11 中原由 Claude 主责的条目（M1 契约、M2 规则格式起草、M3 标注协议与数据）**全部改由 Codex 主责**。Claude 不再主动提交；只在负责人要求时做复核。
 
+## 2026-11-23 工程验收
+
+本轮由 Codex 实现和独立复核。M0–M2 的实现已进入 main，#2–#5 已验收。历史移交时点见下文。
+
+| 工作 | 验收范围与复验入口 |
+|---|---|
+| M3 #6 | 负责人批准本轮 AI 试标作工程验收。26 条、4 项分歧均已裁决，受控参考保存在协调人本机。公开清单由 `python -m annotation.verify_ai_freeze` 核对。[冻结范围](../datasets/freezes/ai-eng-v1/README.md) |
+| M3 #7 | 同一冻结开发集、同一命令比较 JSON、KG、SQLite 和内核的四值、未知误判、规则证明与叶子来源。[评分命令与分母](../baselines/EVALUATION.md) |
+| M4 #8 | 默认关闭的参考适配器仅在显式启用时发出请求。真实 Codex 工程开发集观测单独汇总；Ollama 通路在本轮使用离线替身测试。[适配器](../adapters/README.md) |
+| M5 #9 | 以分阶段预算记录从千条至百万条的结果。十万条只有 IR 0.2 的一个进程完成，百万条在生成输入时已触及预算。[规模复验](../benchmarks/README.md) |
+
+原始答卷、逐条预测、裁决详情和凭据均由协调人在本机保管。历史文档中的真人试标待办仍描述原真人轮次，当前 AI 工程验收的适用范围见冻结清单。
+
 ## #21 与原 PR 的重叠复核
 
 2026-11-20 核对远端引用。main 为 `f6b39f5`，#21 为 `dbc5fb699b1b872a4a3d8902f0bcefa25102bfcc`。以下三个 PR 的 head 均是 #21 的 Git 祖先。逐项比较各 PR 相对 main 改动的路径与 #21 的文件内容后，建议以 #21 为单一集成入口，待其合入并核对 main 后再处理原 PR。被覆盖的代码与实际合并状态分别记录。[集成评审](https://github.com/lsgoodlionel/NCSC/pull/21) · [该提交的 CI](https://github.com/lsgoodlionel/NCSC/actions/runs/44695430754)
