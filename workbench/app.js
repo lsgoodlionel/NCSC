@@ -42,7 +42,7 @@ function populate(data, name) {
   const concepts = Array.isArray(data?.concepts) ? data.concepts.filter(c=>c && typeof c.id === "string") : [];
   const facts = Array.isArray(data?.assertions) ? data.assertions.filter(a=>a && typeof a === "object") : [];
   for (const [slot, def] of [["subject","c:task:release"],["relation","r:status:blocked"],["object","c:value:true"]]) {
-    const choices = concepts.filter(c => slot === "relation" ? c.kind === "relation" : c.kind !== "relation");
+    const choices = data?.version === "0.1" ? concepts : concepts.filter(c => slot === "relation" ? c.kind === "relation" : c.kind !== "relation");
     const el = $(slot);
     el.replaceChildren(...choices.map(c => new Option((c.aliases?.[0] || c.id) + " · " + c.id, c.id)));
     const defaultId = choices.some(c=>c.id===def) ? def : facts[0]?.roles?.[slot];
@@ -73,6 +73,9 @@ async function restore() {
 }
 function fail(message) {
   setState("失败",true);
+  for (const label of $("log").querySelectorAll("li small")) {
+    if (label.textContent === "执行中") label.textContent = "失败";
+  }
   $("output").replaceChildren(node("h3","运行未完成"),node("p",message));
 }
 function details(title, data) {
@@ -110,7 +113,7 @@ function showResult(value) {
   }
   if (Object.hasOwn(value,"model_text")) {
     out.append(node("h3","Codex 回答"),node("pre",value.model_text || "未返回回答"));
-    if (typeof value.verified === "boolean") out.append(node("p",value.verified ? "本次运行已取得内核核验结果。" : "本次回答未经核验。"));
+    if (typeof value.verified === "boolean") out.append(node("p",value.verified ? "已确认 Codex 调用工具并取得本轮证据。" : "未取得匹配的工具收据，请以本页内核结果为准。"));
   }
   out.append(details("查看原始 JSON",value));
   $("download").disabled=false;
